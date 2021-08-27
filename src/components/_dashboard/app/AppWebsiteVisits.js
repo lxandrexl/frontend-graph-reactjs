@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { merge } from 'lodash';
 import ReactApexChart from 'react-apexcharts';
 // material
@@ -5,52 +6,69 @@ import { Card, CardHeader, Box } from '@material-ui/core';
 //
 import { BaseOptionChart } from '../../charts';
 
+import { webSockets, ws } from '../../../services/sensorTemp';
 // ----------------------------------------------------------------------
 
-const CHART_DATA = [
-  {
-    name: 'Team A',
-    type: 'column',
-    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
-  },
-  {
-    name: 'Team B',
-    type: 'area',
-    data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
-  },
-  {
-    name: 'Team C',
-    type: 'line',
-    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
-  }
-];
+const LABEL_DATA = ['01/01/2003 16:14:00'];
+
+webSockets();
 
 export default function AppWebsiteVisits() {
+  const CHART_DATA = [
+    {
+      name: 'Dispositivo 01',
+      type: 'column',
+      data: []
+    },
+    {
+      name: 'Dispositivo 02',
+      type: 'area',
+      data: []
+    },
+    {
+      name: 'Dispositivo 03',
+      type: 'line',
+      data: []
+    },
+    {
+      name: 'Dispositivo 04',
+      type: 'line',
+      data: []
+    }
+  ];
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    ws.addEventListener('message', (e) => {
+      console.log('Message received', JSON.parse(e.data).message, JSON.parse(e.data).date);
+      const response = JSON.parse(e.data);
+      const { message, date } = response;
+
+      CHART_DATA[0].data.push(message[0]);
+      CHART_DATA[1].data.push(message[1]);
+      CHART_DATA[2].data.push(message[2]);
+      CHART_DATA[3].data.push(message[3]);
+
+      LABEL_DATA.push(date);
+
+      setData(() => [...CHART_DATA]);
+    });
+  }, []);
+
   const chartOptions = merge(BaseOptionChart(), {
-    stroke: { width: [0, 2, 3] },
+    chart: { animations: { enabled: false } },
+    stroke: { width: [0, 2, 3, 3] },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
     fill: { type: ['solid', 'gradient', 'solid'] },
-    labels: [
-      '01/01/2003',
-      '02/01/2003',
-      '03/01/2003',
-      '04/01/2003',
-      '05/01/2003',
-      '06/01/2003',
-      '07/01/2003',
-      '08/01/2003',
-      '09/01/2003',
-      '10/01/2003',
-      '11/01/2003'
-    ],
-    xaxis: { type: 'datetime' },
+    labels: LABEL_DATA,
     tooltip: {
       shared: true,
       intersect: false,
       y: {
         formatter: (y) => {
           if (typeof y !== 'undefined') {
-            return `${y.toFixed(0)} visits`;
+            return `${y.toFixed(0)} °C`;
           }
           return y;
         }
@@ -60,9 +78,9 @@ export default function AppWebsiteVisits() {
 
   return (
     <Card>
-      <CardHeader title="Website Visits" subheader="(+43%) than last year" />
+      <CardHeader title="Sensor de temperatura" subheader="Medida de temperatura en Celsius (°C)" />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-        <ReactApexChart type="line" series={CHART_DATA} options={chartOptions} height={364} />
+        <ReactApexChart type="line" series={data} options={chartOptions} height={364} />
       </Box>
     </Card>
   );
