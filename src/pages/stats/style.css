@@ -1,0 +1,30 @@
+.alert{
+    background: red;
+    box-sizing: border-box;
+    padding: 3px 0 3px 0;
+    color: #E8E1E0;
+}
+
+.umbral-info{
+    width: auto;
+    padding-right: 15px;
+}
+
+.umbral-info:last-child{
+    padding-right: 0;
+}
+
+.umbral-info__value{
+    font-size: 20px;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.umbral-info__detail{
+    font-size: 11px;
+    text-align: center;
+}
+
+.boxStats{
+    margin: 0 12px 10px 12px;
+}
