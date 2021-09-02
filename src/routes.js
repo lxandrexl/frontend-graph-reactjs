@@ -6,38 +6,65 @@ import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
-import Products from './pages/Products';
-import Blog from './pages/Blog';
-import User from './pages/User';
 import NotFound from './pages/Page404';
+import { clientId } from './services/constants';
+import { isNull } from 'lodash';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const user = localStorage.getItem('CognitoIdentityServiceProvider.' + clientId + '.LastAuthUser');
+  const tokenName = 'CognitoIdentityServiceProvider.' + clientId + '.' + user;
+  const authToken = localStorage.getItem(tokenName + '.accessToken');
+
+  console.log(authToken);
+
+  let routesDefault = [
+    { path: '/', element: <Navigate to='/login' replace /> },
+    { path: 'login', element: <Login /> },
+    { path: 'register', element: <Register /> },
+    { path: '404', element: <NotFound /> },
+    { path: 'dashboard', element: <Navigate to='/login' replace />},
+    { path: '*', element: <Navigate to="/404" /> }
+  ]
+
+  let routesAuth = [
+    { path: '/', element: <Navigate to='/dashboard/app' replace /> },
+    { path: 'login', element: <Navigate to='/dashboard/app' replace /> },
+    { path: 'register', element: <Navigate to='/dashboard/app' replace /> },
+    { path: '404', element: <NotFound /> },
+    { path: '*', element: <Navigate to="/404" /> }
+  ]
+
+  let dashboardDefault = [
+    { path: 'app', element:  <Navigate to='/login' replace /> },
+  ]
+
+  let dashboardAuth = [
+    { path: 'app', element: <DashboardApp /> },
+  ]
+
+  let routes = routesDefault;
+  let dashboard = dashboardDefault;
+  
+  if(!isNull(authToken)) {
+    routes = routesAuth;
+    dashboard = dashboardAuth;
+  }
+
   return useRoutes([
-    {
-      path: '/dashboard',
-      element: <DashboardLayout />,
-      children: [
-        { path: '/', element: <Navigate to="/dashboard/app" replace /> },
-        { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
-        { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> }
-      ]
-    },
     {
       path: '/',
       element: <LogoOnlyLayout />,
-      children: [
-        { path: 'login', element: <Login /> },
-        { path: 'register', element: <Register /> },
-        { path: '404', element: <NotFound /> },
-        { path: '/', element: <Navigate to="/dashboard" /> },
-        { path: '*', element: <Navigate to="/404" /> }
-      ]
+      children: routes
     },
-
+    
+    {
+      path: '/dashboard',
+      element: <DashboardLayout />,
+      children: dashboard
+    },
+    
     { path: '*', element: <Navigate to="/404" replace /> }
   ]);
 }
