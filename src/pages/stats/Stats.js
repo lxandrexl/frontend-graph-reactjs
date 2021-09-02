@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Table from '@material-ui/core/Table';
+import Button from '@material-ui/core/Button';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -9,6 +10,8 @@ import TableRow from '@material-ui/core/TableRow';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import AutorenewIcon from '@material-ui/icons/Autorenew';
 import './style.css';
 
 const { REACT_APP_API } = process.env;
@@ -191,29 +194,51 @@ export function BoxStats({ stats, umbral, unidad, grupo }) {
 
 export default function Stats() {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(async () => {
-    const payload = await axios.get(`${REACT_APP_API}/dashboard/stats`);
-    setData([
-      ...payload.data.payload,
-      ...payload.data.payload,
-      ...payload.data.payload,
-      ...payload.data.payload
-    ]);
-  }, []);
+    if (!loading) return;
+    const { data } = await axios.get(`${REACT_APP_API}/dashboard/stats`);
+    setData(data.payload);
+    setLoading(false);
+  }, [loading]);
 
   return (
     <div style={{ width: '100%' }}>
-      <Box display="flex" flexWrap="wrap" justifyContent="space-around" bgcolor="background.paper">
-        {data.map((element) => (
-          <BoxStats
-            stats={element.stats}
-            umbral={element.umbral}
-            unidad={element.unidad_medida}
-            grupo={element.grupo}
-          />
-        ))}
-      </Box>
+      {loading ? (
+        <div className="loading">
+          <CircularProgress />
+        </div>
+      ) : (
+        <>
+          <Box display="flex" justifyContent="flex-end">
+            <Button
+              style={{ margin: '0 10px 20px 0' }}
+              variant="contained"
+              color="primary"
+              startIcon={<AutorenewIcon />}
+              onClick={() => setLoading(true)}
+            >
+              Actualizar
+            </Button>
+          </Box>
+          <Box
+            display="flex"
+            flexWrap="wrap"
+            justifyContent="space-around"
+            bgcolor="background.paper"
+          >
+            {data.map((element) => (
+              <BoxStats
+                stats={element.stats}
+                umbral={element.umbral}
+                unidad={element.unidad_medida}
+                grupo={element.grupo}
+              />
+            ))}
+          </Box>
+        </>
+      )}
     </div>
   );
 }

@@ -45,3 +45,10 @@
 .pp:nth-last-child(-n+2){
     margin-bottom: 0;
 }
+
+.loading{
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
