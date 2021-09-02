@@ -55,6 +55,50 @@ const mydata = [
         alertMax: false
       }
     ]
+  },
+  {
+    a: '1',
+    st: '1',
+    unidad_medida: 'CELCIOUS',
+    fabrica: 'laive',
+    imei: '518067539963144',
+    grupo: 'TEMPERATURA',
+    umbral: {
+      a: 1,
+      umbralMinimo: 20,
+      st: 1,
+      fabrica: 'laive',
+      imei: '518067539963144',
+      umbralMaximo: 120
+    },
+    stats: [
+      {
+        imei: '518067539963144',
+        fabrica: 'laive',
+        fecha: '2021-08-31 14:50:50',
+        a: '1',
+        st: '1',
+        min: 0,
+        promedio: 0,
+        max: 0,
+        lecturas: 0,
+        alertMin: false,
+        alertMax: false
+      },
+      {
+        imei: '518067539963144',
+        fabrica: 'laive',
+        fecha: '2021-08-30',
+        a: '1',
+        st: '1',
+        min: 0,
+        promedio: 10,
+        max: 0,
+        lecturas: 0,
+        alertMin: true,
+        alertMax: false
+      }
+    ]
   }
 ];
 
@@ -104,8 +148,8 @@ export function UmbralInfo({ detail, value }) {
 
 export function BoxStats({ stats, umbral, unidad, grupo }) {
   return (
-    <>
-      <Box p={1} flexGrow={1} className="boxStats">
+    <div className="pp">
+      <Box>
         <Typography variant="h5" component="h2">
           {grupo}
         </Typography>
@@ -140,7 +184,7 @@ export function BoxStats({ stats, umbral, unidad, grupo }) {
         </Box>
         <StatsTable stats={stats} umbral={umbral} />
       </Box>
-    </>
+    </div>
   );
 }
 
@@ -149,12 +193,17 @@ export default function Stats() {
 
   useEffect(async () => {
     const payload = await axios.get('http://localhost:4010/TEST/dashboard/stats');
-    setData([...payload.data.payload, ...payload.data.payload, ...payload.data.payload]);
+    setData([
+      ...payload.data.payload,
+      ...payload.data.payload,
+      ...payload.data.payload,
+      ...payload.data.payload
+    ]);
   }, []);
 
   return (
     <div style={{ width: '100%' }}>
-      <Box display="flex" flexWrap="wrap" justifyContent="space-between" bgcolor="background.paper">
+      <Box display="flex" flexWrap="wrap" justifyContent="space-around" bgcolor="background.paper">
         {data.map((element) => (
           <BoxStats
             stats={element.stats}
