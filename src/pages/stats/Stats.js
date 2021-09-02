@@ -11,6 +11,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import './style.css';
 
+const { REACT_APP_API } = process.env;
 const mydata = [
   {
     a: '1',
@@ -192,7 +193,7 @@ export default function Stats() {
   const [data, setData] = useState([]);
 
   useEffect(async () => {
-    const payload = await axios.get('http://localhost:4010/TEST/dashboard/stats');
+    const payload = await axios.get(`${REACT_APP_API}/dashboard/stats`);
     setData([
       ...payload.data.payload,
       ...payload.data.payload,
