@@ -42,6 +42,7 @@ export default function AppWebsiteVisits() {
 
   if(!isNull(getToken())) { 
     if(typeof websocket === 'string') { 
+      console.log('GETTOKEN', getToken());
       websocket =  new WebSocket(wsRoute + '?Auth=' + getToken());
     }
 

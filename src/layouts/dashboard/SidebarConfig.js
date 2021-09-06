@@ -10,6 +10,11 @@ const sidebarConfig = [
     title: 'dashboard',
     path: '/dashboard/app',
     icon: getIcon(pieChart2Fill)
+  },
+  {
+    title: 'estadisticas',
+    path: '/dashboard/stats',
+    icon: getIcon(pieChart2Fill)
   }
 ];
 

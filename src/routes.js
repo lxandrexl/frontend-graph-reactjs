@@ -9,6 +9,7 @@ import DashboardApp from './pages/DashboardApp';
 import NotFound from './pages/Page404';
 import { getToken } from './services/tokens';
 import { isNull } from 'lodash';
+import Stats from './pages/stats/Stats';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +28,7 @@ export default function Router() {
   let routesAuth = [
     { path: '/', element: <Navigate to='/dashboard/app' replace /> },
     { path: 'login', element: <Navigate to='/dashboard/app' replace /> },
+    { path: 'stats', element: <Stats /> },
     { path: 'register', element: <Navigate to='/dashboard/app' replace /> },
     { path: '404', element: <NotFound /> },
     { path: '*', element: <Navigate to="/404" /> }
