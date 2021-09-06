@@ -42,7 +42,7 @@ export default function LoginForm() {
 
         console.log('respuesta del svr',response)
         if(!!response.accessToken) {
-          navigate('/dashboard', { replace: true });
+          navigate('/dashboard/app', { replace: true });
         }
 
       } catch (error) {

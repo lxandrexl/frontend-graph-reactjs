@@ -71,7 +71,7 @@
     "simplebar": "^5.3.5",
     "simplebar-react": "^2.3.5",
     "web-vitals": "^2.1.0",
-    "ws": "^8.2.0",
+    "ws": "^8.2.1",
     "yup": "^0.32.9"
   },
   "devDependencies": {

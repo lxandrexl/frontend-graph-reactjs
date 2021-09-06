@@ -7,17 +7,13 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardApp from './pages/DashboardApp';
 import NotFound from './pages/Page404';
-import { clientId } from './services/constants';
+import { getToken } from './services/tokens';
 import { isNull } from 'lodash';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  const user = localStorage.getItem('CognitoIdentityServiceProvider.' + clientId + '.LastAuthUser');
-  const tokenName = 'CognitoIdentityServiceProvider.' + clientId + '.' + user;
-  const authToken = localStorage.getItem(tokenName + '.accessToken');
-
-  console.log(authToken);
+  const authToken = getToken();
 
   let routesDefault = [
     { path: '/', element: <Navigate to='/login' replace /> },
