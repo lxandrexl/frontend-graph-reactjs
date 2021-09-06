@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { getToken } from '../../services/tokens';
 import Table from '@material-ui/core/Table';
 import Button from '@material-ui/core/Button';
 import TableBody from '@material-ui/core/TableBody';
@@ -106,6 +107,21 @@ const mydata = [
   }
 ];
 
+/*********
+ * Service API
+ */
+async function getData(){
+  const token = getToken();
+  return await axios.get(
+    `${REACT_APP_API}/dashboard/stats`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+  );
+}
+
 export function StatsTable({ stats }) {
   return (
     <TableContainer component={Paper}>
@@ -198,7 +214,7 @@ export default function Stats() {
 
   useEffect(async () => {
     if (!loading) return;
-    const { data } = await axios.get(`${REACT_APP_API}/dashboard/stats`);
+    const { data } = await getData();
     setData(data.payload);
     setLoading(false);
   }, [loading]);
