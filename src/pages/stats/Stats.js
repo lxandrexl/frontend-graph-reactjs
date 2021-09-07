@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { baseUrl } from '../../services/constants';
 import { getAccessToken } from '../../services/tokens';
 import Table from '@material-ui/core/Table';
 import Button from '@material-ui/core/Button';
@@ -15,7 +16,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import './style.css';
 
-const { REACT_APP_API } = process.env;
 const mydata = [
   {
     a: '1',
@@ -113,7 +113,7 @@ const mydata = [
 async function getData(){
   const token = getAccessToken();
   return await axios.get(
-    `${REACT_APP_API}/dashboard/stats`,
+    `${baseUrl}/dashboard/stats`,
     {
       headers: {
         'Authorization': `Bearer ${token}`
