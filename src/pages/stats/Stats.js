@@ -16,97 +16,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import './style.css';
 
-const mydata = [
-  {
-    a: '1',
-    st: '1',
-    unidad_medida: 'CELCIOUS',
-    fabrica: 'laive',
-    imei: '518067539963144',
-    grupo: 'TEMPERATURA',
-    umbral: {
-      a: 1,
-      umbralMinimo: 20,
-      st: 1,
-      fabrica: 'laive',
-      imei: '518067539963144',
-      umbralMaximo: 120
-    },
-    stats: [
-      {
-        imei: '518067539963144',
-        fabrica: 'laive',
-        fecha: '2021-08-31 14:50:50',
-        a: '1',
-        st: '1',
-        min: 0,
-        promedio: 0,
-        max: 0,
-        lecturas: 0,
-        alertMin: false,
-        alertMax: false
-      },
-      {
-        imei: '518067539963144',
-        fabrica: 'laive',
-        fecha: '2021-08-30',
-        a: '1',
-        st: '1',
-        min: 0,
-        promedio: 10,
-        max: 0,
-        lecturas: 0,
-        alertMin: true,
-        alertMax: false
-      }
-    ]
-  },
-  {
-    a: '1',
-    st: '1',
-    unidad_medida: 'CELCIOUS',
-    fabrica: 'laive',
-    imei: '518067539963144',
-    grupo: 'TEMPERATURA',
-    umbral: {
-      a: 1,
-      umbralMinimo: 20,
-      st: 1,
-      fabrica: 'laive',
-      imei: '518067539963144',
-      umbralMaximo: 120
-    },
-    stats: [
-      {
-        imei: '518067539963144',
-        fabrica: 'laive',
-        fecha: '2021-08-31 14:50:50',
-        a: '1',
-        st: '1',
-        min: 0,
-        promedio: 0,
-        max: 0,
-        lecturas: 0,
-        alertMin: false,
-        alertMax: false
-      },
-      {
-        imei: '518067539963144',
-        fabrica: 'laive',
-        fecha: '2021-08-30',
-        a: '1',
-        st: '1',
-        min: 0,
-        promedio: 10,
-        max: 0,
-        lecturas: 0,
-        alertMin: true,
-        alertMax: false
-      }
-    ]
-  }
-];
-
 /*********
  * Service API
  */
@@ -244,8 +153,9 @@ export default function Stats() {
             justifyContent="space-around"
             bgcolor="background.paper"
           >
-            {data.map((element) => (
+            {data.map((element, index) => (
               <BoxStats
+                key={'element-' + index}
                 stats={element.stats}
                 umbral={element.umbral}
                 unidad={element.unidad_medida}
