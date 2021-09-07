@@ -15,6 +15,8 @@ export default function AppWebsiteVisits({ device, llave }) {
   const [wsOpen, setWsOpen] = useState(false);
   const [data, setData] = useState([]);
   const [labels, setLabels] = useState([]);
+  const [wsData, setWsData] = useState([]);
+  const [wsLabels, setWsLabels] = useState([]);
 
   let titleGraphic = `Sensor de ${device.grupo.toLowerCase()}`;
   let subtitleGraphic = `Medida de ${device.grupo.toLowerCase()} en ${device.unidad_medida.toLowerCase()}`;
@@ -72,15 +74,29 @@ export default function AppWebsiteVisits({ device, llave }) {
           }
         }
 
-        setData([
+        setWsData([
           ...valuesArr
         ]);
-        setLabels([
+        setWsLabels([
           ...labelsArr
         ]);
       });
     }
   }, [wsOpen]);
+
+  useEffect(() => {
+    setData([
+      ...data,
+      ...wsData
+    ]);
+  }, [wsData]);
+
+  useEffect(() => {
+    setLabels([
+      ...labels,
+      ...wsLabels
+    ]);
+  }, [wsLabels])
 
   const chartOptions = merge(BaseOptionChart(), {
     chart: { animations: { enabled: false } },
