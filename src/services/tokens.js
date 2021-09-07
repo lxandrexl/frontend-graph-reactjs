@@ -9,6 +9,14 @@ export function getToken() {
     return authToken;
 }
 
+export function getAccessToken() {
+    const user = localStorage.getItem('CognitoIdentityServiceProvider.' + clientId + '.LastAuthUser');
+    const tokenName = 'CognitoIdentityServiceProvider.' + clientId + '.' + user;
+    const authToken = localStorage.getItem(tokenName + '.accessToken');
+
+    return authToken;
+}
+
 export function getUserInfo() {
     const payload = JSON.parse(localStorage.getItem('user-info'));
 

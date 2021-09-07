@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { getToken } from '../../services/tokens';
+import { getAccessToken } from '../../services/tokens';
 import Table from '@material-ui/core/Table';
 import Button from '@material-ui/core/Button';
 import TableBody from '@material-ui/core/TableBody';
@@ -111,7 +111,7 @@ const mydata = [
  * Service API
  */
 async function getData(){
-  const token = getToken();
+  const token = getAccessToken();
   return await axios.get(
     `${REACT_APP_API}/dashboard/stats`,
     {

@@ -40,6 +40,7 @@ export default function Router() {
 
   let dashboardAuth = [
     { path: 'app', element: <DashboardApp /> },
+    { path: 'stats', element: <Stats /> },
   ]
 
   let routes = routesDefault;
