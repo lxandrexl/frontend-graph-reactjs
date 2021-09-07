@@ -16,7 +16,7 @@ import {
   FormControlLabel
 } from '@material-ui/core';
 import { LoadingButton } from '@material-ui/lab';
-import { loginService } from '../../../services/auth.service';
+import { getDevices, loginService } from '../../../services/auth.service';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +42,8 @@ export default function LoginForm() {
 
         console.log('respuesta del svr',response)
         if(!!response.accessToken) {
+          localStorage.setItem('user-info', JSON.stringify(response.accessToken.payload))
+          await getDevices(response.idToken.jwtToken);
           navigate('/dashboard/app', { replace: true });
         }
 

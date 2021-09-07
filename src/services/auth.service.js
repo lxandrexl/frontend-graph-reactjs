@@ -1,5 +1,6 @@
 import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-import { clientId, userPoolId } from './constants';
+import axios from 'axios';
+import { clientId, userPoolId, baseUrl } from './constants';
 
 export async function loginService(payload) {
    return new Promise(function(resolve, reject) {
@@ -47,4 +48,13 @@ export async function loginService(payload) {
         });
    })
    
+}
+
+export async function getDevices(token) {
+    const header = { headers: { Authorization: `Bearer ${token}`}}
+    const { data } = await axios.get(`${baseUrl}/devices`, header)
+
+    if(data.status == 'ok') {
+        localStorage.setItem('devices', JSON.stringify(data.data))
+    }
 }

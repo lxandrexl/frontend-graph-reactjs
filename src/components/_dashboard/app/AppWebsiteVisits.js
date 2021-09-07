@@ -14,35 +14,14 @@ import { wsRoute } from 'src/services/constants';
 let websocket = !isNull(getToken()) ? new WebSocket(wsRoute + '?Auth=' + getToken()) : '';
 
 let LABEL_DATA = [];
+let GRAPHIC_DATA = [ {data: []} ];
 
-let CHART_DATA = [
-  {
-    name: 'Dispositivo 01',
-    type: 'column',
-    data: []
-  },
-  {
-    name: 'Dispositivo 02',
-    type: 'area',
-    data: []
-  },
-  {
-    name: 'Dispositivo 03',
-    type: 'line',
-    data: []
-  },
-  {
-    name: 'Dispositivo 04',
-    type: 'line',
-    data: []
-  }
-];
+export default function AppWebsiteVisits({ device, llave }) {
+  let titleGraphic = `Sensor de ${device.grupo.toLowerCase()}`;
+  let subtitleGraphic = `Medida de ${device.grupo.toLowerCase()} en ${device.unidad_medida.toLowerCase()}`;
 
-export default function AppWebsiteVisits() {
-
-  if(!isNull(getToken())) { 
+  if(!isNull(getToken()) ) { 
     if(typeof websocket === 'string') { 
-      console.log('GETTOKEN', getToken());
       websocket =  new WebSocket(wsRoute + '?Auth=' + getToken());
     }
 
@@ -51,9 +30,9 @@ export default function AppWebsiteVisits() {
   
       const data = {
         action: 'listenDevice',
-        deviceId: '353438060068088#1#2#LAIVE',
+        deviceId: device.deviceId,
         dataHistory: 'true',
-        timeHistory: '12'
+        timeHistory: '24'
       }
   
       websocket.send(JSON.stringify(data));
@@ -64,45 +43,46 @@ export default function AppWebsiteVisits() {
     });
   
     websocket.addEventListener('error', (e) => console.log('Websocket is in error', e));
-  
   }
 
   const [data, setData] = useState([]);
 
   useEffect(() => {
+  if(!isNull(getToken()) ) { 
     websocket.addEventListener('message', (e) => {
       console.log('Message received', JSON.parse(e.data));
       const response = JSON.parse(e.data);
 
 
+
       if(response.hasOwnProperty('message')) {
         const { devices } = response;
         for(let item of devices) { 
-          const value = Number(item.v1);
+          if(item.deviceId == device.deviceId) {
+            const value = Number(item.v1);
 
-          CHART_DATA[0].data.push(value)
-          CHART_DATA[1].data.push(value + 11)
-          CHART_DATA[2].data.push(value + 33)
-          CHART_DATA[3].data.push(value + 44)
-          LABEL_DATA.push(item.ts)
+            GRAPHIC_DATA[0].data.push(value)
+            LABEL_DATA.push(item.ts)
+          }
         }
       } else { 
-        const value = Number(response.v1);
+        if(response.deviceId == device.deviceId) {
+          const value = Number(response.v1);
 
-          CHART_DATA[0].data.push(value)
-          CHART_DATA[1].data.push(value + 11)
-          CHART_DATA[2].data.push(value + 33)
-          CHART_DATA[3].data.push(value + 44)
+          GRAPHIC_DATA[0].data.push(value)
+
           LABEL_DATA.push(response.ts)
+        }
       }
 
-      setData(() => [...CHART_DATA] );
+
+      setData(() => [...GRAPHIC_DATA] );
     });
+  }
   }, []);
 
   const chartOptions = merge(BaseOptionChart(), {
     chart: { animations: { enabled: false } },
-    stroke: { width: [0, 2, 3, 3] },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
     fill: { type: ['solid', 'gradient', 'solid'] },
     labels: LABEL_DATA,
@@ -112,7 +92,18 @@ export default function AppWebsiteVisits() {
       y: {
         formatter: (y) => {
           if (typeof y !== 'undefined') {
-            return `${y.toFixed(0)} °C`;
+            let abrev = '';
+            switch(device.grupo.toLowerCase()) {
+              case 'temperatura':
+                abrev = '°C';
+              break;
+              case 'co2':
+                abrev = 'PPM';
+              break;
+              default:
+                abrev = '~';
+            }
+            return `${y.toFixed(0)} ${abrev}`;
           }
           return y;
         }
@@ -122,7 +113,7 @@ export default function AppWebsiteVisits() {
 
   return (
     <Card>
-      <CardHeader title="Sensor de temperatura" subheader="Medida de temperatura en Celsius (°C)" />
+      <CardHeader title={titleGraphic} subheader={subtitleGraphic} />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
         <ReactApexChart type="line" series={data} options={chartOptions} height={364} />
       </Box>

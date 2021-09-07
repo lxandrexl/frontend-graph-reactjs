@@ -1,3 +1,4 @@
-export const clientId = '72per1f0egb3crop6me89j06qf';
-export const userPoolId = 'us-east-1_NynrgDHLV';
-export const wsRoute = 'wss://4ddl79toe6.execute-api.us-east-1.amazonaws.com/DESA';
+export const clientId = '6knqdbhrftkbblak0419e628ht';
+export const userPoolId = 'us-east-1_GG4CAS0P1';
+export const wsRoute = 'wss://yhkt198qze.execute-api.us-east-1.amazonaws.com/TEST';
+export const baseUrl = 'https://8nu9yz5794.execute-api.us-east-1.amazonaws.com/TEST';
