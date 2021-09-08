@@ -45,7 +45,7 @@ export function RegistrosTable({ registros }) {
         <TableHead>
           <TableRow>
             <TableCell align="center">Fecha</TableCell>
-            <TableCell align="center">Promedio</TableCell>
+            <TableCell align="center">Valor Medido</TableCell>
             <TableCell align="center">Umbral Conf.</TableCell>
             <TableCell align="center">T. Sup. Umbral</TableCell>
           </TableRow>
