@@ -19,45 +19,46 @@ import './style.css';
 /*********
  * Service API
  */
-async function getData(){
+async function getData() {
   const token = getAccessToken();
-  return await axios.get(
-    `${baseUrl}/dashboard/stats`,
+  console.log(token);
+  return await axios.post(
+    `${baseUrl}/dashboard/pushnotifications`,
+    {
+      fabrica: 'LAIVE',
+      imei: 353438060068088,
+      a: 1,
+      st: 2
+    },
     {
       headers: {
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       }
     }
   );
 }
 
-export function StatsTable({ stats }) {
+export function RegistrosTable({ registros }) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Fecha</TableCell>
-            <TableCell align="center">Mayor</TableCell>
+            <TableCell align="center">Fecha</TableCell>
             <TableCell align="center">Promedio</TableCell>
-            <TableCell align="center">Menor</TableCell>
-            <TableCell align="center">Lecturas</TableCell>
+            <TableCell align="center">Umbral Conf.</TableCell>
+            <TableCell align="center">T. Sup. Umbral</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {stats.map((row) => (
-            <TableRow key={row.fecha}>
+          {registros.map((row) => (
+            <TableRow>
               <TableCell component="th" scope="row">
-                {row.fecha}
+                {row.ts}
               </TableCell>
-              <TableCell align="center">
-                <div className={row.alertMax ? 'alert' : null}>{row.max}</div>
-              </TableCell>
-              <TableCell align="center">{row.promedio}</TableCell>
-              <TableCell align="center">
-                <div className={row.alertMin ? 'alert' : null}>{row.min}</div>
-              </TableCell>
-              <TableCell align="center">{row.lecturas}</TableCell>
+              <TableCell align="center">{row.valorMedido}</TableCell>
+              <TableCell align="center">{row.umbralConfigurado}</TableCell>
+              <TableCell align="center">{row.tiempoSuperacionUmbral}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -75,57 +76,45 @@ export function UmbralInfo({ detail, value }) {
   );
 }
 
-export function BoxStats({ stats, umbral, unidad, grupo }) {
+export function BoxRegistros({ registros }) {
   return (
-    <div className="pp">
-      <Box>
-        <Typography variant="h5" component="h2">
-          {grupo}
-        </Typography>
-        <Box
-          display="flex"
-          flexWrap="nowrap"
-          justifyContent="space-between"
-          style={{ width: '100%', paddingBottom: '8px' }}
-        >
-          <div>
-            <Typography
-              style={{ fontSize: '13px', paddingTop: '5px' }}
-              color="textSecondary"
-              gutterBottom
-            >
-              Unidad Medida: {unidad}
-            </Typography>
-          </div>
-          <Box
-            display="flex"
-            style={{
-              padding: '15px',
-              background: '#F3EFEF',
-              borderRadius: '3px',
-              boxShadow: '0 0 1px #CCC'
-            }}
-            bgcolor="background.paper"
+    <Box>
+      <Typography variant="h5" component="h2">
+        Notificaciones
+      </Typography>
+      <Box
+        display="flex"
+        flexWrap="nowrap"
+        justifyContent="space-between"
+        style={{ width: '100%', paddingBottom: '8px' }}
+      >
+        <div>
+          <Typography
+            style={{ fontSize: '13px', paddingTop: '5px' }}
+            color="textSecondary"
+            gutterBottom
           >
-            <UmbralInfo detail="Umbral Max" value={umbral.umbralMaximo} />
-            <UmbralInfo detail="Umbral Min" value={umbral.umbralMinimo} />
-          </Box>
-        </Box>
-        <StatsTable stats={stats} umbral={umbral} />
+            Día actual y 7 días anteriores
+          </Typography>
+        </div>
       </Box>
-    </div>
+      <RegistrosTable registros={registros} />
+    </Box>
   );
 }
 
 export default function Stats() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [fabricaid, setFabricaId] = useState(true);
 
   useEffect(async () => {
     if (!loading) return;
     const { data } = await getData();
+    console.log(data);
     setData(data.payload);
     setLoading(false);
+    setFabricaId({ fabrica: data.fabrica, id: data.id });
   }, [loading]);
 
   return (
@@ -153,15 +142,9 @@ export default function Stats() {
             justifyContent="space-around"
             bgcolor="background.paper"
           >
-            {data.map((element, index) => (
-              <BoxStats
-                key={'element-' + index}
-                stats={element.stats}
-                umbral={element.umbral}
-                unidad={element.unidad_medida}
-                grupo={element.grupo}
-              />
-            ))}
+            <div style={{ width: '100%' }}>
+              <BoxRegistros registros={data} />
+            </div>
           </Box>
         </>
       )}
