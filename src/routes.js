@@ -10,6 +10,7 @@ import NotFound from './pages/Page404';
 import { getToken } from './services/tokens';
 import { isNull } from 'lodash';
 import Stats from './pages/stats/Stats';
+import Notifi from './pages/notificaciones/notifis';
 
 // ----------------------------------------------------------------------
 
@@ -17,36 +18,36 @@ export default function Router() {
   const authToken = getToken();
 
   let routesDefault = [
-    { path: '/', element: <Navigate to='/login' replace /> },
+    { path: '/', element: <Navigate to="/login" replace /> },
     { path: 'login', element: <Login /> },
     { path: 'register', element: <Register /> },
     { path: '404', element: <NotFound /> },
-    { path: 'dashboard', element: <Navigate to='/login' replace />},
+    { path: 'dashboard', element: <Navigate to="/login" replace /> },
     { path: '*', element: <Navigate to="/404" /> }
-  ]
+  ];
 
   let routesAuth = [
-    { path: '/', element: <Navigate to='/dashboard/app' replace /> },
-    { path: 'login', element: <Navigate to='/dashboard/app' replace /> },
+    { path: '/', element: <Navigate to="/dashboard/app" replace /> },
+    { path: 'login', element: <Navigate to="/dashboard/app" replace /> },
     { path: 'stats', element: <Stats /> },
-    { path: 'register', element: <Navigate to='/dashboard/app' replace /> },
+    { path: 'notificaciones', element: <Notifi /> },
+    { path: 'register', element: <Navigate to="/dashboard/app" replace /> },
     { path: '404', element: <NotFound /> },
     { path: '*', element: <Navigate to="/404" /> }
-  ]
+  ];
 
-  let dashboardDefault = [
-    { path: 'app', element:  <Navigate to='/login' replace /> },
-  ]
+  let dashboardDefault = [{ path: 'app', element: <Navigate to="/login" replace /> }];
 
   let dashboardAuth = [
     { path: 'app', element: <DashboardApp /> },
     { path: 'stats', element: <Stats /> },
-  ]
+    { path: 'notificaciones', element: <Notifi /> }
+  ];
 
   let routes = routesDefault;
   let dashboard = dashboardDefault;
-  
-  if(!isNull(authToken)) {
+
+  if (!isNull(authToken)) {
     routes = routesAuth;
     dashboard = dashboardAuth;
   }
@@ -57,13 +58,13 @@ export default function Router() {
       element: <LogoOnlyLayout />,
       children: routes
     },
-    
+
     {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: dashboard
     },
-    
+
     { path: '*', element: <Navigate to="/404" replace /> }
   ]);
 }
