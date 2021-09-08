@@ -42,7 +42,6 @@ DashboardSidebar.propTypes = {
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
-  console.log('se llama otra vez')
   const user = getUserInfo();
 
   useEffect(() => {
