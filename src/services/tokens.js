@@ -1,20 +1,18 @@
-import { clientId } from './constants';
+export function setToken(token) {
+    localStorage.setItem('token_app', token);
+}
+
+export function setAccessToken(token) {
+    localStorage.setItem('access_token_app', token);
+}
 
 
 export function getToken() {
-    const user = localStorage.getItem('CognitoIdentityServiceProvider.' + clientId + '.LastAuthUser');
-    const tokenName = 'CognitoIdentityServiceProvider.' + clientId + '.' + user;
-    const authToken = localStorage.getItem(tokenName + '.idToken');
-
-    return authToken;
+    return localStorage.getItem('token_app');
 }
 
 export function getAccessToken() {
-    const user = localStorage.getItem('CognitoIdentityServiceProvider.' + clientId + '.LastAuthUser');
-    const tokenName = 'CognitoIdentityServiceProvider.' + clientId + '.' + user;
-    const authToken = localStorage.getItem(tokenName + '.accessToken');
-
-    return authToken;
+    return localStorage.getItem('access_token_app');
 }
 
 export function getUserInfo() {
