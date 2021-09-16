@@ -19,13 +19,15 @@ import flechaArribaRoja from './up-red-arrow.png';
 import flechaArribaVerde from './up-green-arrow.png';
 import flechaAbajoRoja from './down-red-arrow.png';
 import flechaAbajoVerde from './down-green-arrow.png';
+import { getUserInfo } from 'src/services/tokens';
 
 /*********
  * Service API
  */
 async function getData() {
   const token = getAccessToken();
-  console.log(token);
+  const user = getUserInfo();
+  console.log(user['cognito:groups'][0].toUpperCase());
   return await axios.post(
     `${baseUrl}/dashboard/pushnotifications`,
     {
@@ -92,24 +94,6 @@ export function RegistrosTable({ registros }) {
                 </TableRow>
               );
             } else if (
-              parseFloat(row.valorMedido) <= parseFloat(row.umbralConfigurado) &&
-              row.direccionCambio === 'Peligro'
-            ) {
-              return (
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    {row.ts}
-                  </TableCell>
-                  <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
-                  <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado}</TableCell>
-                  <TableCell align="center">{row.valorMedido}</TableCell>
-                  <TableCell align="center">
-                    <img src={flechaAbajoRoja} alt="abajo" class="flecha" />
-                  </TableCell>
-                </TableRow>
-              );
-            } else if (
               parseFloat(row.valorMedido) >= parseFloat(row.umbralConfigurado) &&
               row.direccionCambio === 'Peligro'
             ) {
@@ -124,6 +108,24 @@ export function RegistrosTable({ registros }) {
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
                     <img src={flechaArribaRoja} alt="abajo" class="flecha" />
+                  </TableCell>
+                </TableRow>
+              );
+            } else if (
+              parseFloat(row.valorMedido) <= parseFloat(row.umbralConfigurado) &&
+              row.direccionCambio === 'Peligro'
+            ) {
+              return (
+                <TableRow>
+                  <TableCell component="th" scope="row">
+                    {row.ts}
+                  </TableCell>
+                  <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
+                  <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
+                  <TableCell align="center">{row.umbralConfigurado}</TableCell>
+                  <TableCell align="center">{row.valorMedido}</TableCell>
+                  <TableCell align="center">
+                    <img src={flechaAbajoRoja} alt="abajo" class="flecha" />
                   </TableCell>
                 </TableRow>
               );
