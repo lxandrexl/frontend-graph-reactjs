@@ -69,18 +69,20 @@ export function StatsTable({ stats }) {
 export function UmbralInfo({ detail, value }) {
   return (
     <div className="umbral-info">
-      <div className="umbral-info__value">{value}</div>
-      <div className="umbral-info__detail">{detail}</div>
+      <div>
+        <div className="umbral-info__value">{value}</div>
+        <div className="umbral-info__detail">{detail}</div>
+      </div>
     </div>
   );
 }
 
-export function BoxStats({ stats, umbral, unidad, grupo }) {
+export function BoxStats({ stats, umbral, unidad, grupo, descripcion, imei, a, st }) {
   return (
-    <div className="pp">
+    <div className="ppx">
       <Box>
         <Typography variant="h5" component="h2">
-          {grupo}
+          {descripcion || grupo}
         </Typography>
         <Box
           display="flex"
@@ -89,13 +91,42 @@ export function BoxStats({ stats, umbral, unidad, grupo }) {
           style={{ width: '100%', paddingBottom: '8px' }}
         >
           <div>
-            <Typography
-              style={{ fontSize: '13px', paddingTop: '5px' }}
-              color="textSecondary"
-              gutterBottom
-            >
-              Unidad Medida: {unidad}
-            </Typography>
+            <div>
+              <Typography
+                style={{ fontSize: '12px', paddingTop: '5px' }}
+                color="textSecondary"
+                gutterBottom
+              >
+                IMEI: {imei}
+              </Typography>
+            </div>
+            <div>
+              <Typography
+                style={{ fontSize: '12px', paddingTop: '5px' }}
+                color="textSecondary"
+                gutterBottom
+              >
+                Grupo: {grupo}
+              </Typography>
+            </div>
+            <div>
+              <Typography
+                style={{ fontSize: '12px', paddingTop: '5px' }}
+                color="textSecondary"
+                gutterBottom
+              >
+                Unidad Medida: {unidad}
+              </Typography>
+            </div>
+            <div>
+              <Typography
+                style={{ fontSize: '12px', paddingTop: '5px' }}
+                color="textSecondary"
+                gutterBottom
+              >
+                A: {a} &nbsp; &nbsp; ST: {st}
+              </Typography>
+            </div>
           </div>
           <Box
             display="flex"
@@ -107,11 +138,11 @@ export function BoxStats({ stats, umbral, unidad, grupo }) {
             }}
             bgcolor="background.paper"
           >
-            <UmbralInfo detail="Umbral Max" value={umbral.umbralMaximo} />
-            <UmbralInfo detail="Umbral Min" value={umbral.umbralMinimo} />
+            <UmbralInfo detail="Umbral Max" value={umbral ? umbral.umbralMaximo : 0} />
+            <UmbralInfo detail="Umbral Min" value={umbral ? umbral.umbralMinimo : 0} />
           </Box>
         </Box>
-        <StatsTable stats={stats} umbral={umbral} />
+        <StatsTable stats={stats} />
       </Box>
     </div>
   );
@@ -160,6 +191,10 @@ export default function Stats() {
                 umbral={element.umbral}
                 unidad={element.unidad_medida}
                 grupo={element.grupo}
+                imei={element.imei}
+                descripcion={element.descripcion}
+                a={element.a}
+                st={element.st}
               />
             ))}
           </Box>

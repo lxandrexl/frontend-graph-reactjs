@@ -8,6 +8,9 @@
 .umbral-info{
     width: auto;
     padding-right: 15px;
+    display: flex;
+    justify-self: center;
+    align-items: center;
 }
 
 .umbral-info:last-child{
@@ -25,7 +28,7 @@
     text-align: center;
 }
 
-.pp{
+.ppx{
     padding: 20px 20px 20px 20px;
     width: 48%;
     min-width: 250px;
@@ -40,10 +43,6 @@
         min-width: 250px;
         box-shadow: 0 0 0 1px #E6E6E6;
     }
-}
-
-.pp:nth-last-child(-n+2){
-    margin-bottom: 0;
 }
 
 .loading{
