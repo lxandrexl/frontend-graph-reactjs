@@ -42,7 +42,6 @@ DashboardSidebar.propTypes = {
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const { pathname } = useLocation();
-  console.log('se llama otra vez')
   const user = getUserInfo();
 
   useEffect(() => {
@@ -71,7 +70,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             <Avatar src={account.photoURL} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {!!user ? user.username : ''}
+                {!!user ? user['cognito:username'] : ''}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {!!user ? (user['cognito:groups'][0]).toUpperCase() : ''}
