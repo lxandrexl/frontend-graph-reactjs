@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core';
 import { LoadingButton } from '@material-ui/lab';
 import { getDevices, loginService } from '../../../services/auth.service';
+import { setAccessToken, setToken } from 'src/services/tokens';
 
 // ----------------------------------------------------------------------
 
@@ -38,12 +39,16 @@ export default function LoginForm() {
     validationSchema: LoginSchema,
     onSubmit: async (payload) => {
       try {
+        delete payload.remember;
+
         const response = await loginService(payload);
 
         console.log('respuesta del svr',response)
         if(!!response.accessToken) {
-          localStorage.setItem('user-info', JSON.stringify(response.accessToken.payload))
-          await getDevices(response.idToken.jwtToken);
+          setToken(response.accessToken);
+          setAccessToken(response.idToken);
+          localStorage.setItem('user-info', JSON.stringify(response.payload))
+          await getDevices(response.accessToken);
           navigate('/dashboard/app', { replace: true });
         }
 
