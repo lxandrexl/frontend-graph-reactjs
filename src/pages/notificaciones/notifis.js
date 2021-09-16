@@ -27,11 +27,10 @@ import { getUserInfo } from 'src/services/tokens';
 async function getData() {
   const token = getAccessToken();
   const user = getUserInfo();
-  console.log(user['cognito:groups'][0].toUpperCase());
   return await axios.post(
     `${baseUrl}/dashboard/pushnotifications`,
     {
-      fabrica: 'QA'
+      fabrica: user['cognito:groups'][0].toUpperCase()
     },
     {
       headers: {
@@ -63,7 +62,7 @@ export function RegistrosTable({ registros }) {
             ) {
               return (
                 <TableRow>
-                  <TableCell component="th" scope="row">
+                  <TableCell component="th" scope="row" align="center">
                     {row.ts}
                   </TableCell>
                   <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
@@ -71,6 +70,7 @@ export function RegistrosTable({ registros }) {
                   <TableCell align="center">{row.umbralConfigurado}</TableCell>
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
+                    <span class="stable">{row.direccionCambio}</span>
                     <img src={flechaAbajoVerde} alt="abajo" class="flecha" />
                   </TableCell>
                 </TableRow>
@@ -89,6 +89,7 @@ export function RegistrosTable({ registros }) {
                   <TableCell align="center">{row.umbralConfigurado}</TableCell>
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
+                    <span class="stable">{row.direccionCambio}</span>
                     <img src={flechaArribaVerde} alt="abajo" class="flecha" />
                   </TableCell>
                 </TableRow>
@@ -107,6 +108,7 @@ export function RegistrosTable({ registros }) {
                   <TableCell align="center">{row.umbralConfigurado}</TableCell>
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
+                    <span class="peligro">{row.direccionCambio}</span>
                     <img src={flechaArribaRoja} alt="abajo" class="flecha" />
                   </TableCell>
                 </TableRow>
@@ -125,6 +127,7 @@ export function RegistrosTable({ registros }) {
                   <TableCell align="center">{row.umbralConfigurado}</TableCell>
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
+                    <span class="peligro">{row.direccionCambio}</span>
                     <img src={flechaAbajoRoja} alt="abajo" class="flecha" />
                   </TableCell>
                 </TableRow>
