@@ -11,6 +11,7 @@ import { getUserInfo } from 'src/services/tokens';
 import MenuPopover from '../../components/MenuPopover';
 //
 import account from '../../_mocks_/account';
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,7 @@ export default function AccountPopover() {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const user = getUserInfo();
+  const navigate = useNavigate();
 
   const handleOpen = () => {
     setOpen(true);
@@ -40,6 +42,12 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const closeSesion = () => {
+    localStorage.clear();
+
+    navigate('/login', { replace: true });
+  }
 
   return (
     <>
@@ -77,7 +85,7 @@ export default function AccountPopover() {
             {!!user ? (user['cognito:groups'][0]).toUpperCase() : ''}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {!!user ? user.username : ''}
+            {!!user ? user['cognito:username'] : ''}
           </Typography>
         </Box>
 
@@ -106,7 +114,7 @@ export default function AccountPopover() {
         ))}
 
         <Box sx={{ p: 2, pt: 1.5 }}>
-          <Button fullWidth color="inherit" variant="outlined">
+          <Button fullWidth color="inherit" variant="outlined" onClick={closeSesion}>
             Cerrar sesión
           </Button>
         </Box>
