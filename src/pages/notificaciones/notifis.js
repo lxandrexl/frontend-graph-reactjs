@@ -58,7 +58,8 @@ export function RegistrosTable({ registros }) {
           {registros.map((row) => {
             if (
               row.direccionCambio !== 'Peligro' &&
-              parseFloat(row.valorMedido) < parseFloat(row.umbralConfigurado)
+              parseFloat(row.valorMedido) < parseFloat(row.umbralConfigurado) &&
+              row.umbralConfigurado === row.umbralMaximo
             ) {
               return (
                 <TableRow>
@@ -67,7 +68,7 @@ export function RegistrosTable({ registros }) {
                   </TableCell>
                   <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
                   <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado}</TableCell>
+                  <TableCell align="center">{row.umbralConfigurado} (Maximo)</TableCell>
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
                     <span class="stable">{row.direccionCambio}</span>
@@ -77,7 +78,8 @@ export function RegistrosTable({ registros }) {
               );
             } else if (
               parseFloat(row.valorMedido) > parseFloat(row.umbralConfigurado) &&
-              row.direccionCambio !== 'Peligro'
+              row.direccionCambio !== 'Peligro' &&
+              row.umbralConfigurado === row.umbralMinimo
             ) {
               return (
                 <TableRow>
@@ -86,7 +88,7 @@ export function RegistrosTable({ registros }) {
                   </TableCell>
                   <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
                   <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado}</TableCell>
+                  <TableCell align="center">{row.umbralConfigurado} (Minimo)</TableCell>
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
                     <span class="stable">{row.direccionCambio}</span>
@@ -96,7 +98,8 @@ export function RegistrosTable({ registros }) {
               );
             } else if (
               parseFloat(row.valorMedido) >= parseFloat(row.umbralConfigurado) &&
-              row.direccionCambio === 'Peligro'
+              row.direccionCambio === 'Peligro' &&
+              row.umbralConfigurado === row.umbralMaximo
             ) {
               return (
                 <TableRow>
@@ -105,7 +108,7 @@ export function RegistrosTable({ registros }) {
                   </TableCell>
                   <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
                   <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado}</TableCell>
+                  <TableCell align="center">{row.umbralConfigurado} (Maximo)</TableCell>
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
                     <span class="peligro">{row.direccionCambio}</span>
@@ -115,7 +118,8 @@ export function RegistrosTable({ registros }) {
               );
             } else if (
               parseFloat(row.valorMedido) <= parseFloat(row.umbralConfigurado) &&
-              row.direccionCambio === 'Peligro'
+              row.direccionCambio === 'Peligro' &&
+              row.umbralConfigurado === row.umbralMinimo
             ) {
               return (
                 <TableRow>
@@ -124,7 +128,7 @@ export function RegistrosTable({ registros }) {
                   </TableCell>
                   <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
                   <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado}</TableCell>
+                  <TableCell align="center">{row.umbralConfigurado} (Minimo)</TableCell>
                   <TableCell align="center">{row.valorMedido}</TableCell>
                   <TableCell align="center">
                     <span class="peligro">{row.direccionCambio}</span>
