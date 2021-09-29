@@ -8,18 +8,24 @@ import { BaseOptionChart } from '../../charts';
 
 import { getToken } from 'src/services/tokens';
 import { wsRoute } from 'src/services/constants';
+import * as moment from 'moment';
 // ----------------------------------------------------------------------
+moment.locale('es');
 
-export default function AppWebsiteVisits({ device, llave }) {
+export default function AppWebsiteVisits({ device, llave, rule }) {
   const [ws] = useState(new WebSocket(wsRoute + '?Auth=' + getToken()));
   const [wsOpen, setWsOpen] = useState(false);
+
   const [data, setData] = useState([]);
   const [labels, setLabels] = useState([]);
+  const [umbral, setUmbral] = useState([]);
+
   const [wsData, setWsData] = useState([]);
   const [wsLabels, setWsLabels] = useState([]);
+  const [wsUmbral, setWsUmbral] = useState([]);
 
-  let titleGraphic = `Sensor de ${device.grupo.toLowerCase()}`;
-  let subtitleGraphic = `Medida de ${device.grupo.toLowerCase()} en ${device.unidad_medida.toLowerCase()}`;
+  let titleGraphic = `${device.descripcion}`;
+  let subtitleGraphic = `Codigo de dispositivo: ${device.deviceID}`;
 
   useEffect(() => {
     let websocket = ws;
@@ -27,14 +33,14 @@ export default function AppWebsiteVisits({ device, llave }) {
       websocket.addEventListener('open', () => {
         console.log('Websocket is connected');
     
-        const data = {
+        const payload = {
           action: 'listenDevice',
           deviceId: device.deviceId,
           dataHistory: 'true',
           timeHistory: '24'
         }
     
-        websocket.send(JSON.stringify(data));
+        websocket.send(JSON.stringify(payload));
         setWsOpen(true);
       });
   
@@ -55,6 +61,7 @@ export default function AppWebsiteVisits({ device, llave }) {
         const response = JSON.parse(e.data);
         let valuesArr = [];
         let labelsArr = [];
+        let umbralArr = [];
 
 
         if(response.hasOwnProperty('message')) {
@@ -63,14 +70,40 @@ export default function AppWebsiteVisits({ device, llave }) {
             if(item.deviceId == device.deviceId) {
               const value = Number(item.v1);
               valuesArr.push(value);
-              labelsArr.push(item.ts)
+              labelsArr.push(moment(item.ts).format('MMMM Do YYYY, h:mm:ss a'));
+
+              //Verifico si existe umbral maximo/minimo activo.
+              let umbralPos = [null,null];
+
+              if(rule.activoUmbralMaximo) {
+                umbralPos[0] = Number(rule.umbralMaximo);
+              }
+
+              if(rule.activoUmbralMinimo) {
+                umbralPos[1] = Number(rule.umbralMinimo);
+              }
+
+              umbralArr.push(umbralPos);
             }
           }
         } else { 
           if(response.deviceId == device.deviceId) {
             const value = Number(response.v1);
             valuesArr.push(value);
-            labelsArr.push(response.ts)
+            labelsArr.push(moment(response.ts).format('MMMM Do YYYY, h:mm:ss a'))
+
+            //Verifico si existe umbral maximo/minimo activo.
+            let umbralPos = [null,null];
+
+            if(rule.activoUmbralMaximo) {
+              umbralPos[0] = Number(rule.umbralMaximo);
+            }
+
+            if(rule.activoUmbralMinimo) {
+              umbralPos[1] = Number(rule.umbralMinimo);
+            }
+            
+            umbralArr.push(umbralPos);
           }
         }
 
@@ -80,6 +113,9 @@ export default function AppWebsiteVisits({ device, llave }) {
         setWsLabels([
           ...labelsArr
         ]);
+        setWsUmbral([
+          ...umbralArr
+        ])
       });
     }
   }, [wsOpen]);
@@ -96,12 +132,18 @@ export default function AppWebsiteVisits({ device, llave }) {
       ...labels,
       ...wsLabels
     ]);
-  }, [wsLabels])
+  }, [wsLabels]);
+
+  useEffect(() => {
+    setUmbral([
+      ...umbral,
+      ...wsUmbral
+    ]);
+  }, [wsUmbral])
 
   const chartOptions = merge(BaseOptionChart(), {
     chart: { animations: { enabled: false } },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
-    fill: { type: ['solid', 'gradient', 'solid'] },
     labels,
     tooltip: {
       shared: true,
@@ -128,11 +170,29 @@ export default function AppWebsiteVisits({ device, llave }) {
     }
   });
 
+  let umbralMax = [];
+  let umbralMin = [];
+
+  for(let dataUmbral of umbral) {
+    umbralMax.push(dataUmbral[0]);
+    umbralMin.push(dataUmbral[1]);
+  }
+
+  let info =  [ { name: 'Dispositivo', data } ];
+  
+  if(rule.activoUmbralMaximo) {
+    info.push({ name: 'Umbral Maximo', data: umbralMax });
+  }
+
+  if(rule.activoUmbralMinimo) {
+    info.push({ name: 'Umbral Minimo', data: umbralMin });
+  }
+
   return (
     <Card>
       <CardHeader title={titleGraphic} subheader={subtitleGraphic} />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-        <ReactApexChart type="line" series={[{data}]} options={chartOptions} height={364} />
+        <ReactApexChart type="line" series={info} options={chartOptions} height={364} />
       </Box>
     </Card>
   );

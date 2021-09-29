@@ -24,9 +24,9 @@ export default function DashboardApp() {
           <Typography variant="h4">Hola, bienvenido de nuevo.</Typography>
         </Box>
         <Grid container spacing={3}>
-        { devices.map((device, i) => 
+        { devices.map((item, i) => 
           <Grid item xs={12} md={12} lg={12} key={i}>
-              <AppWebsiteVisits device={device} llave={i}/>
+              <AppWebsiteVisits device={item.device} rule={item.rules[0]} llave={i}/>
           </Grid>
         )}
         </Grid>
