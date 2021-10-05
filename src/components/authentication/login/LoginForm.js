@@ -18,6 +18,8 @@ import {
 import { LoadingButton } from '@material-ui/lab';
 import { getDevices, loginService } from '../../../services/auth.service';
 import { setAccessToken, setToken } from 'src/services/tokens';
+// Alert
+import Swal from 'sweetalert2';
 
 // ----------------------------------------------------------------------
 
@@ -54,7 +56,12 @@ export default function LoginForm() {
 
       } catch (error) {
         console.log('error_onsubmit', error.message)
-        alert(error.message)
+        Swal.fire({
+          title: 'Error!',
+          text: 'Usuario o contraseña incorrecta.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        })
       }
     }
   });
