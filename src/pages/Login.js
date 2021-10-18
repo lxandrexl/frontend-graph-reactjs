@@ -54,9 +54,9 @@ export default function Login() {
         <ContentStyle>
           <Stack sx={{ mb: 5 }}>
             <Typography variant="h4" gutterBottom>
-              Inicia sesion
+              Inicia sesión
             </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>Ingresa tus datos a continuacion.</Typography>
+            <Typography sx={{ color: 'text.secondary' }}>Ingresa tus datos a continuación.</Typography>
           </Stack>
 
           <LoginForm />
