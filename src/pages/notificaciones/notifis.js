@@ -82,7 +82,7 @@ export function RegistrosTable({ registros }) {
                 <TableCell align="center">{row.valorMedido}</TableCell>
                 <TableCell align="center">
                   <span class="stable">{row.direccionCambio}</span>
-                  <img src={flechaMostrar} alt="abajo" class="flecha" />
+                  <img src={flechaMostrar} alt="flecha" class="flecha" />
                 </TableCell>
               </TableRow>
             );
