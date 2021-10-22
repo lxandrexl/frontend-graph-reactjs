@@ -19,6 +19,7 @@ import flechaArribaRoja from './up-red-arrow.png';
 import flechaArribaVerde from './up-green-arrow.png';
 import flechaAbajoRoja from './down-red-arrow.png';
 import flechaAbajoVerde from './down-green-arrow.png';
+import iconVerde from './iconVerde.png';
 import { getUserInfo } from 'src/services/tokens';
 
 /*********
@@ -49,94 +50,46 @@ export function RegistrosTable({ registros }) {
             <TableCell align="center">Fecha/Hora</TableCell>
             <TableCell align="center">Sensor</TableCell>
             <TableCell align="center">Unidad Medida</TableCell>
-            <TableCell align="center">Umbral</TableCell>
+            <TableCell align="center">Umbral Min.</TableCell>
+            <TableCell align="center">Umbral Max.</TableCell>
             <TableCell align="center">Medición</TableCell>
             <TableCell align="center">Dirección</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {registros.map((row) => {
+          {registros.map((row, index) => {
+            var flechaMostrar, textoDireccion;
             if (
-              row.direccionCambio !== 'Peligro' &&
-              parseFloat(row.valorMedido) < parseFloat(row.umbralConfigurado) &&
-              row.umbralConfigurado === row.umbralMaximo
+              parseFloat(row.valorMedido) < parseFloat(row.umbralMaximo) &&
+              parseFloat(row.valorMedido) > parseFloat(row.umbralMinimo)
             ) {
-              return (
-                <TableRow>
-                  <TableCell component="th" scope="row" align="center">
-                    {row.ts}
-                  </TableCell>
-                  <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
-                  <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado} (Maximo)</TableCell>
-                  <TableCell align="center">{row.valorMedido}</TableCell>
-                  <TableCell align="center">
-                    <span class="stable">{row.direccionCambio}</span>
-                    <img src={flechaAbajoVerde} alt="abajo" class="flecha" />
-                  </TableCell>
-                </TableRow>
-              );
-            } else if (
-              parseFloat(row.valorMedido) > parseFloat(row.umbralConfigurado) &&
-              row.direccionCambio !== 'Peligro' &&
-              row.umbralConfigurado === row.umbralMinimo
-            ) {
-              return (
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    {row.ts}
-                  </TableCell>
-                  <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
-                  <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado} (Minimo)</TableCell>
-                  <TableCell align="center">{row.valorMedido}</TableCell>
-                  <TableCell align="center">
-                    <span class="stable">{row.direccionCambio}</span>
-                    <img src={flechaArribaVerde} alt="abajo" class="flecha" />
-                  </TableCell>
-                </TableRow>
-              );
-            } else if (
-              parseFloat(row.valorMedido) >= parseFloat(row.umbralConfigurado) &&
-              row.direccionCambio === 'Peligro' &&
-              row.umbralConfigurado === row.umbralMaximo
-            ) {
-              return (
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    {row.ts}
-                  </TableCell>
-                  <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
-                  <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado} (Maximo)</TableCell>
-                  <TableCell align="center">{row.valorMedido}</TableCell>
-                  <TableCell align="center">
-                    <span class="peligro">{row.direccionCambio}</span>
-                    <img src={flechaArribaRoja} alt="abajo" class="flecha" />
-                  </TableCell>
-                </TableRow>
-              );
-            } else if (
-              parseFloat(row.valorMedido) <= parseFloat(row.umbralConfigurado) &&
-              row.direccionCambio === 'Peligro' &&
-              row.umbralConfigurado === row.umbralMinimo
-            ) {
-              return (
-                <TableRow>
-                  <TableCell component="th" scope="row">
-                    {row.ts}
-                  </TableCell>
-                  <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
-                  <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
-                  <TableCell align="center">{row.umbralConfigurado} (Minimo)</TableCell>
-                  <TableCell align="center">{row.valorMedido}</TableCell>
-                  <TableCell align="center">
-                    <span class="peligro">{row.direccionCambio}</span>
-                    <img src={flechaAbajoRoja} alt="abajo" class="flecha" />
-                  </TableCell>
-                </TableRow>
-              );
+              flechaMostrar = iconVerde;
+              textoDireccion = 'Aceptable';
+            } else {
+              if (parseFloat(row.valorMedido) >= parseFloat(row.umbralMaximo)) {
+                flechaMostrar = flechaArribaRoja;
+              } else {
+                flechaMostrar = flechaAbajoRoja;
+              }
+              textoDireccion = 'Peligro';
             }
+
+            return (
+              <TableRow>
+                <TableCell component="th" scope="row" align="center">
+                  {row.ts}
+                </TableCell>
+                <TableCell align="center">{row.datosDispositivo.descripcion}</TableCell>
+                <TableCell align="center">{row.datosDispositivo.unidadMedida}</TableCell>
+                <TableCell align="center">{row.umbralMinimo}</TableCell>
+                <TableCell align="center">{row.umbralMaximo}</TableCell>
+                <TableCell align="center">{row.valorMedido}</TableCell>
+                <TableCell align="center">
+                  <span class="stable">{textoDireccion}</span>
+                  <img src={flechaMostrar} alt="abajo" class="flecha" />
+                </TableCell>
+              </TableRow>
+            );
           })}
         </TableBody>
       </Table>
