@@ -16,9 +16,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import './style.css';
 import flechaArribaRoja from './up-red-arrow.png';
-import flechaArribaVerde from './up-green-arrow.png';
 import flechaAbajoRoja from './down-red-arrow.png';
-import flechaAbajoVerde from './down-green-arrow.png';
 import iconVerde from './iconVerde.png';
 import { getUserInfo } from 'src/services/tokens';
 
@@ -58,20 +56,18 @@ export function RegistrosTable({ registros }) {
         </TableHead>
         <TableBody>
           {registros.map((row, index) => {
-            var flechaMostrar, textoDireccion;
+            var flechaMostrar;
             if (
               parseFloat(row.valorMedido) < parseFloat(row.umbralMaximo) &&
               parseFloat(row.valorMedido) > parseFloat(row.umbralMinimo)
             ) {
               flechaMostrar = iconVerde;
-              textoDireccion = 'Aceptable';
             } else {
               if (parseFloat(row.valorMedido) >= parseFloat(row.umbralMaximo)) {
                 flechaMostrar = flechaArribaRoja;
               } else {
                 flechaMostrar = flechaAbajoRoja;
               }
-              textoDireccion = 'Peligro';
             }
 
             return (
@@ -85,7 +81,7 @@ export function RegistrosTable({ registros }) {
                 <TableCell align="center">{row.umbralMaximo}</TableCell>
                 <TableCell align="center">{row.valorMedido}</TableCell>
                 <TableCell align="center">
-                  <span class="stable">{textoDireccion}</span>
+                  <span class="stable">{row.direccionCambio}</span>
                   <img src={flechaMostrar} alt="abajo" class="flecha" />
                 </TableCell>
               </TableRow>
