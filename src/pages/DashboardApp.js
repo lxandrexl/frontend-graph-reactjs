@@ -13,8 +13,6 @@ import { useNavigate } from 'react-router-dom';
 moment.locale('es');
 
 // ----------------------------------------------------------------------
-let sessionObs;
-
 function parseJwt (token) {
   var base64Url = token.split('.')[1];
   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -26,7 +24,7 @@ function parseJwt (token) {
 }
 
 function checkTokenExp(navigate, token) {
-  sessionObs = setInterval(() => {
+  let sessionObs = setInterval(() => {
     let tokenDecoded = parseJwt(token);
     let time_exp = tokenDecoded.exp * 1000;
     let today = moment().valueOf();
