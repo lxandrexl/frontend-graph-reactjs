@@ -39,7 +39,7 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
           action: 'listenDevice',
           deviceId: device.deviceId,
           dataHistory: 'true',
-          timeHistory: '24'
+          timeHistory: '1'
         }
     
         websocket.send(JSON.stringify(payload));
