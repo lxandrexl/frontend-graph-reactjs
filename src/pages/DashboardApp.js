@@ -1,7 +1,7 @@
 // material
 import { Box, Grid, Container, Typography } from '@material-ui/core';
 import { isNull } from 'lodash';
-import { getToken } from 'src/services/tokens';
+import { getToken, getRefreshToken, setAccessToken, setToken, setRefreshToken } from 'src/services/tokens';
 // components
 import Page from '../components/Page';
 import {
@@ -9,6 +9,7 @@ import {
 } from '../components/_dashboard/app';
 import * as moment from 'moment';
 import { useNavigate } from 'react-router-dom';
+import { getCognitoUser, refreshCognitoToken } from '../services/auth.service';
 
 moment.locale('es');
 
@@ -23,8 +24,8 @@ function parseJwt (token) {
   return JSON.parse(jsonPayload);
 }
 
-function checkTokenExp(navigate, token) {
-  let sessionObs = setInterval(() => {
+function checkTokenExp(navigate, token, refreshToken) {
+  /*let sessionObs =*/ setInterval(async () => {
     let tokenDecoded = parseJwt(token);
     let time_exp = tokenDecoded.exp * 1000;
     let today = moment().valueOf();
@@ -33,10 +34,18 @@ function checkTokenExp(navigate, token) {
 
     if(today >= time_exp) {
       console.info('El token ha expirado. ('+ token +')');
-      
-      clearInterval(sessionObs);
-      localStorage.clear();
-      navigate('/login', { replace: true });
+      let cognitoUser = getCognitoUser(tokenDecoded['cognito:username']);
+      let response = await refreshCognitoToken(cognitoUser, refreshToken);
+      console.log('Los nuevos tokens son::')
+      console.log(response)
+
+      setToken(response.accessToken);
+      setAccessToken(response.idToken);
+      setRefreshToken(response.refreshToken)
+
+      //clearInterval(sessionObs);
+      //localStorage.clear();
+      //navigate('/login', { replace: true });
     }
   }, 5000);
 }
@@ -45,10 +54,11 @@ export default function DashboardApp() {
   const navigate = useNavigate();
   let devices;
   let token = getToken();
+  let refreshToken = getRefreshToken();
 
   if(!isNull(token)) { 
     devices = JSON.parse(localStorage.getItem('devices'));
-    checkTokenExp(navigate, token);
+    checkTokenExp(navigate, token, refreshToken);
   }
   
   return (

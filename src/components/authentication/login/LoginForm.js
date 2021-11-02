@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core';
 import { LoadingButton } from '@material-ui/lab';
 import { getDevices, loginService } from '../../../services/auth.service';
-import { setAccessToken, setToken } from 'src/services/tokens';
+import { setAccessToken, setToken, setRefreshToken } from 'src/services/tokens';
 // Alert
 import Swal from 'sweetalert2';
 
@@ -49,6 +49,7 @@ export default function LoginForm() {
         if(!!response.accessToken) {
           setToken(response.accessToken);
           setAccessToken(response.idToken);
+          setRefreshToken(response.refreshToken)
           localStorage.setItem('user-info', JSON.stringify(response.payload))
           await getDevices(response.accessToken);
           navigate('/dashboard/app', { replace: true });
