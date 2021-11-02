@@ -24,8 +24,8 @@ function parseJwt (token) {
   return JSON.parse(jsonPayload);
 }
 
-function checkTokenExp(navigate, token, refreshToken) {
-  /*let sessionObs =*/ setInterval(async () => {
+function checkTokenExp(token, refreshToken) {
+  let sessionObs = setInterval(async () => {
     let tokenDecoded = parseJwt(token);
     let time_exp = tokenDecoded.exp * 1000;
     let today = moment().valueOf();
@@ -43,7 +43,9 @@ function checkTokenExp(navigate, token, refreshToken) {
       setAccessToken(response.idToken);
       setRefreshToken(response.refreshToken)
 
-      //clearInterval(sessionObs);
+      clearInterval(sessionObs);
+      checkTokenExp(getToken(), refreshToken);
+
       //localStorage.clear();
       //navigate('/login', { replace: true });
     }
@@ -58,7 +60,7 @@ export default function DashboardApp() {
 
   if(!isNull(token)) { 
     devices = JSON.parse(localStorage.getItem('devices'));
-    checkTokenExp(navigate, token, refreshToken);
+    checkTokenExp(token, refreshToken);
   }
   
   return (
