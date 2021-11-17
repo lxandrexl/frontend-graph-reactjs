@@ -11,6 +11,7 @@ import { getToken } from './services/tokens';
 import { isNull } from 'lodash';
 import Stats from './pages/stats/Stats';
 import Notifi from './pages/notificaciones/notifis';
+import Devices from './pages/devices/devices'
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +30,7 @@ export default function Router() {
   let routesAuth = [
     { path: '/', element: <Navigate to="/dashboard/app" replace /> },
     { path: 'login', element: <Navigate to="/dashboard/app" replace /> },
+    { path: 'devices', element: <Devices /> },
     { path: 'stats', element: <Stats /> },
     { path: 'notificaciones', element: <Notifi /> },
     { path: 'register', element: <Navigate to="/dashboard/app" replace /> },
@@ -41,7 +43,8 @@ export default function Router() {
   let dashboardAuth = [
     { path: 'app', element: <DashboardApp /> },
     { path: 'stats', element: <Stats /> },
-    { path: 'notificaciones', element: <Notifi /> }
+    { path: 'notificaciones', element: <Notifi /> },
+    { path: 'dispositivos', element: <Devices /> }
   ];
 
   let routes = routesDefault;

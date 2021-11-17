@@ -64,7 +64,7 @@ export default function DashboardApp() {
   }
   
   return (
-    <Page title="Dashboard | Minimal-UI">
+    <Page title="Dashboard | IoT Fabricas">
       <Container maxWidth="xl">
         <Box sx={{ pb: 5 }}>
           <Typography variant="h4">Hola, bienvenido de nuevo.</Typography>
