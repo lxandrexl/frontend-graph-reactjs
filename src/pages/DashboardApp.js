@@ -8,6 +8,8 @@ import {
   AppWebsiteVisits,
 } from '../components/_dashboard/app';
 import * as moment from 'moment';
+import 'moment/locale/es';
+
 import { useNavigate } from 'react-router-dom';
 import { getCognitoUser, refreshCognitoToken } from '../services/auth.service';
 
