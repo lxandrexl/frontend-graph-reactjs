@@ -13,8 +13,7 @@ import * as moment from 'moment';
 moment.locale('es');
 
 export default function AppWebsiteVisits({ device, llave, rule }) {
-  const [ws] = useState(new WebSocket(wsRoute + '?Auth=' + getToken()));
-  const [wsOpen, setWsOpen] = useState(false);
+  const [ws, setWs] = useState(null);
 
   const [data, setData] = useState([]);
   const [labels, setLabels] = useState([]);
@@ -30,10 +29,10 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
   if(rule == undefined || rule == null) rule = []; 
 
   useEffect(() => {
-    let websocket = ws;
-    if(!isNull(getToken()) ) { 
+    if(!isNull(getToken()) ) {
+      const websocket = new WebSocket(wsRoute + '?Auth=' + getToken());
       websocket.addEventListener('open', () => {
-        console.log('Websocket is connected');
+        console.log('Websocket is connected -->', device.deviceId);
     
         const payload = {
           action: 'listenDevice',
@@ -43,19 +42,22 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
         }
     
         websocket.send(JSON.stringify(payload));
-        setWsOpen(true);
       });
   
       websocket.addEventListener('close', () => {
-        console.log('Websocket is closed');
+        console.log('Websocket is closed --->', device.deviceId);
       });
     
       websocket.addEventListener('error', (e) => console.log('Websocket is in error', e));
+      setWs(websocket);
+      return () => {
+        websocket.close();
+      }
     }
   }, []);
 
   useEffect(() => {
-    if(!wsOpen) return;
+    if(!ws) return;
     let websocket = ws;
     if(!isNull(getToken()) ) { 
       websocket.addEventListener('message', (e) => {
@@ -120,7 +122,9 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
         ])
       });
     }
-  }, [wsOpen]);
+  }, [ws]);
+
+  // return (<></>);
 
   useEffect(() => {
     setData([

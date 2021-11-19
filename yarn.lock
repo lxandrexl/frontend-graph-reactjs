@@ -7943,6 +7943,11 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
+moment@^2.29.1:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
+  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/move-concurrently/-/move-concurrently-1.0.1.tgz"
@@ -11166,6 +11171,11 @@ svgo@^1.0.0, svgo@^1.2.2:
     stable "^0.1.8"
     unquote "~1.1.1"
     util.promisify "~1.0.0"
+
+sweetalert2@^11.1.7:
+  version "11.1.10"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.1.10.tgz#184968f58ffdbe4f09dcd546dde3aef52d2058b6"
+  integrity sha512-Zy/Pdsvf6gJoaqnBaLXYrjElJ85ipe9D5FfcSKxJ0b1PPnTS3B5eC3rFB2pPbo9m1p+LVLBZVvE35JPL2vG6xA==
 
 symbol-observable@1.2.0:
   version "1.2.0"
