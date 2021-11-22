@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { isNull, merge } from 'lodash';
 import ReactApexChart from 'react-apexcharts';
 // material
@@ -6,121 +6,69 @@ import { Card, CardHeader, Box } from '@material-ui/core';
 //
 import { BaseOptionChart } from '../../charts';
 
-import { getToken } from 'src/services/tokens';
-import { wsRoute } from 'src/services/constants';
 import * as moment from 'moment';
 // ----------------------------------------------------------------------
 moment.locale('es');
 
+function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest function.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+
+let CHART_DATA = [
+  {
+    name: 'Team A',
+    type: 'column',
+    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
+  },
+  {
+    name: 'Team B',
+    type: 'area',
+    data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
+  },
+  {
+    name: 'Team C',
+    type: 'line',
+    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
+  }
+];
+
 export default function AppWebsiteVisits({ device, llave, rule }) {
-  const [ws] = useState(new WebSocket(wsRoute + '?Auth=' + getToken()));
-  const [wsOpen, setWsOpen] = useState(false);
-
-  const [data, setData] = useState([]);
-  const [labels, setLabels] = useState([]);
-  const [umbral, setUmbral] = useState([]);
-
-  const [wsData, setWsData] = useState([]);
-  const [wsLabels, setWsLabels] = useState([]);
-  const [wsUmbral, setWsUmbral] = useState([]);
-
   let titleGraphic = `${device.descripcion}`;
   let subtitleGraphic = `Codigo de dispositivo: ${device.deviceId}`;
+  const timeInterval = 1;
+  const perMinute = 10000//60000;
 
   if(rule == undefined || rule == null) rule = []; 
 
-  useEffect(() => {
-    let websocket = ws;
-    if(!isNull(getToken()) ) { 
-      websocket.addEventListener('open', () => {
-        console.log('Websocket is connected');
-    
-        const payload = {
-          action: 'listenDevice',
-          deviceId: device.deviceId,
-          dataHistory: 'true',
-          timeHistory: '1'
-        }
-    
-        websocket.send(JSON.stringify(payload));
-        setWsOpen(true);
-      });
+  const [count, setCount] = useState(0);
+  const [delay, setDelay] = useState(timeInterval * perMinute);
+  const [data, setData] = useState([]);
+  const [wsData, setWsData] = useState([]);
   
-      websocket.addEventListener('close', () => {
-        console.log('Websocket is closed');
-      });
-    
-      websocket.addEventListener('error', (e) => console.log('Websocket is in error', e));
-    }
-  }, []);
 
-  useEffect(() => {
-    if(!wsOpen) return;
-    let websocket = ws;
-    if(!isNull(getToken()) ) { 
-      websocket.addEventListener('message', (e) => {
-        console.log('Message received', JSON.parse(e.data));
-        const response = JSON.parse(e.data);
-        let valuesArr = [];
-        let labelsArr = [];
-        let umbralArr = [];
-
-
-        if(response.hasOwnProperty('message')) {
-          const { devices } = response;
-          for(let item of devices) { 
-            if(item.deviceId == device.deviceId) {
-              const value = Number(item.v1);
-              valuesArr.push(value);
-              labelsArr.push(moment(item.ts).format('MMMM Do YYYY, h:mm:ss a'));
-
-              //Verifico si existe umbral maximo/minimo activo.
-              let umbralPos = [null,null];
-
-              if(rule.activoUmbralMaximo) {
-                umbralPos[0] = Number(rule.umbralMaximo);
-              }
-
-              if(rule.activoUmbralMinimo) {
-                umbralPos[1] = Number(rule.umbralMinimo);
-              }
-
-              umbralArr.push(umbralPos);
-            }
-          }
-        } else { 
-          if(response.deviceId == device.deviceId) {
-            const value = Number(response.v1);
-            valuesArr.push(value);
-            labelsArr.push(moment(response.ts).format('MMMM Do YYYY, h:mm:ss a'))
-
-            //Verifico si existe umbral maximo/minimo activo.
-            let umbralPos = [null,null];
-
-            if(rule.activoUmbralMaximo) {
-              umbralPos[0] = Number(rule.umbralMaximo);
-            }
-
-            if(rule.activoUmbralMinimo) {
-              umbralPos[1] = Number(rule.umbralMinimo);
-            }
-            
-            umbralArr.push(umbralPos);
-          }
-        }
-
-        setWsData([
-          ...valuesArr
-        ]);
-        setWsLabels([
-          ...labelsArr
-        ]);
-        setWsUmbral([
-          ...umbralArr
-        ])
-      });
-    }
-  }, [wsOpen]);
+  useInterval(() => {
+    // Your custom logic here
+    setCount(count + 1);
+    setWsData([
+      ...[(count + 1)]
+    ]);
+  }, delay);
 
   useEffect(() => {
     setData([
@@ -129,42 +77,38 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
     ]);
   }, [wsData]);
 
-  useEffect(() => {
-    setLabels([
-      ...labels,
-      ...wsLabels
-    ]);
-  }, [wsLabels]);
-
-  useEffect(() => {
-    setUmbral([
-      ...umbral,
-      ...wsUmbral
-    ]);
-  }, [wsUmbral])
+  if(count == 0) {
+    console.log(count, device, rule)
+  } else {
+    console.log(device.deviceId)
+    console.log(data)
+  }
 
   const chartOptions = merge(BaseOptionChart(), {
-    chart: { animations: { enabled: false } },
+    stroke: { width: [0, 2, 3] },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
-    labels,
+    fill: { type: ['solid', 'gradient', 'solid'] },
+    labels: [
+      '01/01/2003',
+      '02/01/2003',
+      '03/01/2003',
+      '04/01/2003',
+      '05/01/2003',
+      '06/01/2003',
+      '07/01/2003',
+      '08/01/2003',
+      '09/01/2003',
+      '10/01/2003',
+      '11/01/2003'
+    ],
+    xaxis: { type: 'datetime' },
     tooltip: {
       shared: true,
       intersect: false,
       y: {
         formatter: (y) => {
           if (typeof y !== 'undefined') {
-            let abrev = '';
-            switch(device.grupo.toLowerCase()) {
-              case 'temperatura':
-                abrev = '°C';
-              break;
-              case 'co2':
-                abrev = 'PPM';
-              break;
-              default:
-                abrev = '~';
-            }
-            return `${y.toFixed(0)} ${abrev}`;
+            return `${y.toFixed(0)} visits`;
           }
           return y;
         }
@@ -172,29 +116,14 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
     }
   });
 
-  let umbralMax = [];
-  let umbralMin = [];
 
-  for(let dataUmbral of umbral) {
-    umbralMax.push(dataUmbral[0]);
-    umbralMin.push(dataUmbral[1]);
-  }
-
-  let info =  [ { name: 'Dispositivo', data } ];
-  
-  if(rule.activoUmbralMaximo) {
-    info.push({ name: 'Umbral Maximo', data: umbralMax });
-  }
-
-  if(rule.activoUmbralMinimo) {
-    info.push({ name: 'Umbral Minimo', data: umbralMin });
-  }
 
   return (
+
     <Card>
-      <CardHeader title={titleGraphic} subheader={subtitleGraphic} />
+      <CardHeader title={titleGraphic} subheader={subtitleGraphic + ' ' + count} />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-        <ReactApexChart type="line" series={info} options={chartOptions} height={364} />
+        <ReactApexChart type="line" series={CHART_DATA} options={chartOptions} height={364} />
       </Box>
     </Card>
   );

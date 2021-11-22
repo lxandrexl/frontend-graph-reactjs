@@ -31,8 +31,8 @@ function checkTokenExp(token, refreshToken) {
     let tokenDecoded = parseJwt(token);
     let time_exp = tokenDecoded.exp * 1000;
     let today = moment().valueOf();
-    console.log(today, time_exp, today > time_exp);
-    console.log(moment(today).format(), moment(time_exp).format())
+    // console.log(today, time_exp, today > time_exp);
+    // console.log(moment(today).format(), moment(time_exp).format())
 
     if(today >= time_exp) {
       console.info('El token ha expirado. ('+ token +')');
@@ -55,7 +55,6 @@ function checkTokenExp(token, refreshToken) {
 }
 
 export default function DashboardApp() {
-  const navigate = useNavigate();
   let devices;
   let token = getToken();
   let refreshToken = getRefreshToken();
