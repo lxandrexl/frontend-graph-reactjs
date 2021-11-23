@@ -7,108 +7,117 @@ import { Card, CardHeader, Box } from '@material-ui/core';
 import { BaseOptionChart } from '../../charts';
 
 import * as moment from 'moment';
+import {getDeviceData} from 'src/services/device.service';
+import { getToken } from 'src/services/tokens';
 // ----------------------------------------------------------------------
 moment.locale('es');
-
-function useInterval(callback, delay) {
-  const savedCallback = useRef();
-
-  // Remember the latest function.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
-
-let CHART_DATA = [
-  {
-    name: 'Team A',
-    type: 'column',
-    data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30]
-  },
-  {
-    name: 'Team B',
-    type: 'area',
-    data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43]
-  },
-  {
-    name: 'Team C',
-    type: 'line',
-    data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39]
-  }
-];
 
 export default function AppWebsiteVisits({ device, llave, rule }) {
   let titleGraphic = `${device.descripcion}`;
   let subtitleGraphic = `Codigo de dispositivo: ${device.deviceId}`;
   const timeInterval = 1;
-  const perMinute = 10000//60000;
+  const perMinute = 60000;
+  let lastTS = "";
 
   if(rule == undefined || rule == null) rule = []; 
 
   const [count, setCount] = useState(0);
-  const [delay, setDelay] = useState(timeInterval * perMinute);
   const [data, setData] = useState([]);
-  const [wsData, setWsData] = useState([]);
-  
-
-  useInterval(() => {
-    // Your custom logic here
-    setCount(count + 1);
-    setWsData([
-      ...[(count + 1)]
-    ]);
-  }, delay);
+  const [labels, setLabel] = useState([]);
+  const [umbral, setUmbral] = useState([]);
 
   useEffect(() => {
+    const timer = setInterval(async () => {
+      // Logica ...
+      setCount(c => c + 1);
+
+    }, timeInterval * perMinute);
+
+    return () => {
+      console.log("end timer")
+      clearInterval(timer);
+    }
+  }, []);
+
+  useEffect(async () => {
+    let valuesArr = [];
+    let labelsArr = [];
+    let umbralArr = [];
+
+    console.log(count)
+    console.log("lastTS", lastTS);
+    
+    let response = await getDeviceData(getToken(), lastTS, timeInterval, device.deviceId);
+
+    if(response.data.length > 0) {
+      const deviceData = response.data[0].data;
+      lastTS = response.data[0].ts;
+
+      for(let value of deviceData) {
+        if(value.deviceId == device.deviceId) {
+          valuesArr.push(value.v1);
+          labelsArr.push(moment(value.ts).format('MMMM Do YYYY, h:mm:ss a'));
+
+          let umbralPos = [null,null];
+
+          if(rule.activoUmbralMaximo) {
+            umbralPos[0] = Number(rule.umbralMaximo);
+          }
+
+          if(rule.activoUmbralMinimo) {
+            umbralPos[1] = Number(rule.umbralMinimo);
+          }
+
+          umbralArr.push(umbralPos);
+        }
+      }
+
+      console.log(device.deviceId, lastTS, valuesArr);
+    }
+
     setData([
       ...data,
-      ...wsData
+      ...valuesArr
     ]);
-  }, [wsData]);
 
-  if(count == 0) {
-    console.log(count, device, rule)
-  } else {
-    console.log(device.deviceId)
-    console.log(data)
-  }
+    setLabel([
+      ...labels,
+      ...labelsArr
+    ]);
+
+    setUmbral([
+      ...umbral,
+      ...umbralArr
+    ])
+
+  }, [count]);
+
+  useEffect(() => {
+    // console.log("Nueva data ->", device.deviceId, data)
+  }, [data]);
 
   const chartOptions = merge(BaseOptionChart(), {
-    stroke: { width: [0, 2, 3] },
+    chart: { animations: { enabled: false } },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
-    fill: { type: ['solid', 'gradient', 'solid'] },
-    labels: [
-      '01/01/2003',
-      '02/01/2003',
-      '03/01/2003',
-      '04/01/2003',
-      '05/01/2003',
-      '06/01/2003',
-      '07/01/2003',
-      '08/01/2003',
-      '09/01/2003',
-      '10/01/2003',
-      '11/01/2003'
-    ],
-    xaxis: { type: 'datetime' },
+    labels,
     tooltip: {
       shared: true,
       intersect: false,
       y: {
         formatter: (y) => {
           if (typeof y !== 'undefined') {
-            return `${y.toFixed(0)} visits`;
+            let abrev = '';
+            switch(device.grupo.toLowerCase()) {
+              case 'temperatura':
+                abrev = '°C';
+              break;
+              case 'co2':
+                abrev = 'PPM';
+              break;
+              default:
+                abrev = '~';
+            }
+            return `${y.toFixed(0)} ${abrev}`;
           }
           return y;
         }
@@ -116,14 +125,30 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
     }
   });
 
+  let umbralMax = [];
+  let umbralMin = [];
 
+  for(let dataUmbral of umbral) {
+    umbralMax.push(dataUmbral[0]);
+    umbralMin.push(dataUmbral[1]);
+  }
+
+  let info =  [ { name: 'Dispositivo', data } ];
+  
+  if(rule.activoUmbralMaximo) {
+    info.push({ name: 'Umbral Maximo', data: umbralMax });
+  }
+
+  if(rule.activoUmbralMinimo) {
+    info.push({ name: 'Umbral Minimo', data: umbralMin });
+  }
 
   return (
 
     <Card>
       <CardHeader title={titleGraphic} subheader={subtitleGraphic + ' ' + count} />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-        <ReactApexChart type="line" series={CHART_DATA} options={chartOptions} height={364} />
+        <ReactApexChart type="line" series={info} options={chartOptions} height={364} />
       </Box>
     </Card>
   );
