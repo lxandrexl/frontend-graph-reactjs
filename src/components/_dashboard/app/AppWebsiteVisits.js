@@ -98,6 +98,7 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
 
   const chartOptions = merge(BaseOptionChart(), {
     chart: { animations: { enabled: false } },
+    xaxis: { range: 28 },
     plotOptions: { bar: { columnWidth: '11%', borderRadius: 4 } },
     labels,
     tooltip: {
@@ -146,7 +147,7 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
   return (
 
     <Card>
-      <CardHeader title={titleGraphic} subheader={subtitleGraphic + ' ' + count} />
+      <CardHeader title={titleGraphic} subheader={subtitleGraphic} />
       <Box sx={{ p: 3, pb: 1 }} dir="ltr">
         <ReactApexChart type="line" series={info} options={chartOptions} height={364} />
       </Box>
