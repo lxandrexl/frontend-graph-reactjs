@@ -11,11 +11,11 @@ const sidebarConfig = [
     path: '/dashboard/app',
     icon: getIcon(pieChart2Fill)
   },
-  // {
-  //   title: 'dispositivos',
-  //   path: '/dashboard/dispositivos',
-  //   icon: getIcon(pieChart2Fill)
-  // },
+  {
+    title: 'dispositivos',
+    path: '/dashboard/dispositivos',
+    icon: getIcon(pieChart2Fill)
+  },
   {
     title: 'estadisticas',
     path: '/dashboard/stats',

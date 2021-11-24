@@ -1,15 +1,14 @@
 import { filter, isNull } from 'lodash';
-import { Icon } from '@iconify/react';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
-import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import { useState, Fragment, useEffect } from 'react';
+import { Icon } from '@iconify/react';
+import chevronDownFill from '@iconify/icons-eva/chevron-down-fill';
+import chevronUpFill from '@iconify/icons-eva/chevron-up-fill';
 // material
 import {
   Card,
   Table,
   Stack,
-  Avatar,
   Button,
   Checkbox,
   TableRow,
@@ -18,7 +17,10 @@ import {
   Container,
   Typography,
   TableContainer,
-  TablePagination
+  TablePagination,
+  IconButton,
+  Collapse,
+  TableHead
 } from '@material-ui/core';
 // components
 import Page from '../../components/Page';
@@ -30,17 +32,19 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_d
 import USERLIST from '../../_mocks_/user';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import { getToken } from 'src/services/tokens';
+import { IndeterminateCheckBox } from '@material-ui/icons';
 
 // ----------------------------------------------------------------------
 
+let DEVICES_ORIGIN = [];
 let DEVICES = [];
 
 const TABLE_HEAD = [
-  { id: 'Codigo', label: 'Codigo', alignRight: false },
-  { id: 'Descripción', label: 'Descripción', alignRight: false },
-  { id: 'Grupo', label: 'Grupo', alignRight: false },
-  { id: 'Unidad', label: 'Unidad', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'Imei', label: 'Imei', alignRight: false },
+  { id: 'A', label: 'A', alignRight: false },
+  { id: 'ST', label: 'ST', alignRight: false },
+  { id: 'Fabrica', label: 'Fabrica', alignRight: false },
+  { id: 'Estado', label: 'Estado', alignRight: false },
   { id: '' }
 ];
 
@@ -70,7 +74,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_device) =>  _device.imei.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -82,6 +86,8 @@ export default function User() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  //-----
+  let itemsCollapse = [];
 
   //---- 
   let token = getToken();
@@ -89,9 +95,42 @@ export default function User() {
   if(!isNull(token)) { 
     DEVICES = JSON.parse(localStorage.getItem('devices'));
 
-    console.log(DEVICES);
+    DEVICES = DEVICES.map(({device, rules}) => {
+      const imei = device.imei;
+      const fabrica = device.fabrica;
+      const a = device.a;
+      const st = device.st.split('-')[0];
+
+      return { imei, fabrica, a, st, device, rules }
+    }).reduce((prev, curr) => {
+      let key = curr.imei + '#' + curr.a + '#' + curr.st + '#' + curr.fabrica;
+      if(!prev[key]) prev[key] = []
+      prev[key].push(curr);
+      return prev;
+    }, {});
+
+    DEVICES = Object.values(DEVICES);
+
+
+    DEVICES = DEVICES.map((items) => {
+      let devs = items.map((item) => { return { device: item.device, rule: item.rules } });
+
+      const deviceId = items[0].imei + '#' + items[0].a + '#' + items[0].st + '#' + items[0].fabrica;
+
+      itemsCollapse.push({ status: false, deviceId });
+
+      return {
+        imei: items[0].imei,
+        a: items[0].a,
+        st: items[0].st,
+        fabrica: items[0].fabrica,
+        devices: devs
+      }
+    });
+
   }
-  
+
+  const [open, setOpen] = useState(itemsCollapse);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -101,7 +140,8 @@ export default function User() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = DEVICES.map((n) => n.name);
+      const newSelecteds = DEVICES.map((items) => items);
+      console.log(newSelecteds);
       setSelected(newSelecteds);
       return;
     }
@@ -145,6 +185,30 @@ export default function User() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
+  const collapseTable = (deviceId) => {
+    let items = open.map((item) => {
+      return {
+        status: item.deviceId == deviceId ? !item.status : item.status,
+        deviceId: item.deviceId
+      }
+    });
+    
+    setOpen(items);
+  }
+
+  const checkCollapse = (deviceId) => {
+    let status;
+
+    for(let item of open) {
+      if(item.deviceId == deviceId) {
+        status = item.status;
+      }
+    }
+    
+    return status;
+  }
+
+
   return (
     <Page title="Dispositivos | IoT Fabricas">
       <Container>
@@ -186,13 +250,13 @@ export default function User() {
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, positionRow) => {
-                      const { device, rules } = row;
-                      const { deviceId, descripcion, grupo, unidad_medida } = device;
+                      //const index = (positionRow + 1) + (page * rowsPerPage);
+                      const { imei, a, st, fabrica, devices } = row;
+                      const deviceId = imei + '#' + a + '#' + st + '#' + fabrica;
                       const isItemSelected = selected.indexOf(deviceId) !== -1;
-                      const index = (positionRow + 1) + (page * rowsPerPage);
-                      console.log(index);
 
                       return (
+                        <Fragment>
                         <TableRow
                           hover
                           key={deviceId}
@@ -201,22 +265,25 @@ export default function User() {
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
                         >
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              checked={isItemSelected}
-                              onChange={(event) => handleClick(event, deviceId)}
-                            />
+                          <TableCell>
+                            <IconButton
+                              aria-label="expand row"
+                              size="small"
+                              onClick={() => collapseTable(deviceId)}
+                            >
+                              <Icon icon={ open ? chevronUpFill : chevronDownFill} width={20} height={20} />
+                            </IconButton>
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {deviceId}
+                                {imei}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{descripcion}</TableCell>
-                          <TableCell align="left">{grupo}</TableCell>
-                          <TableCell align="left">{unidad_medida}</TableCell>
+                          <TableCell align="left">{a}</TableCell>
+                          <TableCell align="left">{st}</TableCell>
+                          <TableCell align="left">{fabrica}</TableCell>
                           <TableCell align="left">
                             <Label
                               variant="ghost"
@@ -227,9 +294,70 @@ export default function User() {
                           </TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu type={'plural'}/>
                           </TableCell>
                         </TableRow>
+
+                        <TableRow>
+                          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                            <Collapse in={checkCollapse(deviceId)} timeout="auto" unmountOnExit>
+                            <Typography variant="h6" gutterBottom component="div">
+                              Sensores
+                            </Typography>
+                            <Table size="small" aria-label="purchases">
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell></TableCell>
+                                  <TableCell>Codigo</TableCell>
+                                  <TableCell>Descripción</TableCell>
+                                  <TableCell>Grupo</TableCell>
+                                  <TableCell>Unidad</TableCell>
+                                  <TableCell>Estado</TableCell>
+                                  <TableCell></TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {
+                                  devices.map(({device, rule}, subIndex) => (
+                                    <TableRow key={subIndex}>
+                                      <TableCell component="th" scope="row">
+                                        <Checkbox
+                                          checked={isItemSelected}
+                                          onChange={(event) => handleClick(event, device.deviceId)}
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        {device.deviceId}
+                                      </TableCell>
+                                      <TableCell>
+                                        {device.descripcion}
+                                      </TableCell>
+                                      <TableCell>
+                                        {device.grupo}
+                                      </TableCell>
+                                      <TableCell>
+                                        {device.unidad_medida}
+                                      </TableCell>
+                                      <TableCell>
+                                        <Label
+                                          variant="ghost"
+                                          color={'success'}
+                                        >
+                                          {sentenceCase("Estable")}
+                                        </Label>
+                                      </TableCell>
+                                      <TableCell align="right">
+                                        <UserMoreMenu type={'single'}/>
+                                      </TableCell>
+                                    </TableRow>
+                                  ))
+                                }
+                              </TableBody>
+                            </Table>
+                            </Collapse>
+                          </TableCell>
+                        </TableRow>
+                        </Fragment>
                       );
                     })}
                   {emptyRows > 0 && (
@@ -252,7 +380,7 @@ export default function User() {
           </Scrollbar>
 
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[1, 2, 3]}
             component="div"
             count={DEVICES.length}
             rowsPerPage={rowsPerPage}

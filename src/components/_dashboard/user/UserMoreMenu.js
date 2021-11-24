@@ -10,9 +10,10 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@materia
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+export default function UserMoreMenu(props) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const type = props.type;
 
   return (
     <>
@@ -34,14 +35,14 @@ export default function UserMoreMenu() {
           <ListItemIcon>
             <Icon icon={infoFill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Ver Detalle" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary={type == 'plural' ? "Ver detalles" : "Ver detalle"} primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
 
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={barChart2Fill} width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Ver grafico" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText primary={type == 'plural' ? "Ver graficos" : "Ver grafico"} primaryTypographyProps={{ variant: 'body2' }} />
         </MenuItem>
       </Menu>
     </>
