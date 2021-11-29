@@ -6,6 +6,9 @@
   "private": false,
   "scripts": {
     "start": "env-cmd -f .env.local react-scripts start",
+    "init:desa": "env-cmd -f .env.desa react-scripts start",
+    "init:test": "env-cmd -f .env.test react-scripts start",
+    "init:prod": "env-cmd -f .env.prod react-scripts start",
     "build:desa": "env-cmd -f .env.desa react-scripts build",
     "build:test": "env-cmd -f .env.test react-scripts build",
     "build:prod": "env-cmd -f .env.prod react-scripts build",

@@ -88,6 +88,7 @@ export default function User() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   //-----
   let itemsCollapse = [];
+  let totalRows = 0;
 
   //---- 
   let token = getToken();
@@ -100,20 +101,26 @@ export default function User() {
       const fabrica = device.fabrica;
       const a = device.a;
       const st = device.st.split('-')[0];
+      const grupo = device.grupo;
 
-      return { imei, fabrica, a, st, device, rules }
+      return { imei, fabrica, a, st, grupo, device, rules }
     }).reduce((prev, curr) => {
-      let key = curr.imei + '#' + curr.a + '#' + curr.st + '#' + curr.fabrica;
+      //let key = curr.imei + '#' + curr.a + '#' + curr.st + '#' + curr.fabrica;
+      let key = curr.imei + '#' + curr.grupo; 
       if(!prev[key]) prev[key] = []
       prev[key].push(curr);
-      return prev;
+      return prev; 
     }, {});
 
     DEVICES = Object.values(DEVICES);
 
 
     DEVICES = DEVICES.map((items) => {
-      let devs = items.map((item) => { return { device: item.device, rule: item.rules } });
+      let devs = items.map((item) => { 
+        totalRows++;
+
+        return { device: item.device, rule: item.rules }
+       });
 
       const deviceId = items[0].imei + '#' + items[0].a + '#' + items[0].st + '#' + items[0].fabrica;
 
@@ -127,6 +134,8 @@ export default function User() {
         devices: devs
       }
     });
+    console.log('TOTAL ROWS', totalRows);
+    console.log('devices', DEVICES)
 
   }
 
@@ -139,10 +148,13 @@ export default function User() {
   };
 
   const handleSelectAllClick = (event) => {
+    console.log(event.target.checked)
     if (event.target.checked) {
-      const newSelecteds = DEVICES.map((items) => items);
-      console.log(newSelecteds);
-      setSelected(newSelecteds);
+      let devices = [];
+      DEVICES.forEach((items) => devices.push(...items.devices));
+
+      console.log(devices);
+      setSelected(devices);
       return;
     }
     setSelected([]);
@@ -241,7 +253,7 @@ export default function User() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={DEVICES.length}
+                  rowCount={totalRows}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
