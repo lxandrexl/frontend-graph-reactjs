@@ -134,8 +134,6 @@ export default function User() {
         devices: devs
       }
     });
-    console.log('TOTAL ROWS', totalRows);
-    console.log('devices', DEVICES)
 
   }
 
@@ -161,7 +159,7 @@ export default function User() {
   };
 
   const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+    const selectedIndex = selected.findIndex(e => e.deviceId == name.deviceId);
     let newSelected = [];
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
@@ -265,7 +263,6 @@ export default function User() {
                       //const index = (positionRow + 1) + (page * rowsPerPage);
                       const { imei, a, st, fabrica, devices } = row;
                       const deviceId = imei + '#' + a + '#' + st + '#' + fabrica;
-                      const isItemSelected = selected.indexOf(deviceId) !== -1;
 
                       return (
                         <Fragment>
@@ -273,9 +270,6 @@ export default function User() {
                           hover
                           key={deviceId}
                           tabIndex={-1}
-                          role="checkbox"
-                          selected={isItemSelected}
-                          aria-checked={isItemSelected}
                         >
                           <TableCell>
                             <IconButton
@@ -330,39 +324,49 @@ export default function User() {
                               </TableHead>
                               <TableBody>
                                 {
-                                  devices.map(({device, rule}, subIndex) => (
-                                    <TableRow key={subIndex}>
-                                      <TableCell component="th" scope="row">
-                                        <Checkbox
-                                          checked={isItemSelected}
-                                          onChange={(event) => handleClick(event, device.deviceId)}
-                                        />
-                                      </TableCell>
-                                      <TableCell>
-                                        {device.deviceId}
-                                      </TableCell>
-                                      <TableCell>
-                                        {device.descripcion}
-                                      </TableCell>
-                                      <TableCell>
-                                        {device.grupo}
-                                      </TableCell>
-                                      <TableCell>
-                                        {device.unidad_medida}
-                                      </TableCell>
-                                      <TableCell>
-                                        <Label
-                                          variant="ghost"
-                                          color={'success'}
+                                  devices.map(({device, rule}, subIndex) => {
+                                    const findDevice = selected.findIndex(e => e.deviceId == device.deviceId);
+                                    const isItemSelected = findDevice !== -1;
+
+                                    return (
+                                      <TableRow 
+                                        key={subIndex}
+                                        role="checkbox"
+                                        selected={isItemSelected}
+                                        aria-checked={isItemSelected}
                                         >
-                                          {sentenceCase("Estable")}
-                                        </Label>
-                                      </TableCell>
-                                      <TableCell align="right">
-                                        <UserMoreMenu type={'single'}/>
-                                      </TableCell>
-                                    </TableRow>
-                                  ))
+                                          <TableCell component="th" scope="row">
+                                            <Checkbox
+                                              checked={isItemSelected}
+                                              onChange={(event) => handleClick(event, device)}
+                                            />
+                                          </TableCell>
+                                          <TableCell>
+                                            {device.deviceId}
+                                          </TableCell>
+                                          <TableCell>
+                                            {device.descripcion}
+                                          </TableCell>
+                                          <TableCell>
+                                            {device.grupo}
+                                          </TableCell>
+                                          <TableCell>
+                                            {device.unidad_medida}
+                                          </TableCell>
+                                          <TableCell>
+                                            <Label
+                                              variant="ghost"
+                                              color={'success'}
+                                            >
+                                              {sentenceCase("Estable")}
+                                            </Label>
+                                          </TableCell>
+                                          <TableCell align="right">
+                                            <UserMoreMenu type={'single'}/>
+                                          </TableCell>
+                                        </TableRow>
+                                    )
+                                  })
                                 }
                               </TableBody>
                             </Table>
