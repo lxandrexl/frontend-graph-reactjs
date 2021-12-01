@@ -37,7 +37,7 @@ export default function GraphicDevice() {
                 devices.map((item, i) => {
                     return (
                         <Grid item xs={12} md={12} lg={12} key={i}>
-                            <AppWebsiteVisits device={item.device} rule={item.rule} llave={i}/>
+                            <AppWebsiteVisits device={item.device} rule={item.rule[0]} llave={i}/>
                         </Grid>
                     )
                 })
