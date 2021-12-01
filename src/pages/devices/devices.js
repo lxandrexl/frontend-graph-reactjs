@@ -20,7 +20,8 @@ import {
   TablePagination,
   IconButton,
   Collapse,
-  TableHead
+  TableHead,
+  Link
 } from '@material-ui/core';
 // components
 import Page from '../../components/Page';
@@ -29,18 +30,16 @@ import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user';
 //
-import AutorenewIcon from '@material-ui/icons/Autorenew';
 import { getToken } from 'src/services/tokens';
 
+import { Link as RouterLink } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
 let DEVICES = [];
 
 const TABLE_HEAD = [
+  { id: 'Grupo', label: 'Grupo', alignRight: false },
   { id: 'Imei', label: 'Imei', alignRight: false },
-  { id: 'A', label: 'A', alignRight: false },
-  { id: 'ST', label: 'ST', alignRight: false },
-  { id: 'Fabrica', label: 'Fabrica', alignRight: false },
   { id: 'Estado', label: 'Estado', alignRight: false },
   { id: '' }
 ];
@@ -71,7 +70,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_device) =>  _device.imei.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_device) =>  _device.grupo.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -127,6 +126,7 @@ export default function User() {
         a: items[0].a,
         st: items[0].st,
         fabrica: items[0].fabrica,
+        grupo: items[0].grupo,
         devices: devs
       }
     });
@@ -225,15 +225,23 @@ export default function User() {
           <Typography variant="h4" gutterBottom>
             Dispositivos
           </Typography>
-          <Button
+          {
+            selected.length > 0 ? 
+            <Button
               style={{ margin: '0 10px 20px 0' }}
               variant="contained"
               color="primary"
-              startIcon={<AutorenewIcon />}
               //onClick={() => setLoading(true)}
             >
-              Actualizar
-            </Button>
+              <Link 
+                to='/graphic'
+                state={{device: selected, type: 'checkbox'}}
+                color="inherit" underline="none" component={RouterLink}>
+                  Ver Graficos ({selected.length})
+              </Link>
+            </Button> :
+             null
+          }
         </Stack>
 
         <Card>
@@ -259,8 +267,8 @@ export default function User() {
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row, positionRow) => {
-                      //const index = (positionRow + 1) + (page * rowsPerPage);
-                      const { imei, a, st, fabrica, devices } = row;
+                      const index = (positionRow + 1) + (page * rowsPerPage);
+                      const { imei, a, st, fabrica, grupo, devices } = row;
                       const deviceId = imei + '#' + a + '#' + st + '#' + fabrica;
 
                       return (
@@ -282,13 +290,11 @@ export default function User() {
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Typography variant="subtitle2" noWrap>
-                                {imei}
+                                {grupo}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{a}</TableCell>
-                          <TableCell align="left">{st}</TableCell>
-                          <TableCell align="left">{fabrica}</TableCell>
+                          <TableCell align="left">{imei}</TableCell>
                           <TableCell align="left">
                             <Label
                               variant="ghost"
@@ -299,7 +305,7 @@ export default function User() {
                           </TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu type={'plural'}/>
+                            <UserMoreMenu device={row} type={'plural'}/>
                           </TableCell>
                         </TableRow>
 
@@ -362,7 +368,7 @@ export default function User() {
                                             </Label>
                                           </TableCell>
                                           <TableCell align="right">
-                                            <UserMoreMenu type={'single'}/>
+                                            <UserMoreMenu device={item} type={'singular'}/>
                                           </TableCell>
                                         </TableRow>
                                     )

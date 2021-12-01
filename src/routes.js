@@ -12,6 +12,7 @@ import { isNull } from 'lodash';
 import Stats from './pages/stats/Stats';
 import Notifi from './pages/notificaciones/notifis';
 import Devices from './pages/devices/devices'
+import GraphicDevice  from './pages/devices/graphics/graphic'
 
 // ----------------------------------------------------------------------
 
@@ -31,17 +32,18 @@ export default function Router() {
     { path: '/', element: <Navigate to="/dashboard/app" replace /> },
     { path: 'login', element: <Navigate to="/dashboard/app" replace /> },
     { path: 'devices', element: <Devices /> },
+    { path: 'graphic', element: <GraphicDevice /> },
     { path: 'stats', element: <Stats /> },
     { path: 'notificaciones', element: <Notifi /> },
     { path: 'register', element: <Navigate to="/dashboard/app" replace /> },
     { path: '404', element: <NotFound /> },
-    { path: '*', element: <Navigate to="/404" /> }
   ];
 
   let dashboardDefault = [{ path: 'app', element: <Navigate to="/login" replace /> }];
 
   let dashboardAuth = [
-    { path: 'app', element: <DashboardApp /> },
+    { path: 'app', element: <Devices /> },
+    { path: 'all-graphics', element: <DashboardApp /> },
     { path: 'stats', element: <Stats /> },
     { path: 'notificaciones', element: <Notifi /> },
     { path: 'dispositivos', element: <Devices /> }

@@ -20,11 +20,6 @@ const MENU_OPTIONS = [
     label: 'Inicio',
     icon: homeFill,
     linkTo: '/'
-  },
-  {
-    label: 'Opciones',
-    icon: settings2Fill,
-    linkTo: '#'
   }
 ];
 

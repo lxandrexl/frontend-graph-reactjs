@@ -73,19 +73,6 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
         />
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Ver Graficos">
-          <IconButton>
-            <Icon icon={barChart2Fill} />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <Icon icon={roundFilterList} />
-          </IconButton>
-        </Tooltip>
-      )}
     </RootStyle>
   );
 }

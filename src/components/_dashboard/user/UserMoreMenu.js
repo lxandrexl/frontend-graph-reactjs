@@ -6,7 +6,8 @@ import infoFill from '@iconify/icons-eva/info-fill';
 import barChart2Fill from '@iconify/icons-eva/bar-chart-2-fill';
 
 // material
-import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText, Link } from '@material-ui/core';
+import GraphicDevice from '../../../pages/devices/graphics/graphic';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +15,8 @@ export default function UserMoreMenu(props) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const type = props.type;
-
+  const device = props.device;
+  console.log(props)
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
@@ -31,18 +33,21 @@ export default function UserMoreMenu(props) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        {/* <MenuItem sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={infoFill} width={24} height={24} />
           </ListItemIcon>
           <ListItemText primary={type == 'plural' ? "Ver detalles" : "Ver detalle"} primaryTypographyProps={{ variant: 'body2' }} />
-        </MenuItem>
+        </MenuItem> */}
 
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
-          <ListItemIcon>
-            <Icon icon={barChart2Fill} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText primary={type == 'plural' ? "Ver graficos" : "Ver grafico"} primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemIcon> <Icon icon={barChart2Fill} width={24} height={24} /> </ListItemIcon>
+          <Link 
+            to='/graphic'
+            state={{device: device, type: type}}
+            color="inherit" underline="none" component={RouterLink}>
+              {type == 'plural' ? "Ver graficos" : "Ver grafico"}
+          </Link>
         </MenuItem>
       </Menu>
     </>

@@ -1,28 +1,48 @@
-import { useEffect, useState, useRef } from 'react';
-import { isNull, merge } from 'lodash';
-import ReactApexChart from 'react-apexcharts';
 // material
-import { Card, CardHeader, Box } from '@material-ui/core';
+import { Box, Grid, Container, Typography } from '@material-ui/core';
 //
-import { BaseOptionChart } from '../../charts';
-
 import * as moment from 'moment';
-import {getDeviceData} from 'src/services/device.service';
-import { getToken } from 'src/services/tokens';
+import { useLocation } from 'react-router-dom'
+import Page from '../../../components/Page';
+import AppWebsiteVisits from '../../../components/_dashboard/app/AppWebsiteVisits';
+
+
 // ----------------------------------------------------------------------
 moment.locale('es');
 
-export default function AppWebsiteVisits({ device, llave, rule }) {
-  let titleGraphic = '=)';//`${device.descripcion}`;
-  let subtitleGraphic = '=)';//`Codigo de dispositivo: ${device.deviceId}`;
+export default function GraphicDevice() {
+    const location = useLocation();
+    const type = location.state.type;
+    const device = location.state.device;
+    console.log('rs', type , device)
+    let devices = [];
 
-  return (
+    if(type == 'singular') {
+        devices.push(device);
+    } else if(type == 'plural'){
+        devices = device.devices;
+    } else if(type == 'checkbox') {
+        devices = device;
+    } else {
+        return 404;
+    }
 
-    <Card>
-      <CardHeader title={titleGraphic} subheader={subtitleGraphic} />
-      <Box sx={{ p: 3, pb: 1 }} dir="ltr">
-          Hi =)
-      </Box>
-    </Card>
-  );
+    return (
+        <Page title="Dashboard | IoT Fabricas">
+            <Container maxWidth="xl">
+                <Box sx={{ pb: 5 }}>
+                </Box>
+                <Grid container spacing={0}></Grid>
+                { 
+                devices.map((item, i) => {
+                    return (
+                        <Grid item xs={12} md={12} lg={12} key={i}>
+                            <AppWebsiteVisits device={item.device} rule={item.rule} llave={i}/>
+                        </Grid>
+                    )
+                })
+                }
+            </Container>
+        </Page>
+    )
 }

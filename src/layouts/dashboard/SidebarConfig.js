@@ -8,12 +8,12 @@ const getIcon = (name) => <Icon icon={name} width={22} height={22} />;
 const sidebarConfig = [
   {
     title: 'dashboard',
-    path: '/dashboard/dispositivos',
+    path: '/dashboard/app',
     icon: getIcon(pieChart2Fill)
   },
   {
     title: 'graficos',
-    path: '/dashboard/app',
+    path: '/dashboard/all-graphics',
     icon: getIcon(pieChart2Fill)
   },
   {
