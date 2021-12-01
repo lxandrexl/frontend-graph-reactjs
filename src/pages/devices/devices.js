@@ -29,14 +29,11 @@ import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user';
 //
-import USERLIST from '../../_mocks_/user';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import { getToken } from 'src/services/tokens';
-import { IndeterminateCheckBox } from '@material-ui/icons';
 
 // ----------------------------------------------------------------------
 
-let DEVICES_ORIGIN = [];
 let DEVICES = [];
 
 const TABLE_HEAD = [
@@ -105,7 +102,6 @@ export default function User() {
 
       return { imei, fabrica, a, st, grupo, device, rules }
     }).reduce((prev, curr) => {
-      //let key = curr.imei + '#' + curr.a + '#' + curr.st + '#' + curr.fabrica;
       let key = curr.imei + '#' + curr.grupo; 
       if(!prev[key]) prev[key] = []
       prev[key].push(curr);
@@ -151,18 +147,21 @@ export default function User() {
       let devices = [];
       DEVICES.forEach((items) => devices.push(...items.devices));
 
-      console.log(devices);
       setSelected(devices);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.findIndex(e => e.deviceId == name.deviceId);
+  useEffect(() => {
+     console.log("Nueva data ->", selected)
+  }, [selected]);
+
+  const handleClick = (event, item) => {
+    const selectedIndex = selected.findIndex(e => e.device.deviceId == item.device.deviceId);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, item);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -324,8 +323,9 @@ export default function User() {
                               </TableHead>
                               <TableBody>
                                 {
-                                  devices.map(({device, rule}, subIndex) => {
-                                    const findDevice = selected.findIndex(e => e.deviceId == device.deviceId);
+                                  devices.map((item, subIndex) => {
+                                    const device = item.device;
+                                    const findDevice = selected.findIndex(e => e.device.deviceId == device.deviceId);
                                     const isItemSelected = findDevice !== -1;
 
                                     return (
@@ -338,7 +338,7 @@ export default function User() {
                                           <TableCell component="th" scope="row">
                                             <Checkbox
                                               checked={isItemSelected}
-                                              onChange={(event) => handleClick(event, device)}
+                                              onChange={(event) => handleClick(event, item)}
                                             />
                                           </TableCell>
                                           <TableCell>

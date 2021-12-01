@@ -14,6 +14,7 @@ import {
   OutlinedInput,
   InputAdornment
 } from '@material-ui/core';
+import barChart2Fill from '@iconify/icons-eva/bar-chart-2-fill';
 
 // ----------------------------------------------------------------------
 
@@ -57,7 +58,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
     >
       {numSelected > 0 ? (
         <Typography component="div" variant="subtitle1">
-          {numSelected} selected
+          {numSelected} { numSelected > 1 ? 'seleccionados' : 'seleccionado'}
         </Typography>
       ) : (
         <SearchStyle
@@ -73,9 +74,9 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
+        <Tooltip title="Ver Graficos">
           <IconButton>
-            <Icon icon={trash2Fill} />
+            <Icon icon={barChart2Fill} />
           </IconButton>
         </Tooltip>
       ) : (
