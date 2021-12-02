@@ -46,7 +46,8 @@ export default function Router() {
     { path: 'all-graphics', element: <DashboardApp /> },
     { path: 'stats', element: <Stats /> },
     { path: 'notificaciones', element: <Notifi /> },
-    { path: 'dispositivos', element: <Devices /> }
+    { path: 'dispositivos', element: <Devices /> },
+    { path: 'graphic', element: <GraphicDevice /> }
   ];
 
   let routes = routesDefault;

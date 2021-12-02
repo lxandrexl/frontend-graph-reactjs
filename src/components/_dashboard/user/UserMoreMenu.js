@@ -43,7 +43,7 @@ export default function UserMoreMenu(props) {
         <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
           <ListItemIcon> <Icon icon={barChart2Fill} width={24} height={24} /> </ListItemIcon>
           <Link 
-            to='/graphic'
+            to='/dashboard/graphic'
             state={{device: device, type: type}}
             color="inherit" underline="none" component={RouterLink}>
               {type == 'plural' ? "Ver graficos" : "Ver grafico"}

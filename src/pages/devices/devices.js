@@ -75,7 +75,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
+export default function Devices() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -234,7 +234,7 @@ export default function User() {
               //onClick={() => setLoading(true)}
             >
               <Link 
-                to='/graphic'
+                to='/dashboard/graphic'
                 state={{device: selected, type: 'checkbox'}}
                 color="inherit" underline="none" component={RouterLink}>
                   Ver Graficos ({selected.length})
