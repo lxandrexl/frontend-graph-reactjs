@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { useLocation } from 'react-router-dom'
 import Page from '../../../components/Page';
 import AppWebsiteVisits from '../../../components/_dashboard/app/AppWebsiteVisits';
+import { Fragment } from 'react';
 
 
 // ----------------------------------------------------------------------
@@ -32,13 +33,16 @@ export default function GraphicDevice() {
             <Container maxWidth="xl">
                 <Box sx={{ pb: 5 }}>
                 </Box>
-                <Grid container spacing={0}></Grid>
+                <Grid container spacing={4}></Grid>
                 { 
                 devices.map((item, i) => {
                     return (
-                        <Grid item xs={12} md={12} lg={12} key={i}>
-                            <AppWebsiteVisits device={item.device} rule={item.rule[0]} llave={i}/>
-                        </Grid>
+                        <Fragment>
+                            <Grid item xs={12} md={12} lg={12} key={i}>
+                                <AppWebsiteVisits device={item.device} rule={item.rule[0]} llave={i}/>
+                            </Grid>
+                            <Grid> &nbsp; </Grid> 
+                        </Fragment>
                     )
                 })
                 }
