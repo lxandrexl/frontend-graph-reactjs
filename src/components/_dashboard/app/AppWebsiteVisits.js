@@ -30,6 +30,7 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
   if(rule == undefined || rule == null) rule = []; 
 
   useEffect(() => {
+    console.log('DEBERIA EJECUTAR 1 VEZ')
     let websocket = ws;
     if(!isNull(getToken()) ) { 
       websocket.addEventListener('open', () => {
@@ -45,19 +46,8 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
         websocket.send(JSON.stringify(payload));
         setWsOpen(true);
       });
-  
-      websocket.addEventListener('close', () => {
-        console.log('Websocket is closed');
-      });
-    
-      websocket.addEventListener('error', (e) => console.log('Websocket is in error', e));
-    }
-  }, []);
 
-  useEffect(() => {
-    if(!wsOpen) return;
-    let websocket = ws;
-    if(!isNull(getToken()) ) { 
+      //WEBSOCKET LISTENEVER EVENT
       websocket.addEventListener('message', (e) => {
         console.log('Message received', JSON.parse(e.data));
         const response = JSON.parse(e.data);
@@ -119,8 +109,33 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
           ...umbralArr
         ])
       });
+  
+      websocket.addEventListener('error', (e) => console.log('Websocket is in error', e));
+
+      return () => {
+        websocket.addEventListener('close', () => {
+          console.log('Websocket is closed');
+        });
+        console.log('PRUEBA RETURN CLOSE...')
+
+        websocket.close();
+
+        console.log('CERRO CONEXION')
+      }
     }
-  }, [wsOpen]);
+  }, []);
+
+      
+
+
+  // useEffect(() => {
+  //   console.log('USE EFFECT DE WSOPEN')
+  //   if(!wsOpen) return;
+  //   let websocket = ws;
+  //   if(!isNull(getToken()) ) { 
+      
+  //   }
+  // }, [wsOpen]);
 
   useEffect(() => {
     setData([
@@ -189,6 +204,8 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
   if(rule.activoUmbralMinimo) {
     info.push({ name: 'Umbral Minimo', data: umbralMin });
   }
+
+  console.log('LOG FUERA DEL USE EFFECT')
 
   return (
     <Card>
