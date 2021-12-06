@@ -54,15 +54,15 @@ export default function Searchbar() {
   return (
     <ClickAwayListener onClickAway={handleClose}>
       <div>
-        {!isOpen && (
+        {/* {!isOpen && (
           <IconButton onClick={handleOpen}>
             <Icon icon={searchFill} width={20} height={20} />
           </IconButton>
-        )}
+        )} */}
 
         <Slide direction="down" in={isOpen} mountOnEnter unmountOnExit>
           <SearchbarStyle>
-            <Input
+            {/* <Input
               autoFocus
               fullWidth
               disableUnderline
@@ -77,10 +77,10 @@ export default function Searchbar() {
                 </InputAdornment>
               }
               sx={{ mr: 1, fontWeight: 'fontWeightBold' }}
-            />
-            <Button variant="contained" onClick={handleClose}>
+            /> */}
+            {/* <Button variant="contained" onClick={handleClose}>
               Search
-            </Button>
+            </Button> */}
           </SearchbarStyle>
         </Slide>
       </div>

@@ -12,12 +12,12 @@ const sidebarConfig = [
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: 'graficos',
+    title: 'gráficos',
     path: '/dashboard/all-graphics',
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: 'estadisticas',
+    title: 'estadistícas',
     path: '/dashboard/stats',
     icon: getIcon(pieChart2Fill)
   },

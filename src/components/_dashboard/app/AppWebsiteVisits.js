@@ -9,13 +9,14 @@ import { BaseOptionChart } from '../../charts';
 import * as moment from 'moment';
 import {getDeviceData} from 'src/services/device.service';
 import { getToken } from 'src/services/tokens';
+import { timeIntervalPerMinute } from 'src/services/constants'
 // ----------------------------------------------------------------------
 moment.locale('es');
 
 export default function AppWebsiteVisits({ device, llave, rule }) {
   let titleGraphic = `${device.descripcion}`;
   let subtitleGraphic = `Codigo de dispositivo: ${device.deviceId}`;
-  const timeInterval = 1;
+  const timeInterval = timeIntervalPerMinute;
   const perMinute = 60000;
   let lastTS = "";
 

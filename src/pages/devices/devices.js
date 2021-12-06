@@ -30,12 +30,28 @@ import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_dashboard/user';
 //
-import { getToken } from 'src/services/tokens';
+import { getToken, getAccessToken } from 'src/services/tokens';
+import { getStatsData, getAlertsData } from 'src/services/device.service';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { Link as RouterLink } from 'react-router-dom';
+import AutorenewIcon from '@material-ui/icons/Autorenew';
+import Box from '@material-ui/core/Box';
+import { timeIntervalPerMinute } from 'src/services/constants'
+import * as moment from 'moment-timezone';
+import 'moment/locale/es';
+
+moment.locale('es');
 // ----------------------------------------------------------------------
 
 let DEVICES = [];
+let DEVICES_ID = [];
+let firstLoad = true;
+let firstLoadAlert = true;
+
+// -- last time data updated
+let today =  moment().tz('America/Lima').format('YYYY-MM-DD HH:mm:ss'); 
+
 
 const TABLE_HEAD = [
   { id: 'Grupo', label: 'Grupo', alignRight: false },
@@ -43,6 +59,14 @@ const TABLE_HEAD = [
   { id: 'Estado', label: 'Estado', alignRight: false },
   { id: '' }
 ];
+
+function getLastTimeFormat() {
+  //let lastTimeLoadedStats = moment().format('dddd DD [de] MMMM [del] YYYY [a las] HH:mm:ss');
+  let datetime = moment().format('dddd DD [de] MMMM [a las] HH:mm:ss');
+  //datetime = datetime[0].toUpperCase() + datetime.substring(1);
+
+  return datetime;
+}
 
 // ----------------------------------------------------------------------
 
@@ -82,6 +106,12 @@ export default function Devices() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [loading, setLoading] = useState(true);
+  const [statsData, setStatsData] = useState([]);
+  const [alertData, setAlertData] = useState([]);
+  const [count, setCount] = useState(0);
+  const [lastTimeLoadedStats, setLastTimeLoadedStats] = useState(getLastTimeFormat());
+
   //-----
   let itemsCollapse = [];
   let totalRows = 0;
@@ -89,10 +119,39 @@ export default function Devices() {
   //---- 
   let token = getToken();
 
-  if(!isNull(token)) { 
-    DEVICES = JSON.parse(localStorage.getItem('devices'));
+  // Loading view
+  useEffect(async () => {
+    if (!loading) return;
+    //const { data } = await getStatsData(getAccessToken());
 
-    DEVICES = DEVICES.map(({device, rules}) => {
+    if(firstLoadAlert) {
+      const lastTime = '';
+      const isLoaded = false;
+      const { data } = await getAlertsData(getToken(), today, lastTime, isLoaded, DEVICES_ID);
+      console.log('ENTRO FRRRR')
+      setAlertData(data);
+      firstLoadAlert = false;
+    }
+
+    //setStatsData(data.payload);
+    setLoading(false);
+  }, [loading]);
+
+  useEffect(() => {
+      console.log('==> useEffect alertdata', alertData)
+  }, [alertData]);
+
+  if(!isNull(token)) { 
+    let devices_storage = JSON.parse(localStorage.getItem('devices'));
+
+   if(firstLoad) {
+      DEVICES_ID = devices_storage.map(({device, rules}) => {
+        return device.deviceId;
+      })
+      firstLoad = false;
+   }
+
+    DEVICES = devices_storage.map(({device, rules}) => {
       const imei = device.imei;
       const fabrica = device.fabrica;
       const a = device.a;
@@ -142,7 +201,7 @@ export default function Devices() {
   };
 
   const handleSelectAllClick = (event) => {
-    console.log(event.target.checked)
+    //console.log(event.target.checked)
     if (event.target.checked) {
       let devices = [];
       DEVICES.forEach((items) => devices.push(...items.devices));
@@ -153,9 +212,31 @@ export default function Devices() {
     setSelected([]);
   };
 
+  // Groups selected
   useEffect(() => {
-     console.log("Nueva data ->", selected)
+     //console.log("Nueva data ->", selected)
   }, [selected]);
+
+  // Stats 
+  useEffect(() => {
+    //console.log('Data cargada (Stats) ->', statsData)
+    // console.log('Devices ->', DEVICES)
+    // DEVICES = DEVICES.map((item) => {
+    //   const devices = item.devices.map(({device}) => {
+    //     for(let stat of statsData) {
+    //       const deviceId = stat.imei + '#' + stat.a + '#' + stat.st + '#' + stat.fabrica;
+
+    //       if(device.deviceId == deviceId) {
+    //         // stat;
+    //       }
+    //     }
+    //   });
+
+    //   return {
+
+    //   }
+    // })
+  }, [statsData]);
 
   const handleClick = (event, item) => {
     const selectedIndex = selected.findIndex(e => e.device.deviceId == item.device.deviceId);
@@ -217,201 +298,309 @@ export default function Devices() {
     return status;
   }
 
+  // ALERTS SERVICE
+
+  const checkStatus = (data, isGroup) => {
+    let status = true;
+
+    if(isGroup) {
+      console.log('CEE', alertData)
+
+      for(let alert of alertData) {
+        const alertDeviceID = alert.deviceId;
+
+        for(let item of data.devices) {
+          const deviceId = item.device.deviceId;
+
+          if(alertDeviceID === deviceId) {
+            status = false;
+            break;
+          }
+        }
+      }
+
+    } else {
+      for(let alert of alertData) {
+        const alertDeviceID = alert.deviceId;
+
+        if(alertDeviceID === data.deviceId) {
+          status = false;
+          break;
+        }
+      }
+    }
+
+    return status;
+  }
+
+  useEffect(() => {
+    const timer = setInterval(async () => {
+      // Logica ...
+      setCount(c => c + 1);
+
+    }, timeIntervalPerMinute * 60000);
+
+    return () => {
+      console.log("end timer")
+      clearInterval(timer);
+    }
+  }, []);
+
+  useEffect(async() => {
+    if(!firstLoadAlert) {
+      const lastTime = today;
+      today =  moment().tz('America/Lima').format('YYYY-MM-DD HH:mm:ss'); 
+      const isLoaded = true;
+      const { data } = await getAlertsData(getToken(),today,lastTime, isLoaded, DEVICES_ID);
+      console.log('INGRESO AL BUCLE PRRAAA', data)
+      setAlertData([...alertData, ...data]);
+      setLastTimeLoadedStats(getLastTimeFormat());
+    }
+  }, [count])
+
 
   return (
-    <Page title="Dispositivos | IoT Fabricas">
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Dispositivos
-          </Typography>
-          {
-            selected.length > 0 ? 
-            <Button
-              style={{ margin: '0 10px 20px 0' }}
-              variant="contained"
-              color="primary"
-              //onClick={() => setLoading(true)}
-            >
-              <Link 
-                to='/dashboard/graphic'
-                state={{device: selected, type: 'checkbox'}}
-                color="inherit" underline="none" component={RouterLink}>
-                  Ver Graficos ({selected.length})
-              </Link>
-            </Button> :
-             null
-          }
-        </Stack>
+    <div style={{ width: '100%' }}>
+      {loading ? (
+        <div className="loading">
+          <CircularProgress />
+        </div>
+      ) : (
+        <>
+          <Page title="Dispositivos | IoT Fabricas">
+            <Container>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={0}>
+                <Typography variant="h4" gutterBottom>
+                  Dispositivos
+                </Typography>     
+                <Box display="flex" justifyContent="flex-end">       
+                  {
+                    selected.length > 0 ? 
+                    <Button
+                      style={{ margin: '0 10px 20px 0' }}
+                      variant="contained"
+                      color="primary"
+                      //onClick={() => setLoading(true)}
+                    >
+                      <Link 
+                        to='/dashboard/graphic'
+                        state={{device: selected, type: 'checkbox'}}
+                        color="inherit" underline="none" component={RouterLink}>
+                          Ver Graficos ({selected.length})
+                      </Link>
+                    </Button> :
+                    null
+                  }
+                  <Button
+                    style={{ margin: '0 10px 20px 0' }}
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AutorenewIcon />}
+                    onClick={() => setLoading(true)}
+                  >
+                    Actualizar Estadísticas
+                  </Button>
+                </Box>
+              </Stack>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                <Typography>
+                  Notificaciones actualizadas por ultima vez el { lastTimeLoadedStats }
+                </Typography>
+              </Stack>
 
-        <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filterName}
-            onFilterName={handleFilterByName}
-          />
-
-          <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={totalRows}
+              <Card>
+                <UserListToolbar
                   numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
+                  filterName={filterName}
+                  onFilterName={handleFilterByName}
                 />
-                <TableBody>
-                  {filteredUsers
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row, positionRow) => {
-                      const index = (positionRow + 1) + (page * rowsPerPage);
-                      const { imei, a, st, fabrica, grupo, devices } = row;
-                      const deviceId = imei + '#' + a + '#' + st + '#' + fabrica;
 
-                      return (
-                        <Fragment>
-                        <TableRow
-                          hover
-                          key={deviceId}
-                          tabIndex={-1}
-                        >
-                          <TableCell>
-                            <IconButton
-                              aria-label="expand row"
-                              size="small"
-                              onClick={() => collapseTable(deviceId)}
-                            >
-                              <Icon icon={ open ? chevronUpFill : chevronDownFill} width={20} height={20} />
-                            </IconButton>
-                          </TableCell>
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                              <Typography variant="subtitle2" noWrap>
-                                {grupo}
-                              </Typography>
-                            </Stack>
-                          </TableCell>
-                          <TableCell align="left">{imei}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              variant="ghost"
-                              color={'success'}
-                            >
-                              {sentenceCase("Estable")}
-                            </Label>
-                          </TableCell>
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD}
+                        rowCount={totalRows}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                      />
+                      <TableBody>
+                        {filteredUsers
+                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .map((row, positionRow) => {
+                            const index = (positionRow + 1) + (page * rowsPerPage);
+                            const { imei, a, st, fabrica, grupo, devices } = row;
+                            const deviceId = imei + '#' + a + '#' + st + '#' + fabrica;
 
-                          <TableCell align="right">
-                            <UserMoreMenu device={row} type={'plural'}/>
-                          </TableCell>
-                        </TableRow>
-
-                        <TableRow>
-                          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                            <Collapse in={checkCollapse(deviceId)} timeout="auto" unmountOnExit>
-                            <Typography variant="h6" gutterBottom component="div">
-                              Sensores
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell></TableCell>
-                                  <TableCell>Codigo</TableCell>
-                                  <TableCell>Descripción</TableCell>
-                                  <TableCell>Grupo</TableCell>
-                                  <TableCell>Unidad</TableCell>
-                                  <TableCell>Estado</TableCell>
-                                  <TableCell></TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {
-                                  devices.map((item, subIndex) => {
-                                    const device = item.device;
-                                    const findDevice = selected.findIndex(e => e.device.deviceId == device.deviceId);
-                                    const isItemSelected = findDevice !== -1;
-
-                                    return (
-                                      <TableRow 
-                                        key={subIndex}
-                                        role="checkbox"
-                                        selected={isItemSelected}
-                                        aria-checked={isItemSelected}
-                                        >
-                                          <TableCell component="th" scope="row">
-                                            <Checkbox
-                                              checked={isItemSelected}
-                                              onChange={(event) => handleClick(event, item)}
-                                            />
-                                          </TableCell>
-                                          <TableCell>
-                                            {device.deviceId}
-                                          </TableCell>
-                                          <TableCell>
-                                            {device.descripcion}
-                                          </TableCell>
-                                          <TableCell>
-                                            {device.grupo}
-                                          </TableCell>
-                                          <TableCell>
-                                            {device.unidad_medida}
-                                          </TableCell>
-                                          <TableCell>
-                                            <Label
-                                              variant="ghost"
-                                              color={'success'}
-                                            >
-                                              {sentenceCase("Estable")}
-                                            </Label>
-                                          </TableCell>
-                                          <TableCell align="right">
-                                            <UserMoreMenu device={item} type={'singular'}/>
-                                          </TableCell>
-                                        </TableRow>
+                            return (
+                              <Fragment>
+                              <TableRow
+                                hover
+                                key={deviceId}
+                                tabIndex={-1}
+                              >
+                                <TableCell>
+                                  <IconButton
+                                    aria-label="expand row"
+                                    size="small"
+                                    onClick={() => collapseTable(deviceId)}
+                                  >
+                                    <Icon icon={ open ? chevronUpFill : chevronDownFill} width={20} height={20} />
+                                  </IconButton>
+                                </TableCell>
+                                <TableCell component="th" scope="row" padding="none">
+                                  <Stack direction="row" alignItems="center" spacing={2}>
+                                    <Typography variant="subtitle2" noWrap>
+                                      {grupo}
+                                    </Typography>
+                                  </Stack>
+                                </TableCell>
+                                <TableCell align="left">{imei}</TableCell>
+                                <TableCell align="left">
+                                  {
+                                    checkStatus(row, true) ? (
+                                      <Label
+                                      variant="ghost"
+                                      color={'success'}
+                                    >
+                                      {sentenceCase("Estable")}
+                                    </Label>
+                                    ) : (
+                                      <Label
+                                      variant="ghost"
+                                      color={'error'}
+                                    >
+                                      {sentenceCase("Peligro")}
+                                    </Label>
                                     )
-                                  })
-                                }
-                              </TableBody>
-                            </Table>
-                            </Collapse>
-                          </TableCell>
-                        </TableRow>
-                        </Fragment>
-                      );
-                    })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
-                {isUserNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <SearchNotFound searchQuery={filterName} />
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </Scrollbar>
+                                  }
+                                </TableCell>
 
-          <TablePagination
-            rowsPerPageOptions={[1, 2, 3]}
-            component="div"
-            count={DEVICES.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Card>
-      </Container>
-    </Page>
+                                <TableCell align="right">
+                                  <UserMoreMenu device={row} stats={statsData} type={'plural'}/>
+                                </TableCell>
+                              </TableRow>
+
+                              <TableRow>
+                                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                  <Collapse in={checkCollapse(deviceId)} timeout="auto" unmountOnExit>
+                                  <Typography variant="h6" gutterBottom component="div">
+                                    Sensores
+                                  </Typography>
+                                  <Table size="small" aria-label="purchases">
+                                    <TableHead>
+                                      <TableRow>
+                                        <TableCell></TableCell>
+                                        <TableCell>Código</TableCell>
+                                        <TableCell>Descripción</TableCell>
+                                        <TableCell>Grupo</TableCell>
+                                        <TableCell>Unidad</TableCell>
+                                        <TableCell>Estado</TableCell>
+                                        <TableCell></TableCell>
+                                      </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                      {
+                                        devices.map((item, subIndex) => {
+                                          const device = item.device;
+                                          const findDevice = selected.findIndex(e => e.device.deviceId == device.deviceId);
+                                          const isItemSelected = findDevice !== -1;
+
+                                          return (
+                                            <TableRow 
+                                              key={subIndex}
+                                              role="checkbox"
+                                              selected={isItemSelected}
+                                              aria-checked={isItemSelected}
+                                              >
+                                                <TableCell component="th" scope="row">
+                                                  <Checkbox
+                                                    checked={isItemSelected}
+                                                    onChange={(event) => handleClick(event, item)}
+                                                  />
+                                                </TableCell>
+                                                <TableCell>
+                                                  {device.deviceId}
+                                                </TableCell>
+                                                <TableCell>
+                                                  {device.descripcion}
+                                                </TableCell>
+                                                <TableCell>
+                                                  {device.grupo}
+                                                </TableCell>
+                                                <TableCell>
+                                                  {device.unidad_medida}
+                                                </TableCell>
+                                                <TableCell>
+                                                  {
+                                                    checkStatus(device, false) ? (
+                                                      <Label
+                                                      variant="ghost"
+                                                      color={'success'}
+                                                    >
+                                                      {sentenceCase("Estable")}
+                                                    </Label>
+                                                    ) : (
+                                                      <Label
+                                                      variant="ghost"
+                                                      color={'error'}
+                                                    >
+                                                      {sentenceCase("Peligro")}
+                                                    </Label>
+                                                    )
+                                                  }
+                                                </TableCell>
+                                                <TableCell align="right">
+                                                  <UserMoreMenu device={item} stats={statsData} type={'singular'}/>
+                                                </TableCell>
+                                              </TableRow>
+                                          )
+                                        })
+                                      }
+                                    </TableBody>
+                                  </Table>
+                                  </Collapse>
+                                </TableCell>
+                              </TableRow>
+                              </Fragment>
+                            );
+                          })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+                      {isUserNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <SearchNotFound searchQuery={filterName} />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                </Scrollbar>
+
+                <TablePagination
+                  rowsPerPageOptions={[1, 2, 3]}
+                  component="div"
+                  count={DEVICES.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </Card>
+            </Container>
+          </Page>
+        </>
+      )}
+    </div>
   );
 }
