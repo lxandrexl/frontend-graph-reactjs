@@ -41,7 +41,7 @@ export default function RegistrosTable({ registros, device }) {
                   {row.ts}
                 </TableCell>
                 <TableCell align="center">{device.device.descripcion}</TableCell>
-                <TableCell align="center">{device.device.unidadMedida}</TableCell>
+                <TableCell align="center">{device.device.unidad_medida}</TableCell>
                 <TableCell align="center">{row.jsonRegla.umbralMinimo.N}</TableCell>
                 <TableCell align="center">{row.jsonRegla.umbralMaximo.N}</TableCell>
                 <TableCell align="center">{row.valorMedido}</TableCell>
