@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 import infoFill from '@iconify/icons-eva/info-fill';
@@ -10,6 +10,7 @@ import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText, Link } from '@m
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/styles';
 import Stats from 'src/pages/devices/stats/Stats';
+import RegistrosTable from 'src/pages/devices/notifications/notifis';
 
 // ----------------------------------------------------------------------
 function getModalStyle() {
@@ -43,10 +44,17 @@ const useStyles = makeStyles((theme) => ({
 export default function UserMoreMenu(props) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [alerts, setAlerts] = useState(props.alerts);
   const type = props.type;
   const device = props.device;  
   const stats = props.stats;
-  // console.log('props option',props)
+  //const alerts = props.alerts;
+  console.log('ENTRO AL USERMORE', props)
+
+  useEffect(() => {
+    console.log('alerts effect', alerts)
+  }, [alerts]);
+  
   let statsList = [];
 
   if(type == 'singular') {
@@ -79,6 +87,7 @@ export default function UserMoreMenu(props) {
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = useState(getModalStyle);
   const [openModal, setOpenModal] = useState(false);
+  const [openAlertModal, setOpenAlertModal] = useState(false);
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -88,12 +97,30 @@ export default function UserMoreMenu(props) {
     setOpenModal(false);
   };
 
+  const handleOpenAlertModal = () => {
+    setOpenAlertModal(true);
+  };
+
+  const handleCloseAlertModal = () => {
+    setOpenAlertModal(false);
+  };
+
   const modalBody = (data) => (
     <div style={modalStyle} className={classes.paper}>
       <h2 id="simple-modal-title">{ type == 'plural' ? "Estadísticas" : "Estadística" }</h2>
       <br/>
       <span>
-        <Stats data={data}/>
+        <Stats data={data} />
+      </span>
+    </div>
+  );
+
+  const modalAlertBody = (data, item) => (
+    <div style={modalStyle} className={classes.paper}>
+      <h2 id="simple-modal-title">Notificaciones</h2>
+      <br/>
+      <span>
+        <RegistrosTable registros={data} device={item} />
       </span>
     </div>
   );
@@ -114,6 +141,21 @@ export default function UserMoreMenu(props) {
         {modalBody(statsList)}
       </Modal>
 
+
+      {
+        (type == 'singular') ?
+        (
+          <Modal
+            open={openAlertModal}
+            onClose={handleCloseAlertModal}
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+          >
+            {modalAlertBody(alerts, device)}
+          </Modal>
+        ) : null
+      }
+
       <Menu
         open={isOpen}
         anchorEl={ref.current}
@@ -124,6 +166,21 @@ export default function UserMoreMenu(props) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
+        {
+          (alerts.length > 0 && type == 'singular')  ?
+          (
+            <MenuItem sx={{ color: 'text.secondary' }}>
+              <ListItemIcon>
+                <Icon icon={infoFill} width={24} height={24} />
+              </ListItemIcon>
+              <ListItemText 
+                onClick={handleOpenAlertModal}
+                primary="Ver Notificaciones"
+                primaryTypographyProps={{ variant: 'body2' }} 
+              />
+            </MenuItem>
+          ) : null
+        }
         <MenuItem sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
             <Icon icon={infoFill} width={24} height={24} />

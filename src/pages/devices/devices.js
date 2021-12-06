@@ -128,7 +128,6 @@ export default function Devices() {
       const lastTime = '';
       const isLoaded = false;
       const { data } = await getAlertsData(getToken(), today, lastTime, isLoaded, DEVICES_ID);
-      console.log('ENTRO FRRRR')
       setAlertData(data);
       firstLoadAlert = false;
     }
@@ -138,7 +137,7 @@ export default function Devices() {
   }, [loading]);
 
   useEffect(() => {
-      console.log('==> useEffect alertdata', alertData)
+      //console.log('==> useEffect alertdata', alertData)
   }, [alertData]);
 
   if(!isNull(token)) { 
@@ -220,22 +219,6 @@ export default function Devices() {
   // Stats 
   useEffect(() => {
     //console.log('Data cargada (Stats) ->', statsData)
-    // console.log('Devices ->', DEVICES)
-    // DEVICES = DEVICES.map((item) => {
-    //   const devices = item.devices.map(({device}) => {
-    //     for(let stat of statsData) {
-    //       const deviceId = stat.imei + '#' + stat.a + '#' + stat.st + '#' + stat.fabrica;
-
-    //       if(device.deviceId == deviceId) {
-    //         // stat;
-    //       }
-    //     }
-    //   });
-
-    //   return {
-
-    //   }
-    // })
   }, [statsData]);
 
   const handleClick = (event, item) => {
@@ -302,10 +285,9 @@ export default function Devices() {
 
   const checkStatus = (data, isGroup) => {
     let status = true;
+    let notifications = [];
 
     if(isGroup) {
-      console.log('CEE', alertData)
-
       for(let alert of alertData) {
         const alertDeviceID = alert.deviceId;
 
@@ -313,6 +295,7 @@ export default function Devices() {
           const deviceId = item.device.deviceId;
 
           if(alertDeviceID === deviceId) {
+            notifications = alert.data;
             status = false;
             break;
           }
@@ -324,13 +307,15 @@ export default function Devices() {
         const alertDeviceID = alert.deviceId;
 
         if(alertDeviceID === data.deviceId) {
+          console.log('ENTRO', alert)
+          notifications = alert.data;
           status = false;
           break;
         }
       }
     }
 
-    return status;
+    return { status, notifications };
   }
 
   useEffect(() => {
@@ -341,18 +326,21 @@ export default function Devices() {
     }, timeIntervalPerMinute * 60000);
 
     return () => {
-      console.log("end timer")
       clearInterval(timer);
     }
   }, []);
 
   useEffect(async() => {
+    if(count == 30) {
+      setAlertData([]);
+      setCount(0);
+    }
+
     if(!firstLoadAlert) {
       const lastTime = today;
       today =  moment().tz('America/Lima').format('YYYY-MM-DD HH:mm:ss'); 
       const isLoaded = true;
       const { data } = await getAlertsData(getToken(),today,lastTime, isLoaded, DEVICES_ID);
-      console.log('INGRESO AL BUCLE PRRAAA', data)
       setAlertData([...alertData, ...data]);
       setLastTimeLoadedStats(getLastTimeFormat());
     }
@@ -434,6 +422,8 @@ export default function Devices() {
                             const index = (positionRow + 1) + (page * rowsPerPage);
                             const { imei, a, st, fabrica, grupo, devices } = row;
                             const deviceId = imei + '#' + a + '#' + st + '#' + fabrica;
+                            const alertGroup = checkStatus(row, true);
+
 
                             return (
                               <Fragment>
@@ -461,7 +451,7 @@ export default function Devices() {
                                 <TableCell align="left">{imei}</TableCell>
                                 <TableCell align="left">
                                   {
-                                    checkStatus(row, true) ? (
+                                    alertGroup.status ? (
                                       <Label
                                       variant="ghost"
                                       color={'success'}
@@ -480,7 +470,7 @@ export default function Devices() {
                                 </TableCell>
 
                                 <TableCell align="right">
-                                  <UserMoreMenu device={row} stats={statsData} type={'plural'}/>
+                                  <UserMoreMenu device={row} alerts={alertGroup.notifications} stats={statsData} type={'plural'}/>
                                 </TableCell>
                               </TableRow>
 
@@ -508,6 +498,7 @@ export default function Devices() {
                                           const device = item.device;
                                           const findDevice = selected.findIndex(e => e.device.deviceId == device.deviceId);
                                           const isItemSelected = findDevice !== -1;
+                                          const alertDevice = checkStatus(device, false);
 
                                           return (
                                             <TableRow 
@@ -536,7 +527,7 @@ export default function Devices() {
                                                 </TableCell>
                                                 <TableCell>
                                                   {
-                                                    checkStatus(device, false) ? (
+                                                    alertDevice.status ? (
                                                       <Label
                                                       variant="ghost"
                                                       color={'success'}
@@ -554,7 +545,7 @@ export default function Devices() {
                                                   }
                                                 </TableCell>
                                                 <TableCell align="right">
-                                                  <UserMoreMenu device={item} stats={statsData} type={'singular'}/>
+                                                  <UserMoreMenu device={item} alerts={alertDevice.notifications} stats={statsData} type={'singular'}/>
                                                 </TableCell>
                                               </TableRow>
                                           )
