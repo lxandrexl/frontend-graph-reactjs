@@ -10,7 +10,7 @@ import flechaArribaRoja from './up-red-arrow.png';
 import flechaAbajoRoja from './down-red-arrow.png';
 
 export default function RegistrosTable({ registros, device }) {
-  console.log('registros notif', device, registros)
+  // console.log('registros notif', device, registros)
 
   return (
     <TableContainer component={Paper}>

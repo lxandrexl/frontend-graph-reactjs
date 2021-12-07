@@ -44,16 +44,20 @@ const useStyles = makeStyles((theme) => ({
 export default function UserMoreMenu(props) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [alerts, setAlerts] = useState(props.alerts);
+  //const [alerts, setAlerts] = useState([]);
   const type = props.type;
   const device = props.device;  
   const stats = props.stats;
-  //const alerts = props.alerts;
-  console.log('ENTRO AL USERMORE', props)
+  const alerts = props.alerts;
+  //console.log('ENTRO AL USERMORE', alerts)
 
-  useEffect(() => {
-    console.log('alerts effect', alerts)
-  }, [alerts]);
+  // useEffect(() => {
+  //   setAlerts(alert);
+  // })
+
+  // useEffect(() => {
+  //   console.log('alerts effect', alerts)
+  // }, [alerts]);
   
   let statsList = [];
 

@@ -281,8 +281,6 @@ export default function Devices() {
     return status;
   }
 
-  // ALERTS SERVICE
-
   const checkStatus = (data, isGroup) => {
     let status = true;
     let notifications = [];
@@ -307,13 +305,14 @@ export default function Devices() {
         const alertDeviceID = alert.deviceId;
 
         if(alertDeviceID === data.deviceId) {
-          console.log('ENTRO', alert)
           notifications = alert.data;
           status = false;
           break;
         }
       }
+     // console.log('alert data =>',notifications)
     }
+    
 
     return { status, notifications };
   }
@@ -341,11 +340,48 @@ export default function Devices() {
       today =  moment().tz('America/Lima').format('YYYY-MM-DD HH:mm:ss'); 
       const isLoaded = true;
       const { data } = await getAlertsData(getToken(),today,lastTime, isLoaded, DEVICES_ID);
-      setAlertData([...alertData, ...data]);
+
+      for(let newData of data) {
+        let nDeviceId = newData.deviceId;
+        let nData = newData.data;
+        let nTs = newData.ts;
+        let status = newData.status;
+        // Variable que indica si se detecto una notificacion nueva de otro sensor fuera del array antiguo.
+        let findDeviceId = false;
+
+        for(const [index, oldData] of alertData.entries()) {
+          let oDeviceId = oldData.deviceId;
+          let oData = oldData.data;
+
+          if(nDeviceId == oDeviceId) {
+            let item = {
+              deviceId: nDeviceId,
+              ts: nTs,
+              status,
+              data: [...oData, ...nData]
+            }
+            alertData.splice(index, 1);
+            alertData.push(item)
+
+            findDeviceId = true;
+          }
+        }
+
+        if(!findDeviceId) {
+          alertData.push(newData);
+        }
+
+      }
+
+      setAlertData(alertData);
       setLastTimeLoadedStats(getLastTimeFormat());
     }
   }, [count])
 
+  // ALERTS SERVICE
+  useEffect(() => {
+    //console.log('alertData useEffect =>', alertData)
+  }, [alertData])
 
   return (
     <div style={{ width: '100%' }}>
