@@ -123,7 +123,8 @@ export default function Devices() {
   useEffect(async () => {
     if (!loading) return;
     const stats = await getStatsData(getAccessToken());
-    setStatsData(stats.data);
+    console.log(stats.data.payload)
+    setStatsData(stats.data.payload);
 
     if(firstLoadAlert) {
       const lastTime = '';
@@ -428,7 +429,7 @@ export default function Devices() {
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                 <Typography>
-                  Notificaciones actualizadas por ultima vez el { lastTimeLoadedStats }
+                  Notificaciones actualizadas por última vez el { lastTimeLoadedStats }
                 </Typography>
               </Stack>
 
