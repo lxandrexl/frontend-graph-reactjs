@@ -122,17 +122,17 @@ export default function Devices() {
   // Loading view
   useEffect(async () => {
     if (!loading) return;
-    //const { data } = await getStatsData(getAccessToken());
+    const stats = await getStatsData(getAccessToken());
+    setStatsData(stats.data);
 
     if(firstLoadAlert) {
       const lastTime = '';
       const isLoaded = false;
-      const { data } = await getAlertsData(getToken(), today, lastTime, isLoaded, DEVICES_ID);
-      setAlertData(data);
+      const alerts = await getAlertsData(getToken(), today, lastTime, isLoaded, DEVICES_ID);
+      setAlertData(alerts.data);
       firstLoadAlert = false;
     }
 
-    //setStatsData(data.payload);
     setLoading(false);
   }, [loading]);
 
