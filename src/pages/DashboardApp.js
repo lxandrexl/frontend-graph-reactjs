@@ -68,7 +68,7 @@ export default function DashboardApp() {
     <Page title="Dashboard | IoT Fabricas">
       <Container maxWidth="xl">
         <Box sx={{ pb: 5 }}>
-          <Typography variant="h4">Hola, bienvenido de nuevo.</Typography>
+          <Typography variant="h4">Gráficos</Typography>
         </Box>
         <Grid container spacing={3}>
         { devices.map((item, i) => 
