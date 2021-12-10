@@ -1,0 +1,53 @@
+.alert{
+    background: red;
+    box-sizing: border-box;
+    padding: 3px 0 3px 0;
+    color: #E8E1E0;
+}
+
+.umbral-info{
+    width: auto;
+    padding-right: 15px;
+    display: flex;
+    justify-self: center;
+    align-items: center;
+}
+
+.umbral-info:last-child{
+    padding-right: 0;
+}
+
+.umbral-info__value{
+    font-size: 20px;
+    padding-bottom: 5px;
+    text-align: center;
+}
+
+.umbral-info__detail{
+    font-size: 11px;
+    text-align: center;
+}
+
+.ppx{
+    padding: 20px 20px 20px 20px;
+    width: 48%;
+    min-width: 250px;
+    box-shadow: 0 0 0 1px #E6E6E6;
+    margin-bottom: 20px;
+}
+
+@media screen and (max-width: 960px) {
+    .pp{
+        padding: 20px 20px 20px 20px;
+        width: 100%;
+        min-width: 250px;
+        box-shadow: 0 0 0 1px #E6E6E6;
+    }
+}
+
+.loading{
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
