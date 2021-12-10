@@ -28,29 +28,31 @@ export default function RegistrosTable({ registros, device }) {
         </TableHead>
         <TableBody>
           {registros.map((row, index) => {
-            var flechaMostrar;
-            if (parseFloat(row.valorMedido) >= parseFloat(row.jsonRegla.umbralMaximo.N)) {
-              flechaMostrar = flechaArribaRoja;
-            } else {
-              flechaMostrar = flechaAbajoRoja;
-            }
+            if(row.direccionCambio != 'Aceptable') {
+              var flechaMostrar;
+              if (parseFloat(row.valorMedido) >= parseFloat(row.jsonRegla.umbralMaximo.N)) {
+                flechaMostrar = flechaArribaRoja;
+              } else {
+                flechaMostrar = flechaAbajoRoja;
+              }
 
-            return (
-              <TableRow>
-                <TableCell component="th" scope="row" align="center">
-                  {row.ts}
-                </TableCell>
-                <TableCell align="center">{device.device.descripcion}</TableCell>
-                <TableCell align="center">{device.device.unidad_medida}</TableCell>
-                <TableCell align="center">{row.jsonRegla.umbralMinimo.N}</TableCell>
-                <TableCell align="center">{row.jsonRegla.umbralMaximo.N}</TableCell>
-                <TableCell align="center">{row.valorMedido}</TableCell>
-                <TableCell align="center">
-                  <span class="stable">{row.direccionCambio}</span>
-                  <img src={flechaMostrar} alt="flecha" class="flecha" />
-                </TableCell>
-              </TableRow>
-            );
+              return (
+                <TableRow>
+                  <TableCell component="th" scope="row" align="center">
+                    {row.ts}
+                  </TableCell>
+                  <TableCell align="center">{device.device.descripcion}</TableCell>
+                  <TableCell align="center">{device.device.unidad_medida}</TableCell>
+                  <TableCell align="center">{row.jsonRegla.umbralMinimo.N}</TableCell>
+                  <TableCell align="center">{row.jsonRegla.umbralMaximo.N}</TableCell>
+                  <TableCell align="center">{row.valorMedido}</TableCell>
+                  <TableCell align="center">
+                    <span class="stable">{row.direccionCambio}</span>
+                    <img src={flechaMostrar} alt="flecha" class="flecha" />
+                  </TableCell>
+                </TableRow>
+              );
+            }
           })}
         </TableBody>
       </Table>

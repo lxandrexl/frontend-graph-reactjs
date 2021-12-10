@@ -123,7 +123,6 @@ export default function Devices() {
   useEffect(async () => {
     if (!loading) return;
     const stats = await getStatsData(getAccessToken());
-    console.log(stats.data.payload)
     setStatsData(stats.data.payload);
 
     if(firstLoadAlert) {
