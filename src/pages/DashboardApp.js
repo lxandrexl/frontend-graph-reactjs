@@ -8,6 +8,8 @@ import {
   AppWebsiteVisits,
 } from '../components/_dashboard/app';
 import * as moment from 'moment';
+import 'moment/locale/es';
+
 import { useNavigate } from 'react-router-dom';
 import { getCognitoUser, refreshCognitoToken } from '../services/auth.service';
 
@@ -29,8 +31,8 @@ function checkTokenExp(token, refreshToken) {
     let tokenDecoded = parseJwt(token);
     let time_exp = tokenDecoded.exp * 1000;
     let today = moment().valueOf();
-    console.log(today, time_exp, today > time_exp);
-    console.log(moment(today).format(), moment(time_exp).format())
+    // console.log(today, time_exp, today > time_exp);
+    // console.log(moment(today).format(), moment(time_exp).format())
 
     if(today >= time_exp) {
       console.info('El token ha expirado. ('+ token +')');
@@ -53,7 +55,6 @@ function checkTokenExp(token, refreshToken) {
 }
 
 export default function DashboardApp() {
-  const navigate = useNavigate();
   let devices;
   let token = getToken();
   let refreshToken = getRefreshToken();
@@ -64,10 +65,10 @@ export default function DashboardApp() {
   }
   
   return (
-    <Page title="Dashboard | Minimal-UI">
+    <Page title="Dashboard | IoT Fabricas">
       <Container maxWidth="xl">
         <Box sx={{ pb: 5 }}>
-          <Typography variant="h4">Hola, bienvenido de nuevo.</Typography>
+          <Typography variant="h4">Gráficos</Typography>
         </Box>
         <Grid container spacing={3}>
         { devices.map((item, i) => 
