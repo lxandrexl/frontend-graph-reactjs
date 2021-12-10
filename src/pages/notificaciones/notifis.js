@@ -56,18 +56,13 @@ export function RegistrosTable({ registros }) {
         </TableHead>
         <TableBody>
           {registros.map((row, index) => {
-            var flechaMostrar;
-            if (
-              parseFloat(row.valorMedido) < parseFloat(row.umbralMaximo) &&
-              parseFloat(row.valorMedido) > parseFloat(row.umbralMinimo)
-            ) {
+            var flechaMostrar;                        
+            if(parseFloat(row.valorMedido) >= parseFloat(row.umbralMaximo)){
+              flechaMostrar = flechaArribaRoja;
+            }else if(parseFloat(row.valorMedido) <= parseFloat(row.umbralMinimo)){
+              flechaMostrar = flechaAbajoRoja;
+            }else{
               flechaMostrar = iconVerde;
-            } else {
-              if (parseFloat(row.valorMedido) >= parseFloat(row.umbralMaximo)) {
-                flechaMostrar = flechaArribaRoja;
-              } else {
-                flechaMostrar = flechaAbajoRoja;
-              }
             }
 
             return (
