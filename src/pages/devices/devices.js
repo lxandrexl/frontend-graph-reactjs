@@ -124,14 +124,15 @@ export default function Devices() {
     if (!loading) return;
     const stats = await getStatsData(getAccessToken());
     setStatsData(stats.data.payload);
-
-    if(firstLoadAlert) {
+    
+    //if(firstLoadAlert) {
       const lastTime = '';
       const isLoaded = false;
       const alerts = await getAlertsData(getToken(), today, lastTime, isLoaded, DEVICES_ID);
+      console.log('TODAY', today, )
       setAlertData(alerts.data);
       firstLoadAlert = false;
-    }
+    //}
 
     setLoading(false);
   }, [loading]);
