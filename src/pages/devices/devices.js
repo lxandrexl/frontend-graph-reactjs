@@ -129,7 +129,7 @@ export default function Devices() {
       const lastTime = '';
       const isLoaded = false;
       const alerts = await getAlertsData(getToken(), today, lastTime, isLoaded, DEVICES_ID);
-      console.log('TODAY', today, )
+      // console.log('TODAY', today, )
       setAlertData(alerts.data);
       firstLoadAlert = false;
     //}
