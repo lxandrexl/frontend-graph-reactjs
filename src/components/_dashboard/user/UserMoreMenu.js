@@ -1,9 +1,11 @@
 import { Icon } from '@iconify/react';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import {stringify as QueryStringify} from 'query-string';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 import infoFill from '@iconify/icons-eva/info-fill';
 import barChart2Fill from '@iconify/icons-eva/bar-chart-2-fill';
+import downloadFill from '@iconify/icons-eva/download-fill';
 
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText, Link } from '@material-ui/core';
@@ -49,6 +51,14 @@ export default function UserMoreMenu(props) {
   const device = props.device;  
   const stats = props.stats;
   const alerts = props.alerts;
+  
+  const pickDeviceQuery = useMemo(() => {
+    return {
+        imei: device?.device?.imei,
+        a: device?.device?.a,
+        st: device?.device?.st
+    }
+  }, []);
   //console.log('ENTRO AL USERMORE', alerts)
 
   // useEffect(() => {
@@ -204,6 +214,17 @@ export default function UserMoreMenu(props) {
             style={{ fontSize: '0.875rem' }}
             color="inherit" underline="none" component={RouterLink}>
               {type == 'plural' ? "Ver gráficos" : "Ver gráfico"}
+          </Link>
+        </MenuItem>
+
+        <MenuItem sx={{ color: 'text.secondary' }}>
+          <ListItemIcon> <Icon icon={downloadFill} width={24} height={24} /> </ListItemIcon>
+          <Link 
+            to={`/dashboard/data?${QueryStringify(pickDeviceQuery)}`}
+            state={{device: device, type: type}}
+            style={{ fontSize: '0.875rem' }}
+            color="inherit" underline="none" component={RouterLink}>
+              Exportar datos
           </Link>
         </MenuItem>
       </Menu>
