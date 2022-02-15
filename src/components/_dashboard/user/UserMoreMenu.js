@@ -57,7 +57,10 @@ export default function UserMoreMenu(props) {
         imei: device?.device?.imei,
         a: device?.device?.a,
         st: device?.device?.st,
-        fabrica: device?.device?.fabrica
+        fabrica: device?.device?.fabrica,
+        grupo: device?.device?.grupo,
+        descripcion: device?.device?.descripcion,
+        unidad: device?.device?.unidad_medida
     }
   }, []);
   //console.log('ENTRO AL USERMORE', alerts)

@@ -148,7 +148,10 @@ export default function ExportPage(props) {
         a,
         st,
         imei,
-        fabrica
+        fabrica,
+        grupo,
+        unidad,
+        descripcion
     } = useMemo(() => QueryParse(location.search), []);
 
     const queryToSend = useMemo(() => (
@@ -209,11 +212,6 @@ export default function ExportPage(props) {
     //         next: 'id'
     //     }
     // }
-
-    const availableForSearch = useMemo(() => {
-        return (!fromDate && !toDate) || 
-        (fromDate && toDate && moment(fromDate).isBefore(moment(toDate)))
-    }, [fromDate, toDate]);
     
     async function fetchData(query){
         const {
@@ -304,150 +302,121 @@ export default function ExportPage(props) {
                                 setModalState(true)
                             }}
                             >
-                            Crear
+                            Crear reporte
                             </Button>
                         </Box>
-                        <Typography variant="subtitle2">Sensor: {`${imei}#${a}#${st}#${fabrica}`}</Typography>
-                    </Stack>
-                    <Stack spacing={2}>
-                        <Stack direction="row" spacing={3} alignItems="center" justifyContent="flex-end">
-                            <Stack spacing={1}>
-                                <Typography variant="subtitle2">Desde: </Typography>
-                                <LocalizationProvider dateAdapter={AdapterMoment}>
-                                    <DateTimePicker
-                                        renderInput={(props) => <TextField variant="outlined" {...props} />}
-                                        value={fromDate}
-                                        onChange={(newValue) => {
-                                            setFromDate(newValue);
-                                        }}
-                                    />
-                                </LocalizationProvider>
+                        <Stack spacing={1}>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography variant="subtitle2">Codigo:</Typography>
+                                <Typography variant="caption">{`${imei}#${a}#${st}#${fabrica}`}</Typography>
                             </Stack>
-                            <Stack spacing={1}>
-                                <Typography variant="subtitle2">Hasta: </Typography>
-                                <LocalizationProvider dateAdapter={AdapterMoment}>
-                                    <DateTimePicker
-                                        renderInput={(props) => <TextField variant="outlined" {...props} />}
-                                        value={toDate}
-                                        onChange={(newValue) => {
-                                            setToDate(newValue);
-                                        }}
-                                    />
-                                </LocalizationProvider>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography variant="subtitle2">Descripcion:</Typography>
+                                <Typography variant="caption">{descripcion}</Typography>
+                            </Stack>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography variant="subtitle2">Grupo:</Typography>
+                                <Typography variant="caption">{grupo}</Typography>
+                            </Stack>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography variant="subtitle2">Unidad:</Typography>
+                                <Typography variant="caption">{unidad}</Typography>
                             </Stack>
                         </Stack>
-                        <Stack direction="row" spacing={2} justifyContent="flex-end">
-                            <Box>
-                                <Button 
-                                    color="secondary"
-                                    variant="outlined"
-                                    onClick={() => {
-                                        setFromDate(null);
-                                        setToDate(null);
-                                    }}
-                                >Limpiar</Button>
-                            </Box>
-                            <Box>
-                                <Button 
-                                    disabled={!availableForSearch}
-                                    color="secondary"
-                                    variant="outlined"
-                                    startIcon={<SearchIcon />}
-                                    onClick={readyForSearch}
-                                >Buscar</Button>
-                            </Box>
-                        </Stack>
                     </Stack>
-                    <InfiniteScroll
-                        dataLength={items.length}
-                        next={readyForNextIteration}
-                        hasMore={!!nextKey}
-                        scrollableTarget={window}
-                        scrollThreshold={.9}
-                    >
-                    <TableContainer sx={{
-                        position: 'relative'
-                    }}>
-                         <Backdrop
-                            sx={{ 
-                                background: alpha('#FFF', 0.85), 
-                                zIndex: (theme) => theme.zIndex.drawer + 1,
-                                position: 'absolute',
-                            }}
-                            open={loading}
-                            >
-                            <CircularProgress color="inherit" />
-                        </Backdrop>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                            <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Box 
-                                    onClick={changeOrder}
-                                    sx={{
-                                        cursor: 'pointer',
-                                    }}>
-                                        <Stack
-                                            direction="row"
-                                            spacing={1}
-                                            alignItems="center"
+                    <Stack spacing={1}>
+                        <Typography variant="subtitle1">Historial de reportes</Typography>
+                        <InfiniteScroll
+                            dataLength={items.length}
+                            next={readyForNextIteration}
+                            hasMore={!!nextKey}
+                            scrollableTarget={window}
+                            scrollThreshold={.9}
+                        >
+                        <TableContainer sx={{
+                            position: 'relative'
+                        }}>
+                            <Backdrop
+                                sx={{ 
+                                    background: alpha('#FFF', 0.85), 
+                                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                                    position: 'absolute',
+                                }}
+                                open={loading}
+                                >
+                                <CircularProgress color="inherit" />
+                            </Backdrop>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                <TableHead>
+                                <TableRow>
+                                    <TableCell>
+                                        <Box 
+                                        onClick={changeOrder}
+                                        sx={{
+                                            cursor: 'pointer',
+                                        }}>
+                                            <Stack
+                                                direction="row"
+                                                spacing={1}
+                                                alignItems="center"
+                                            >
+                                                <Box>Fecha de creacion</Box>
+                                                {
+                                                    order === 'desc' ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />
+                                                }
+                                            </Stack>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>Intervalo</TableCell>
+                                    <TableCell>Estado</TableCell>
+                                    <TableCell></TableCell>
+                                </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {items.map((row, i) => (
+                                        <TableRow
+                                            key={i}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
-                                            <Box>Fecha de creacion</Box>
+                                        <TableCell component="th" scope="row">
+                                            {row.creationTime}
+                                        </TableCell>
+                                        <TableCell>
+                                            <Stack direction="row" alignItems="center" spacing={1}>
+                                                <div>{row.intervalStart}</div>
+                                                <Box sx={{fontSize: (theme) => theme.typography.h4.fontSize}}>&rarr;</Box>
+                                                <div>{row.invervalEnd}</div>
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Label
+                                                variant="ghost"
+                                                color={row.status === 'progreso' ? 'warning' : 'success'}
+                                            >{row.status === 'progreso' ? 'En Progreso' : 'Finalizado'}</Label>
+                                        </TableCell>
+                                        <TableCell>
                                             {
-                                                order === 'desc' ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />
+                                                row.url ? (
+                                                    <a target="_blank" href={row.url}>
+                                                        <Box 
+                                                            sx={{
+                                                            textDecoration: 'underline',
+                                                            color: 'secondary.main',
+                                                            cursor: 'pointer'
+                                                        }}>
+                                                        Descargar
+                                                        </Box>
+                                                    </a>
+                                                ) : null
                                             }
-                                        </Stack>
-                                    </Box>
-                                </TableCell>
-                                <TableCell>Intervalo</TableCell>
-                                <TableCell>Estado</TableCell>
-                                <TableCell></TableCell>
-                            </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {items.map((row, i) => (
-                                    <TableRow
-                                        key={i}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                    <TableCell component="th" scope="row">
-                                        {row.creationTime}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Stack direction="row" alignItems="center" spacing={1}>
-                                            <div>{row.intervalStart}</div>
-                                            <Box sx={{fontSize: (theme) => theme.typography.h4.fontSize}}>&rarr;</Box>
-                                            <div>{row.invervalEnd}</div>
-                                        </Stack>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Label
-                                            variant="ghost"
-                                            color={row.status === 'progreso' ? 'warning' : 'success'}
-                                        >{row.status === 'progreso' ? 'En Progreso' : 'Finalizado'}</Label>
-                                    </TableCell>
-                                    <TableCell>
-                                        {
-                                            row.url ? (
-                                                <a target="_blank" href={row.url}>
-                                                    <Box 
-                                                        sx={{
-                                                        textDecoration: 'underline',
-                                                        color: 'secondary.main',
-                                                        cursor: 'pointer'
-                                                    }}>
-                                                    Descargar
-                                                    </Box>
-                                                </a>
-                                            ) : null
-                                        }
-                                    </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                        </TableContainer>
-                        </InfiniteScroll>
+                                        </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                            </TableContainer>
+                            </InfiniteScroll>
+                        </Stack>
                 </Stack>
             </Box>
         </>
