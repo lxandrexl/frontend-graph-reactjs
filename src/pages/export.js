@@ -428,7 +428,7 @@ export default function ExportPage(props) {
                                     </TableCell>
                                     <TableCell>
                                         {
-                                            row.urlArchivo ? (
+                                            row.url ? (
                                                 <a target="_blank" href={row.url}>
                                                     <Box 
                                                         sx={{
