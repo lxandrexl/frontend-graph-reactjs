@@ -56,7 +56,8 @@ export default function UserMoreMenu(props) {
     return {
         imei: device?.device?.imei,
         a: device?.device?.a,
-        st: device?.device?.st
+        st: device?.device?.st,
+        fabrica: device?.device?.fabrica
     }
   }, []);
   //console.log('ENTRO AL USERMORE', alerts)
@@ -217,16 +218,20 @@ export default function UserMoreMenu(props) {
           </Link>
         </MenuItem>
 
-        <MenuItem sx={{ color: 'text.secondary' }}>
-          <ListItemIcon> <Icon icon={downloadFill} width={24} height={24} /> </ListItemIcon>
-          <Link 
-            to={`/dashboard/data?${QueryStringify(pickDeviceQuery)}`}
-            state={{device: device, type: type}}
-            style={{ fontSize: '0.875rem' }}
-            color="inherit" underline="none" component={RouterLink}>
-              Exportar datos
-          </Link>
-        </MenuItem>
+        {
+          type === 'singular' ? (
+            <MenuItem sx={{ color: 'text.secondary' }}>
+              <ListItemIcon> <Icon icon={downloadFill} width={24} height={24} /> </ListItemIcon>
+              <Link 
+                to={`/dashboard/data?${QueryStringify(pickDeviceQuery)}`}
+                state={{device: device, type: type}}
+                style={{ fontSize: '0.875rem' }}
+                color="inherit" underline="none" component={RouterLink}>
+                  Exportar datos
+              </Link>
+            </MenuItem>
+          ) : null
+        }
       </Menu>
     </>
   );

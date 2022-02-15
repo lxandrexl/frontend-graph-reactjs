@@ -13,6 +13,7 @@ import Stats from './pages/stats/Stats';
 import Notifi from './pages/notificaciones/notifis';
 import Devices from './pages/devices/devices'
 import GraphicDevice  from './pages/devices/graphics/graphic'
+import ExportPage from './pages/export'
 
 // ----------------------------------------------------------------------
 
@@ -47,7 +48,8 @@ export default function Router() {
     { path: 'stats', element: <Stats /> },
     { path: 'notificaciones', element: <Notifi /> },
     { path: 'dispositivos', element: <Devices /> },
-    { path: 'graphic', element: <GraphicDevice /> }
+    { path: 'graphic', element: <GraphicDevice /> },
+    { path: 'data', element: <ExportPage/> },
   ];
 
   let routes = routesDefault;
