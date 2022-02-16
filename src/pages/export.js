@@ -23,6 +23,7 @@ import moment from 'moment';
 import Label from '../components/Label';
 import { Link as RouterLink } from 'react-router-dom';
 import AddIcon from '@material-ui/icons/Add';
+import ReplayIcon from '@material-ui/icons/Replay';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import DateTimePicker from '@material-ui/lab/DateTimePicker';
 import LoadingButton from '@material-ui/lab/LoadingButton';
@@ -266,7 +267,7 @@ export default function ExportPage(props) {
 
     return (
         <>
-            <Box sx={{width: '100%'}}>
+            <Box sx={{width: '100%', px: 2}}>
                 <Modal
                     open={modalState}
                     onClose={() => {
@@ -325,7 +326,16 @@ export default function ExportPage(props) {
                         </Stack>
                     </Stack>
                     <Stack spacing={1}>
-                        <Typography variant="subtitle1">Historial de reportes</Typography>
+                        <Stack spacing={1} direction="row" alignItems="center">
+                            <Typography variant="subtitle1">Historial de reportes</Typography>
+                            <ReplayIcon
+                                fontSize="small"
+                                onClick={readyForSearch}
+                                sx={{
+                                    cursor: 'pointer'
+                                }}
+                            />
+                        </Stack>
                         <InfiniteScroll
                             dataLength={items.length}
                             next={readyForNextIteration}
