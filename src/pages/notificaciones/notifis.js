@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { baseUrl } from '../../services/constants';
-import { getAccessToken } from '../../services/tokens';
+import { getAccessToken, getToken } from '../../services/tokens';
 import Table from '@material-ui/core/Table';
 import Button from '@material-ui/core/Button';
 import TableBody from '@material-ui/core/TableBody';
@@ -24,7 +24,7 @@ import { getUserInfo } from 'src/services/tokens';
  * Service API
  */
 async function getData() {
-  const token = getAccessToken();
+  const token = getToken();
   const user = getUserInfo();
   return await axios.post(
     `${baseUrl}/dashboard/pushnotifications`,

@@ -8,7 +8,7 @@ import { BaseOptionChart } from '../../charts';
 
 import * as moment from 'moment';
 import {getDeviceData} from 'src/services/device.service';
-import { getToken } from 'src/services/tokens';
+import { getToken, getAccessToken } from 'src/services/tokens';
 import { timeIntervalPerMinute } from 'src/services/constants'
 // ----------------------------------------------------------------------
 moment.locale('es');
@@ -48,7 +48,7 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
     console.log(count)
     console.log("lastTS", lastTS);
     
-    let response = await getDeviceData(getToken(), lastTS, timeInterval, device.deviceId);
+    let response = await getDeviceData(getAccessToken(), lastTS, timeInterval, device.deviceId);
 
     if(response.data.length > 0) {
       const deviceData = response.data[0].data;

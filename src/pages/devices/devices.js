@@ -122,13 +122,13 @@ export default function Devices() {
   // Loading view
   useEffect(async () => {
     if (!loading) return;
-    const stats = await getStatsData(getAccessToken());
+    const stats = await getStatsData(getToken());
     setStatsData(stats.data.payload);
     
     //if(firstLoadAlert) {
       const lastTime = '';
       const isLoaded = false;
-      const alerts = await getAlertsData(getToken(), today, lastTime, isLoaded, DEVICES_ID);
+      const alerts = await getAlertsData(getAccessToken(), today, lastTime, isLoaded, DEVICES_ID);
       // console.log('TODAY', today, )
       setAlertData(alerts.data);
       firstLoadAlert = false;
@@ -340,7 +340,7 @@ export default function Devices() {
       const lastTime = today;
       today =  moment().tz('America/Lima').format('YYYY-MM-DD HH:mm:ss'); 
       const isLoaded = true;
-      const { data } = await getAlertsData(getToken(),today,lastTime, isLoaded, DEVICES_ID);
+      const { data } = await getAlertsData(getAccessToken(),today,lastTime, isLoaded, DEVICES_ID);
 
       for(let newData of data) {
         let nDeviceId = newData.deviceId;

@@ -47,8 +47,8 @@ export default function LoginForm() {
 
         console.log('respuesta del svr',response)
         if(!!response.accessToken) {
-          setToken(response.idToken);
-          setAccessToken(response.accessToken);
+          setToken(response.accessToken);
+          setAccessToken(response.idToken);
           setRefreshToken(response.refreshToken)
           localStorage.setItem('user-info', JSON.stringify(response.payload))
           await getDevices(response.accessToken);

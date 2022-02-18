@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { baseUrl } from './constants';
-import { getAccessToken } from './tokens';
+import { getToken } from './tokens';
 
 export async function getTickets(query){
-    const token = getAccessToken();
+    const token = getToken();
     return axios.get(
       `${baseUrl}/tickets?${query}`,
       {
@@ -15,7 +15,7 @@ export async function getTickets(query){
 }
 
 export async function createTickets(query){
-  const token = getAccessToken();
+  const token = getToken();
   const {
     a,
     st,
