@@ -84,7 +84,7 @@ function NewReport(props){
             p: 4,
         }}>
             <Stack spacing={2}>
-                <Typography variant="h4">Nueva extraccion</Typography>
+                <Typography variant="h4">Nueva extracci&oacute;n</Typography>
                 <Stack spacing={1}>
                     <Stack direction="row" spacing={3} alignItems="center" justifyContent="flex-end">
                         <Stack spacing={1}>
@@ -165,7 +165,7 @@ export default function ExportPage(props) {
             toDate: toDate?.format('YYYY-MM-DD HH:mm:ss'),
             order,
             $next: nextKey,
-            $limit: 30
+            $limit: 20
         }, {
             skipNull: true
         })
@@ -199,20 +199,6 @@ export default function ExportPage(props) {
         });
         setLoading(false);
     }, [nextIteration]);
-
-    // async function fetchData(query){
-    //     const data = new Array(20).fill({
-    //         creationTime: '2022-01-01 22:00:00',
-    //         intervalStart: '2022-01-02 15:00:00',
-    //         invervalEnd: '2022-01-02 17:00:00',
-    //         status: 'progreso',
-    //         url: '/aaa'
-    //     });
-    //     return {
-    //         data,
-    //         next: 'id'
-    //     }
-    // }
     
     async function fetchData(query){
         const {
@@ -308,11 +294,11 @@ export default function ExportPage(props) {
                         </Box>
                         <Stack spacing={1}>
                             <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Codigo:</Typography>
+                                <Typography variant="subtitle2">C&oacute;digo:</Typography>
                                 <Typography variant="caption">{`${imei}#${a}#${st}#${fabrica}`}</Typography>
                             </Stack>
                             <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Descripcion:</Typography>
+                                <Typography variant="subtitle2">Descripci&oacute;n:</Typography>
                                 <Typography variant="caption">{descripcion}</Typography>
                             </Stack>
                             <Stack direction="row" spacing={1} alignItems="center">
