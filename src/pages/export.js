@@ -370,7 +370,7 @@ export default function ExportPage(props) {
                                                 spacing={1}
                                                 alignItems="center"
                                             >
-                                                <Box>Fecha de creacion</Box>
+                                                <Box>Fecha de creaci&oacute;n</Box>
                                                 {
                                                     order === 'desc' ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />
                                                 }
