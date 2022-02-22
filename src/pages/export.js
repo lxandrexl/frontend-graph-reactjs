@@ -26,6 +26,7 @@ import AddIcon from '@material-ui/icons/Add';
 import ReplayIcon from '@material-ui/icons/Replay';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import DateTimePicker from '@material-ui/lab/DateTimePicker';
+import MobileDateTimePicker from '@material-ui/lab/MobileDateTimePicker';
 import LoadingButton from '@material-ui/lab/LoadingButton';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import AdapterMoment from '@material-ui/lab/AdapterMoment';
@@ -78,7 +79,10 @@ function NewReport(props){
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 500,
+            width: {
+                xs: 320,
+                sm: 600
+            },
             bgcolor: 'background.paper',
             boxShadow: 2,
             p: 4,
@@ -86,28 +90,47 @@ function NewReport(props){
             <Stack spacing={2}>
                 <Typography variant="h4">Nueva extracci&oacute;n</Typography>
                 <Stack spacing={1}>
-                    <Stack direction="row" spacing={3} alignItems="center" justifyContent="flex-end">
-                        <Stack spacing={1}>
+                    <Stack direction={{
+                        xs: 'column',
+                        sm: 'row'
+                    }} spacing={3} alignItems="center" justifyContent="start">
+                        <Stack spacing={1} sx={{
+                            flex: 1
+                        }}>
                             <Typography variant="subtitle2">Desde: </Typography>
                             <LocalizationProvider dateAdapter={AdapterMoment}>
-                                <DateTimePicker
-                                    renderInput={(props) => <TextField variant="outlined" {...props} />}
+                                <MobileDateTimePicker
+                                    renderInput={(props) => <TextField placeholder='Seleccionar fecha' variant="outlined" {...props} />}
                                     value={fromDate}
                                     onChange={(newValue) => {
                                         setFromDate(newValue);
                                     }}
+                                    inputFormat={'YYYY-MM-DD HH:mm:ss'}
+                                    views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
+                                    cancelText='Cancelar'
+                                    okText='Aceptar'
+                                    toolbarTitle='Seleccionar fecha'
+                                    toolbarFormat='HH:mm:ss'
                                 />
                             </LocalizationProvider>
                         </Stack>
-                        <Stack spacing={1}>
+                        <Stack spacing={1} sx={{
+                            flex: 1
+                        }}>
                             <Typography variant="subtitle2">Hasta: </Typography>
                             <LocalizationProvider dateAdapter={AdapterMoment}>
-                                <DateTimePicker
-                                    renderInput={(props) => <TextField variant="outlined" {...props} />}
+                                <MobileDateTimePicker
+                                    renderInput={(props) => <TextField placeholder='Seleccionar fecha' variant="outlined" {...props} />}
                                     value={toDate}
                                     onChange={(newValue) => {
                                         setToDate(newValue);
                                     }}
+                                    inputFormat={'YYYY-MM-DD HH:mm:ss'}
+                                    views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']}
+                                    cancelText='Cancelar'
+                                    okText='Aceptar'
+                                    toolbarTitle='Seleccionar fecha'
+                                    toolbarFormat='HH:mm:ss'
                                 />
                             </LocalizationProvider>
                         </Stack>
