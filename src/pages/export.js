@@ -188,7 +188,7 @@ export default function ExportPage(props) {
             toDate: toDate?.format('YYYY-MM-DD HH:mm:ss'),
             order,
             $next: nextKey,
-            $limit: 20
+            $limit: 25
         }, {
             skipNull: true
         })
@@ -230,7 +230,7 @@ export default function ExportPage(props) {
                 payload
             }
         } = await getTickets(query);
-        const nn = links.filter((element) => 'next' in element)[0]?.href;
+        const nn = links.filter((element) => 'next' in element)[0]?.next?.href;
         const next = nn ? QueryParse(nn).$next : null;
         return {
             data: payload.map((element) => ({
