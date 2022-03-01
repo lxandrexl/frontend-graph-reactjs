@@ -6,6 +6,7 @@ import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
 import infoFill from '@iconify/icons-eva/info-fill';
 import barChart2Fill from '@iconify/icons-eva/bar-chart-2-fill';
 import downloadFill from '@iconify/icons-eva/download-fill';
+import settings2Fill from '@iconify/icons-eva/settings-2-fill';
 
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText, Link } from '@material-ui/core';
@@ -231,6 +232,21 @@ export default function UserMoreMenu(props) {
                 style={{ fontSize: '0.875rem' }}
                 color="inherit" underline="none" component={RouterLink}>
                   Exportar datos
+              </Link>
+            </MenuItem>
+          ) : null
+        }
+
+        {
+          type === 'singular' ? (
+            <MenuItem sx={{ color: 'text.secondary' }}>
+              <ListItemIcon> <Icon icon={settings2Fill} width={24} height={24} /> </ListItemIcon>
+              <Link 
+                to={`/dashboard/threshold?${QueryStringify(pickDeviceQuery)}`}
+                state={{device: device, type: type}}
+                style={{ fontSize: '0.875rem' }}
+                color="inherit" underline="none" component={RouterLink}>
+                  Configurar Umbral
               </Link>
             </MenuItem>
           ) : null

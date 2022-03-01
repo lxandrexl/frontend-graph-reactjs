@@ -14,6 +14,7 @@ import Notifi from './pages/notificaciones/notifis';
 import Devices from './pages/devices/devices'
 import GraphicDevice  from './pages/devices/graphics/graphic'
 import ExportPage from './pages/export'
+import ThresholdPage from './pages/threshold'
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +51,7 @@ export default function Router() {
     { path: 'dispositivos', element: <Devices /> },
     { path: 'graphic', element: <GraphicDevice /> },
     { path: 'data', element: <ExportPage/> },
+    { path: 'threshold', element: <ThresholdPage/> },
   ];
 
   let routes = routesDefault;
