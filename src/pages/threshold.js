@@ -10,37 +10,49 @@ import {
     alpha,
     Switch,
     Snackbar,
-    Alert
+    Alert,
+    Drawer
 } from '@material-ui/core';
 import LoadingButton from '@material-ui/lab/LoadingButton';
 import SaveIcon from '@material-ui/icons/Save';
+import InfoIcon from '@material-ui/icons/Info';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {SearchStyle} from '../components/_dashboard/user/UserListToolbar'
 import {getThreshold, saveThreshold} from '../services/threshold.service';
 import { useForm, Controller } from "react-hook-form";
 import * as yup from 'yup';
 
+function capitalize(word) {
+    const lower = word.toLowerCase();
+    return word.charAt(0).toUpperCase() + lower.slice(1);
+}
+
 function FormInput(props){
 
     const {
         label,
-        orientation = 'row',
+        orientation = 'column',
         component,
-        align = 'center'
+        align = 'start',
+        enableInfo = true,
+        onClick
     } = props;
 
     return (
-        <Stack direction={orientation} alignItems={align}>
+        <Stack spacing={2} direction={orientation} alignItems={align}>
             <Box sx={{
-                width: {
-                    xs: 120,
-                    sm: 170
-                },
+                paddingRight: 5,
+                boxSizing: 'border-box',
                 overflowWrap: 'break-word'
             }}>
-                <Typography sx={{
-                    overflowWrap: 'break-word'
-                }} align="left" variant="body2">{label}</Typography>
+                <Stack direction='row' spacing={1}>
+                    {
+                       enableInfo ? <InfoIcon sx={{cursor: 'pointer'}} onClick={onClick} /> : null
+                    }
+                    <Typography sx={{
+                        overflowWrap: 'break-word'
+                    }} align="left" variant="body2">{label}</Typography>
+                </Stack>
             </Box>
             {component}
         </Stack>
@@ -51,16 +63,110 @@ function FormInput(props){
 const schema = yup
     .object()
     .shape({
-        umbralMinimo: yup.number().moreThan(-1).required(),
-        umbralMaximo: yup.number().moreThan(-1).required(),
-        tiempoUmbralMinimo: yup.number().moreThan(-1).required(),
-        tiempoUmbralMaximo: yup.number().moreThan(-1).required(),
-        frecuenciaNotificacionesUmbralMinimo: yup.number().moreThan(-1).required(),
-        frecuenciaNotificacionesUmbralMaximo: yup.number().moreThan(-1).required(),
-        cantidadMaximaNotificaciones: yup.number().moreThan(-1).required(),
+        umbralMinimo: yup.number().typeError('Solo valores numericos').required(),
+        umbralMaximo: yup.number().typeError('Solo valores numericos').required(),
+        tiempoUmbralMinimo: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
+        tiempoUmbralMaximo: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
+        frecuenciaNotificacionesUmbralMinimo: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
+        frecuenciaNotificacionesUmbralMaximo: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
+        cantidadMaximaNotificaciones: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
         activoUmbralMinimo: yup.boolean().required(),
         activoUmbralMaximo: yup.boolean().required()
     }).required();
+
+const UmbralInfo = () => {
+    return (
+        <>
+            <Typography variant="h4">Umbrales</Typography>
+            <Typography variant="body1">
+                Para poder detectar algun suceso importante en los dispositivos se hace uso de los <b>Umbrales</b>,
+                esto va a permitir poder limitar un rango de valores que pueden ser considerados de alerta.
+            </Typography>
+            <Stack spacing={.5}>
+                <Typography variant="subtitle1">Umbral minimo</Typography>
+                <Typography variant="body2">
+                    Es un valor mínimo del sensor que define un límite que inicia un seguimiento a los valores del sensor que notificará al usuario. 
+                </Typography>
+            </Stack>
+            <Stack spacing={.5}>
+                <Typography variant="subtitle1">Umbral maximo</Typography>
+                <Typography variant="body2">
+                    Es un valor maximo del sensor que define un límite que inicia un seguimiento a los valores del sensor que notificará al usuario. 
+                </Typography>
+            </Stack>
+        </>
+    );
+}
+
+const TimeInfo = () => {
+    return (
+        <>
+            <Typography variant="h4">Tiempo</Typography>
+            <Typography variant="body1">
+                Para la activacion de un umbral y su posterior notificacion es necesario configurar el <b>tiempo</b>,
+                este valor va a permitir que cuando se detecte que el umbral ha pasado su maximo o minimo segun sea el caso
+                pase a un estado de <b>observacion</b> permitiendo que los segundos configurados en <b>frecuencia</b> se tome en cuenta.
+            </Typography>
+            <Stack spacing={.5}>
+                <Typography variant="subtitle1">Tiempo umbral minimo</Typography>
+                <Typography variant="body2">
+                    La cantidad de segundos en el cual el valor del sensor debe estar por debajo del umbral minimo.
+                </Typography>
+            </Stack>
+            <Stack spacing={.5}>
+                <Typography variant="subtitle1">Tiempo umbral maximo</Typography>
+                <Typography variant="body2">
+                    La cantidad de segundos en el cual el valor del sensor debe estar por debajo del umbral maximo.
+                </Typography>
+            </Stack>
+        </>
+    );
+}
+
+const FrequencyInfo = () => {
+    return (
+        <>
+            <Typography variant="h4">Frecuencia</Typography>
+            <Typography variant="body1">
+                Cuando el valor del sensor ha pasado los umbrales definidos y asi mismo con el tiempo establecido, entra en accion la <b>frecuencia</b> en la cual va a permitir el envio de notificaciones en el intervalo configurado.  
+            </Typography>
+            <Stack spacing={.5}>
+                <Typography variant="subtitle1">Frecuencia umbral minimo</Typography>
+                <Typography variant="body2">
+                    La cantidad de segundos en el cual se enviara notificaciones para la configuracion del umbral minimo.
+                </Typography>
+            </Stack>
+            <Stack spacing={.5}>
+                <Typography variant="subtitle1">Frecuencia umbral maximo</Typography>
+                <Typography variant="body2">
+                    La cantidad de segundos en el cual se enviara notificaciones para la configuracion del umbral maximo.
+                </Typography>
+            </Stack>
+        </>
+    );
+}
+
+const MaxNotificationsInfo = () => {
+    return (
+        <>
+            <Typography variant="h4">Cantidad de notificaciones</Typography>
+            <Typography variant="body1">
+                Esta configuracion va a permitir que cuando el valor del sensor haya superado el umbral minimo o maximo y este dentro del rango establecido
+                de tiempo y frecuencia, se limite el numero de notificaciones a enviar.
+            </Typography>
+            <Stack spacing={.5}>
+                <Typography variant="subtitle1">Ejemplo</Typography>
+                <Typography variant="body2">
+                    Tenemos un sensor de temperatura cuyo umbral maximo es: 30 grados celsius, el tiempo es: 30 segundos y la frecuencia: 10 segundos,
+                    durante un periodo de tiempo el sensor envia 35 grados celsius por mas de 30 segundos y con una frecuencia de 10 segundos y esto se prolonga
+                    por alrededor de 5 minutos, con esta configuracion podremos limitar la cantidad de notificaciones para que no se tenga un conjunto de mensajes
+                    repetidos, para este ejemplo se configuro con el valor de 5, es decir que dentro de esos 5 minutos que tenemos con el valor del sensor superando
+                    el maximo del umbral configurado tendriamos como maximo 5 notificaciones.
+                </Typography>
+            </Stack>
+        </>
+    );
+}
 
 export default function ThresholdPage(props) {
     const location = useLocation();
@@ -68,6 +174,8 @@ export default function ThresholdPage(props) {
     const [loadingSave, setLoadingSave] = useState(false);
     const [snackBar, setSnackBar] = useState(false);
     const [snackBarStatus, setSnackBarStatus] = useState('success');
+    const [infoTrigger, setInfoTrigger] = useState(false);
+    const [infoKind, setInfoKind] = useState('umbral');
     const {
         a,
         st,
@@ -189,6 +297,39 @@ export default function ThresholdPage(props) {
                     }
                 </Alert>
             </Snackbar>
+            <Drawer
+                anchor={'right'}
+                open={infoTrigger}
+                onClose={() => {
+                    setInfoTrigger(false);
+                }}
+            >
+                <Stack
+                    spacing={2}
+                    sx={{
+                        p: 4,
+                        width: {
+                            xs: 300,
+                            sm: 400
+                        }
+                    }}
+                >
+                    {
+                        (() => {
+                            switch(infoKind){
+                                case 'umbral':
+                                    return (<UmbralInfo/>);
+                                case 'time':
+                                    return (<TimeInfo/>);
+                                case 'frequency':
+                                    return (<FrequencyInfo/>);
+                                case 'maxnotis':
+                                    return (<MaxNotificationsInfo/>);
+                            }
+                        })()
+                    }
+                </Stack>
+            </Drawer>
             <Box sx={{width: '100%', px: 2}}>
                 <Stack spacing={4}>
                     <Stack spacing={1}>
@@ -258,13 +399,14 @@ export default function ThresholdPage(props) {
                             </Backdrop>
                             <Stack spacing={3}>
                                 <Typography variant="h6">Configuracion</Typography>
-                                <Stack spacing={3}>
+                                <Stack spacing={4}>
                                     <FormInput
                                         label='Activar'
+                                        enableInfo={false}
                                         component={
-                                            <Stack direction='row' spacing={7}>
-                                                <Stack direction='column'>
-                                                    <Typography variant="caption">Minimo</Typography>
+                                            <Stack direction='row' spacing={5}>
+                                                <Stack direction='column' spacing={1}>
+                                                    <Typography variant="caption">Umbral Minimo</Typography>
                                                     <Controller
                                                         name="activoUmbralMinimo"
                                                         control={control}
@@ -276,8 +418,8 @@ export default function ThresholdPage(props) {
                                                         )}
                                                     />
                                                 </Stack>
-                                                <Stack direction='column'>
-                                                    <Typography variant="caption">Maximo</Typography>
+                                                <Stack direction='column' spacing={1}>
+                                                    <Typography variant="caption">Umbral Maximo</Typography>
                                                     <Controller
                                                         name="activoUmbralMaximo"
                                                         control={control}
@@ -289,11 +431,15 @@ export default function ThresholdPage(props) {
                                         }
                                     ></FormInput>
                                     <FormInput
-                                        label='Umbral'
+                                        label={`Umbral (${capitalize(unidad)})`}
+                                        onClick={() => {
+                                            setInfoTrigger(true);
+                                            setInfoKind('umbral');
+                                        }}
                                         component={
-                                            <Stack direction='row' spacing={2}>
-                                                <Stack direction='column'>
-                                                    <Typography variant="caption">Minimo</Typography>
+                                            <Stack direction='row' spacing={3}>
+                                                <Stack direction='column' spacing={1}>
+                                                    <Typography variant="caption">Umbral Minimo</Typography>
                                                     <Controller
                                                         name="umbralMinimo"
                                                         control={control}
@@ -302,119 +448,257 @@ export default function ThresholdPage(props) {
                                                                 {...rest}
                                                                 inputRef={ref}
                                                                 sx={{
-                                                                maxWidth: 100,
-                                                                '&.Mui-focused': { maxWidth: 100 },
+                                                                maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                },
+                                                                '&.Mui-focused': { maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                }},
                                                             }}/>
                                                         )
                                                         }
                                                     />
-                                                    <Typography variant="caption">
+                                                    <Typography
+                                                        sx={{
+                                                            maxWidth: 100,
+                                                            overflowWrap: 'break-word'
+                                                        }}
+                                                        color="error"
+                                                        variant="caption"
+                                                    >
                                                         {errors?.umbralMinimo?.message}
                                                     </Typography>
                                                 </Stack>
-                                                <Stack direction='column'>
-                                                    <Typography variant="caption">Maximo</Typography>
+                                                <Stack direction='column' spacing={1}>
+                                                    <Typography variant="caption">Umbral Maximo</Typography>
                                                     <Controller
                                                         name="umbralMaximo"
                                                         control={control}
                                                         render={({ field }) => <SearchStyle 
                                                                 {...field}
                                                                 sx={{
-                                                                maxWidth: 100,
-                                                                '&.Mui-focused': { maxWidth: 100 },
+                                                                maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                },
+                                                                '&.Mui-focused': { maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                } },
                                                             }}/>
                                                         }
                                                     />
+                                                    <Typography
+                                                        sx={{
+                                                            maxWidth: 100,
+                                                            overflowWrap: 'break-word'
+                                                        }}
+                                                        color="error"
+                                                        variant="caption"
+                                                    >
+                                                        {errors?.umbralMaximo?.message}
+                                                    </Typography>
                                                 </Stack>
                                             </Stack>
                                         }
                                     ></FormInput>
                                     <FormInput
-                                        label='Tiempo'
+                                        label='Tiempo (Segundos)'
+                                        onClick={() => {
+                                            setInfoTrigger(true);
+                                            setInfoKind('time');
+                                        }}
                                         component={
-                                            <Stack direction='row' spacing={2}>
-                                                <Stack direction='column'>
-                                                    <Typography variant="caption">Minimo</Typography>
+                                            <Stack direction='row' spacing={3}>
+                                                <Stack direction='column' spacing={1}>
+                                                    <Typography variant="caption">Umbral Minimo</Typography>
                                                     <Controller
                                                         name="tiempoUmbralMinimo"
                                                         control={control}
                                                         render={({ field }) => <SearchStyle 
                                                                 {...field}
                                                                 sx={{
-                                                                maxWidth: 100,
-                                                                '&.Mui-focused': { maxWidth: 100 },
+                                                                maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                },
+                                                                '&.Mui-focused': { maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                } },
                                                             }}/>
                                                         }
                                                     />
+                                                    <Typography
+                                                        sx={{
+                                                            maxWidth: {
+                                                                xs: 100,
+                                                                sm: 130
+                                                            },
+                                                            overflowWrap: 'break-word'
+                                                        }}
+                                                        color="error"
+                                                        variant="caption"
+                                                    >
+                                                        {errors?.tiempoUmbralMinimo?.message}
+                                                    </Typography>
                                                 </Stack>
-                                                <Stack direction='column'>
-                                                    <Typography variant="caption">Maximo</Typography>
+                                                <Stack direction='column' spacing={1}>
+                                                    <Typography variant="caption">Umbral Maximo</Typography>
                                                     <Controller
                                                         name="tiempoUmbralMaximo"
                                                         control={control}
                                                         render={({ field }) => <SearchStyle 
                                                                 {...field}
                                                                 sx={{
-                                                                maxWidth: 100,
-                                                                '&.Mui-focused': { maxWidth: 100 },
+                                                                maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                },
+                                                                '&.Mui-focused': { maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                } },
                                                             }}/>
                                                         }
                                                     />
+                                                    <Typography
+                                                        sx={{
+                                                            maxWidth: {
+                                                                xs: 100,
+                                                                sm: 130
+                                                            },
+                                                            overflowWrap: 'break-word'
+                                                        }}
+                                                        color="error"
+                                                        variant="caption"
+                                                    >
+                                                        {errors?.tiempoUmbralMaximo?.message}
+                                                    </Typography>
                                                 </Stack>
                                             </Stack>
                                         }
                                     ></FormInput>
                                     <FormInput
-                                        label='Frecuencia'
+                                        label='Frecuencia (Segundos)'
+                                        onClick={() => {
+                                            setInfoTrigger(true);
+                                            setInfoKind('frequency');
+                                        }}
                                         component={
-                                            <Stack direction='row' spacing={2}>
-                                                <Stack direction='column'>
-                                                    <Typography variant="caption">Minimo</Typography>
+                                            <Stack direction='row' spacing={3}>
+                                                <Stack direction='column' spacing={1}>
+                                                    <Typography variant="caption">Umbral Minimo</Typography>
                                                     <Controller
                                                         name="frecuenciaNotificacionesUmbralMinimo"
                                                         control={control}
                                                         render={({ field }) => <SearchStyle 
                                                                 {...field}
                                                                 sx={{
-                                                                maxWidth: 100,
-                                                                '&.Mui-focused': { maxWidth: 100 },
+                                                                maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                },
+                                                                '&.Mui-focused': { maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                } },
                                                             }}/>
                                                         }
                                                     />
+                                                    <Typography
+                                                        sx={{
+                                                            maxWidth: {
+                                                                xs: 100,
+                                                                sm: 130
+                                                            },
+                                                            overflowWrap: 'break-word'
+                                                        }}
+                                                        color="error"
+                                                        variant="caption"
+                                                    >
+                                                        {errors?.frecuenciaNotificacionesUmbralMinimo?.message}
+                                                    </Typography>
                                                 </Stack>
-                                                <Stack direction='column'>
-                                                    <Typography variant="caption">Maximo</Typography>
+                                                <Stack direction='column' spacing={1}>
+                                                    <Typography variant="caption">Umbral Maximo</Typography>
                                                     <Controller
                                                         name="frecuenciaNotificacionesUmbralMaximo"
                                                         control={control}
                                                         render={({ field }) => <SearchStyle 
                                                                 {...field}
                                                                 sx={{
-                                                                maxWidth: 100,
-                                                                '&.Mui-focused': { maxWidth: 100 },
+                                                                maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                },
+                                                                '&.Mui-focused': { maxWidth: {
+                                                                    xs: 100,
+                                                                    sm: 130
+                                                                } },
                                                             }}/>
                                                         }
                                                     />
+                                                    <Typography
+                                                        sx={{
+                                                            maxWidth: {
+                                                                xs: 100,
+                                                                sm: 130
+                                                            },
+                                                            overflowWrap: 'break-word'
+                                                        }}
+                                                        color="error"
+                                                        variant="caption"
+                                                    >
+                                                        {errors?.frecuenciaNotificacionesUmbralMaximo?.message}
+                                                    </Typography>
                                                 </Stack>
                                             </Stack>
                                         }
                                     ></FormInput>
-                                    <Controller
-                                        name="cantidadMaximaNotificaciones"
-                                        control={control}
-                                        render={({ field }) => <FormInput
-                                                label='Max. Notificaciones'
-                                                component={
-                                                    <SearchStyle 
-                                                        {...field}
-                                                        sx={{
-                                                        maxWidth: 100,
-                                                        '&.Mui-focused': { maxWidth: 100 },
-                                                    }}/>
-                                                }
-                                            ></FormInput> 
+                                    <FormInput
+                                        label='Max. Notificaciones (Cantidad)'
+                                        onClick={() => {
+                                            setInfoTrigger(true);
+                                            setInfoKind('maxnotis');
+                                        }}
+                                        component={
+                                            <Stack direction='column' spacing={1}>
+                                                <Controller
+                                                    name="cantidadMaximaNotificaciones"
+                                                    control={control}
+                                                    render={({ field }) => <SearchStyle 
+                                                            {...field}
+                                                            sx={{
+                                                            maxWidth: {
+                                                                xs: 100,
+                                                                sm: 130
+                                                            },
+                                                            '&.Mui-focused': { maxWidth: {
+                                                                xs: 100,
+                                                                sm: 130
+                                                            } },
+                                                        }}/>
+                                                    }
+                                                />
+                                                <Typography
+                                                    sx={{
+                                                        maxWidth: {
+                                                            xs: 100,
+                                                            sm: 130
+                                                        },
+                                                        overflowWrap: 'break-word'
+                                                    }}
+                                                    color="error"
+                                                    variant="caption"
+                                                >
+                                                    {errors?.cantidadMaximaNotificaciones?.message}
+                                                </Typography>
+                                            </Stack>
                                         }
-                                    />
+                                    ></FormInput>
                                 </Stack>
                             </Stack>
                         </Box>
