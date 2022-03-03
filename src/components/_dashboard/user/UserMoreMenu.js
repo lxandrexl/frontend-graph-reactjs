@@ -238,7 +238,7 @@ export default function UserMoreMenu(props) {
         }
 
         {
-          type === 'singular' ? (
+          type === 'singular' && device?.device?.unidad_medida !== 'ALARMA' ? (
             <MenuItem sx={{ color: 'text.secondary' }}>
               <ListItemIcon> <Icon icon={settings2Fill} width={24} height={24} /> </ListItemIcon>
               <Link 

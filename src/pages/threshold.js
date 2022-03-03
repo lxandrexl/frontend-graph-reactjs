@@ -63,13 +63,13 @@ function FormInput(props){
 const schema = yup
     .object()
     .shape({
-        umbralMinimo: yup.number().typeError('Solo valores numericos').required(),
-        umbralMaximo: yup.number().typeError('Solo valores numericos').required(),
-        tiempoUmbralMinimo: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
-        tiempoUmbralMaximo: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
-        frecuenciaNotificacionesUmbralMinimo: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
-        frecuenciaNotificacionesUmbralMaximo: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
-        cantidadMaximaNotificaciones: yup.number().typeError('Solo valores numericos').moreThan(0, "Debe ser mayor a 0").required(),
+        umbralMinimo: yup.number().typeError('Solo valores numéricos').required(),
+        umbralMaximo: yup.number().typeError('Solo valores numéricos').required(),
+        tiempoUmbralMinimo: yup.number().typeError('Solo valores numéricos').moreThan(0, "Debe ser mayor a 0").required(),
+        tiempoUmbralMaximo: yup.number().typeError('Solo valores numéricos').moreThan(0, "Debe ser mayor a 0").required(),
+        frecuenciaNotificacionesUmbralMinimo: yup.number().typeError('Solo valores numéricos').moreThan(0, "Debe ser mayor a 0").required(),
+        frecuenciaNotificacionesUmbralMaximo: yup.number().typeError('Solo valores numéricos').moreThan(0, "Debe ser mayor a 0").required(),
+        cantidadMaximaNotificaciones: yup.number().typeError('Solo valores numéricos').moreThan(0, "Debe ser mayor a 0").required(),
         activoUmbralMinimo: yup.boolean().required(),
         activoUmbralMaximo: yup.boolean().required()
     }).required();
@@ -398,7 +398,7 @@ export default function ThresholdPage(props) {
                                 <CircularProgress color="inherit" />
                             </Backdrop>
                             <Stack spacing={3}>
-                                <Typography variant="h6">Configuracion</Typography>
+                                <Typography variant="h6">Configuración</Typography>
                                 <Stack spacing={4}>
                                     <FormInput
                                         label='Activar'
