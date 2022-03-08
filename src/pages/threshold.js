@@ -313,7 +313,9 @@ export default function ThresholdPage(props) {
                         width: {
                             xs: 300,
                             sm: 400
-                        }
+                        },
+                        textAlign: 'justify',
+                        textJustify: 'inter-word'
                     }}
                 >
                     {
