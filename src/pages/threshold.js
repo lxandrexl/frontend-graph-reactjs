@@ -79,19 +79,19 @@ const UmbralInfo = () => {
         <>
             <Typography variant="h4">Umbrales</Typography>
             <Typography variant="body1">
-                Para poder detectar algun suceso importante en los dispositivos se hace uso de los <b>Umbrales</b>,
+                Para poder detectar algún suceso importante en los dispositivos se hace uso de los <b>Umbrales</b>,
                 esto va a permitir poder limitar un rango de valores que pueden ser considerados de alerta.
             </Typography>
             <Stack spacing={.5}>
-                <Typography variant="subtitle1">Umbral minimo</Typography>
+                <Typography variant="subtitle1">Umbral mínimo</Typography>
                 <Typography variant="body2">
                     Es un valor mínimo del sensor que define un límite que inicia un seguimiento a los valores del sensor que notificará al usuario. 
                 </Typography>
             </Stack>
             <Stack spacing={.5}>
-                <Typography variant="subtitle1">Umbral maximo</Typography>
+                <Typography variant="subtitle1">Umbral máximo</Typography>
                 <Typography variant="body2">
-                    Es un valor maximo del sensor que define un límite que inicia un seguimiento a los valores del sensor que notificará al usuario. 
+                    Es un valor máximo del sensor que define un límite que inicia un seguimiento a los valores del sensor que notificará al usuario. 
                 </Typography>
             </Stack>
         </>
@@ -103,20 +103,20 @@ const TimeInfo = () => {
         <>
             <Typography variant="h4">Tiempo</Typography>
             <Typography variant="body1">
-                Para la activacion de un umbral y su posterior notificacion es necesario configurar el <b>tiempo</b>,
-                este valor va a permitir que cuando se detecte que el umbral ha pasado su maximo o minimo segun sea el caso
-                pase a un estado de <b>observacion</b> permitiendo que los segundos configurados en <b>frecuencia</b> se tome en cuenta.
+                Para la activación de un umbral y su posterior notificación es necesario configurar el <b>tiempo</b>,
+                este valor va a permitir que cuando se detecte que el umbral ha pasado su máximo o mínimo según sea el caso
+                pase a un estado de <b>observación</b> permitiendo que los segundos configurados en <b>frecuencia</b> se tome en cuenta.
             </Typography>
             <Stack spacing={.5}>
-                <Typography variant="subtitle1">Tiempo umbral minimo</Typography>
+                <Typography variant="subtitle1">Tiempo umbral mínimo</Typography>
                 <Typography variant="body2">
-                    La cantidad de segundos en el cual el valor del sensor debe estar por debajo del umbral minimo.
+                    La cantidad de segundos en el cual el valor del sensor debe estar por debajo del umbral mínimo.
                 </Typography>
             </Stack>
             <Stack spacing={.5}>
-                <Typography variant="subtitle1">Tiempo umbral maximo</Typography>
+                <Typography variant="subtitle1">Tiempo umbral máximo</Typography>
                 <Typography variant="body2">
-                    La cantidad de segundos en el cual el valor del sensor debe estar por debajo del umbral maximo.
+                    La cantidad de segundos en el cual el valor del sensor debe estar por debajo del umbral máximo.
                 </Typography>
             </Stack>
         </>
@@ -128,18 +128,18 @@ const FrequencyInfo = () => {
         <>
             <Typography variant="h4">Frecuencia</Typography>
             <Typography variant="body1">
-                Cuando el valor del sensor ha pasado los umbrales definidos y asi mismo con el tiempo establecido, entra en accion la <b>frecuencia</b> en la cual va a permitir el envio de notificaciones en el intervalo configurado.  
+                Cuando el valor del sensor ha pasado los umbrales definidos y así mismo con el tiempo establecido, entra en acción la <b>frecuencia</b> en la cual va a permitir el envío de notificaciones en el intervalo configurado.  
             </Typography>
             <Stack spacing={.5}>
-                <Typography variant="subtitle1">Frecuencia umbral minimo</Typography>
+                <Typography variant="subtitle1">Frecuencia umbral mínimo</Typography>
                 <Typography variant="body2">
-                    La cantidad de segundos en el cual se enviara notificaciones para la configuracion del umbral minimo.
+                    La cantidad de segundos en el cual se enviara notificaciones para la configuración del umbral mínimo.
                 </Typography>
             </Stack>
             <Stack spacing={.5}>
-                <Typography variant="subtitle1">Frecuencia umbral maximo</Typography>
+                <Typography variant="subtitle1">Frecuencia umbral máximo</Typography>
                 <Typography variant="body2">
-                    La cantidad de segundos en el cual se enviara notificaciones para la configuracion del umbral maximo.
+                    La cantidad de segundos en el cual se enviara notificaciones para la configuración del umbral máximo.
                 </Typography>
             </Stack>
         </>
@@ -151,18 +151,20 @@ const MaxNotificationsInfo = () => {
         <>
             <Typography variant="h4">Cantidad de notificaciones</Typography>
             <Typography variant="body1">
-                Esta configuracion va a permitir que cuando el valor del sensor haya superado el umbral minimo o maximo y este dentro del rango establecido
-                de tiempo y frecuencia, se limite el numero de notificaciones a enviar.
+                Esta configuración va a permitir que cuando el valor del sensor haya superado el umbral mínimo o máximo y este dentro del rango establecido
+                de tiempo y frecuencia, se limite el número de notificaciones a enviar.
             </Typography>
             <Stack spacing={.5}>
                 <Typography variant="subtitle1">Ejemplo</Typography>
-                <Typography variant="body2">
-                    Tenemos un sensor de temperatura cuyo umbral maximo es: 30 grados celsius, el tiempo es: 30 segundos y la frecuencia: 10 segundos,
-                    durante un periodo de tiempo el sensor envia 35 grados celsius por mas de 30 segundos y con una frecuencia de 10 segundos y esto se prolonga
-                    por alrededor de 5 minutos, con esta configuracion podremos limitar la cantidad de notificaciones para que no se tenga un conjunto de mensajes
-                    repetidos, para este ejemplo se configuro con el valor de 5, es decir que dentro de esos 5 minutos que tenemos con el valor del sensor superando
-                    el maximo del umbral configurado tendriamos como maximo 5 notificaciones.
-                </Typography>
+                <Stack spacing={1}>
+                    <Typography variant="body2">
+                    Se tiene un sensor de temperatura que tiene configurado un umbral máximo = 40° celsius, con un tiempo de observación = 60 segundos y una frecuencia después de tiempo de observacion = 60 segundos.
+                    </Typography>
+                    <Typography variant="body2">
+                    Luego de obtener un valor en la lectura del sensor de 42° celsius podemos decir que dicho valor se encuentra por encima del umbral máximo, es en ese momento que se inicia el periodo de tiempo de observación en la cual si se mantiene el umbral por encima de los 40° celsius por 60 segundos se pasara al estado de observación para luego enviar las notificaciones con la frecuencia establecida de 60 segundos hasta que la lectura del sensor se encuentre con un valor estable, de acuerdo a lo expuesto y con la finalidad
+    de evitar el llenado constante de notificaciones se recomendaría al usuario realizar la configuración del campo <b>máximo de notificaciones</b> con la cantidad de notificaciones que se desea.
+                    </Typography>
+                </Stack>
             </Stack>
         </>
     );
@@ -406,7 +408,7 @@ export default function ThresholdPage(props) {
                                         component={
                                             <Stack direction='row' spacing={5}>
                                                 <Stack direction='column' spacing={1}>
-                                                    <Typography variant="caption">Umbral Minimo</Typography>
+                                                    <Typography variant="caption">Umbral Mínimo</Typography>
                                                     <Controller
                                                         name="activoUmbralMinimo"
                                                         control={control}
@@ -419,7 +421,7 @@ export default function ThresholdPage(props) {
                                                     />
                                                 </Stack>
                                                 <Stack direction='column' spacing={1}>
-                                                    <Typography variant="caption">Umbral Maximo</Typography>
+                                                    <Typography variant="caption">Umbral Máximo</Typography>
                                                     <Controller
                                                         name="activoUmbralMaximo"
                                                         control={control}
@@ -439,7 +441,7 @@ export default function ThresholdPage(props) {
                                         component={
                                             <Stack direction='row' spacing={3}>
                                                 <Stack direction='column' spacing={1}>
-                                                    <Typography variant="caption">Umbral Minimo</Typography>
+                                                    <Typography variant="caption">Umbral Mínimo</Typography>
                                                     <Controller
                                                         name="umbralMinimo"
                                                         control={control}
@@ -472,7 +474,7 @@ export default function ThresholdPage(props) {
                                                     </Typography>
                                                 </Stack>
                                                 <Stack direction='column' spacing={1}>
-                                                    <Typography variant="caption">Umbral Maximo</Typography>
+                                                    <Typography variant="caption">Umbral Máximo</Typography>
                                                     <Controller
                                                         name="umbralMaximo"
                                                         control={control}
@@ -505,7 +507,7 @@ export default function ThresholdPage(props) {
                                         }
                                     ></FormInput>
                                     <FormInput
-                                        label='Tiempo (Segundos)'
+                                        label='Tiempo de observación luego de superado el umbral (Segundos)'
                                         onClick={() => {
                                             setInfoTrigger(true);
                                             setInfoKind('time');
@@ -513,7 +515,7 @@ export default function ThresholdPage(props) {
                                         component={
                                             <Stack direction='row' spacing={3}>
                                                 <Stack direction='column' spacing={1}>
-                                                    <Typography variant="caption">Umbral Minimo</Typography>
+                                                    <Typography variant="caption">Umbral Mínimo</Typography>
                                                     <Controller
                                                         name="tiempoUmbralMinimo"
                                                         control={control}
@@ -546,7 +548,7 @@ export default function ThresholdPage(props) {
                                                     </Typography>
                                                 </Stack>
                                                 <Stack direction='column' spacing={1}>
-                                                    <Typography variant="caption">Umbral Maximo</Typography>
+                                                    <Typography variant="caption">Umbral Máximo</Typography>
                                                     <Controller
                                                         name="tiempoUmbralMaximo"
                                                         control={control}
@@ -582,7 +584,7 @@ export default function ThresholdPage(props) {
                                         }
                                     ></FormInput>
                                     <FormInput
-                                        label='Frecuencia (Segundos)'
+                                        label='Frecuencia de notificación luego del tiempo de observación (Segundos)'
                                         onClick={() => {
                                             setInfoTrigger(true);
                                             setInfoKind('frequency');
@@ -590,7 +592,7 @@ export default function ThresholdPage(props) {
                                         component={
                                             <Stack direction='row' spacing={3}>
                                                 <Stack direction='column' spacing={1}>
-                                                    <Typography variant="caption">Umbral Minimo</Typography>
+                                                    <Typography variant="caption">Umbral Mínimo</Typography>
                                                     <Controller
                                                         name="frecuenciaNotificacionesUmbralMinimo"
                                                         control={control}
@@ -623,7 +625,7 @@ export default function ThresholdPage(props) {
                                                     </Typography>
                                                 </Stack>
                                                 <Stack direction='column' spacing={1}>
-                                                    <Typography variant="caption">Umbral Maximo</Typography>
+                                                    <Typography variant="caption">Umbral Máximo</Typography>
                                                     <Controller
                                                         name="frecuenciaNotificacionesUmbralMaximo"
                                                         control={control}
@@ -659,7 +661,7 @@ export default function ThresholdPage(props) {
                                         }
                                     ></FormInput>
                                     <FormInput
-                                        label='Max. Notificaciones (Cantidad)'
+                                        label='Máximo de notificaciones luego del tiempo de observación (Cantidad)'
                                         onClick={() => {
                                             setInfoTrigger(true);
                                             setInfoKind('maxnotis');

@@ -96,7 +96,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             <Button
               style={{ margin: '0 10px 20px 0' }}
               variant="outlined"
-              color="secondary"
+              color="info"
               startIcon={<PictureAsPdfIcon />}
               onClick={() => {
                 window.open('/static/manual.pdf', '_blank');
