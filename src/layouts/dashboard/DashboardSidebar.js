@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@material-ui/core/styles';
-import { Box, Link,  Drawer, Typography, Avatar } from '@material-ui/core';
+import { Box, Link,  Drawer, Typography, Avatar, Stack, Button } from '@material-ui/core';
 // components
 import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
@@ -13,7 +13,7 @@ import { MHidden } from '../../components/@material-extend';
 import sidebarConfig from './SidebarConfig';
 import account from '../../_mocks_/account';
 import { getUserInfo } from 'src/services/tokens';
-
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 // ----------------------------------------------------------------------
 
 const DRAWER_WIDTH = 280;
@@ -80,8 +80,33 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Link>
       </Box>
 
-      <NavSection navConfig={sidebarConfig} />
-
+      <Stack sx={{
+        height: '100%'
+      }} 
+      direction="column" 
+      justifyContent="space-between">
+        <NavSection navConfig={sidebarConfig} />
+        <Box
+          sx={{
+            pb: 2,
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+        >
+            <Button
+              style={{ margin: '0 10px 20px 0' }}
+              variant="outlined"
+              color="secondary"
+              startIcon={<PictureAsPdfIcon />}
+              onClick={() => {
+                window.open('/static/manual.pdf', '_blank');
+              }}
+            >
+              Descargar Manual
+            </Button>
+        </Box>
+      </Stack>
+      
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>
   );
