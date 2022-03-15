@@ -51,7 +51,6 @@ export default function LoginForm() {
           setAccessToken(response.idToken);
           setRefreshToken(response.refreshToken)
           localStorage.setItem('user-info', JSON.stringify(response.payload))
-          await getDevices(response.accessToken);
           navigate('/dashboard/app', { replace: true });
         }
 

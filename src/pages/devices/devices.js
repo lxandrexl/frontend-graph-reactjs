@@ -32,6 +32,7 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../../components/_d
 //
 import { getToken, getAccessToken } from 'src/services/tokens';
 import { getStatsData, getAlertsData } from 'src/services/device.service';
+import { getDevices } from 'src/services/auth.service';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { Link as RouterLink } from 'react-router-dom';
@@ -141,56 +142,58 @@ export default function Devices() {
       //console.log('==> useEffect alertdata', alertData)
   }, [alertData]);
 
-  if(!isNull(token)) { 
-    let devices_storage = JSON.parse(localStorage.getItem('devices'));
-
-   if(firstLoad) {
-      DEVICES_ID = devices_storage.map(({device, rules}) => {
-        return device.deviceId;
-      })
-      firstLoad = false;
-   }
-
-    DEVICES = devices_storage.map(({device, rules}) => {
-      const imei = device.imei;
-      const fabrica = device.fabrica;
-      const a = device.a;
-      const st = device.st.split('-')[0];
-      const grupo = device.grupo;
-
-      return { imei, fabrica, a, st, grupo, device, rules }
-    }).reduce((prev, curr) => {
-      let key = curr.imei + '#' + curr.grupo; 
-      if(!prev[key]) prev[key] = []
-      prev[key].push(curr);
-      return prev; 
-    }, {});
-
-    DEVICES = Object.values(DEVICES);
-
-
-    DEVICES = DEVICES.map((items) => {
-      let devs = items.map((item) => { 
-        totalRows++;
-
-        return { device: item.device, rule: item.rules }
-       });
-
-      const deviceId = items[0].imei + '#' + items[0].a + '#' + items[0].st + '#' + items[0].fabrica;
-
-      itemsCollapse.push({ status: false, deviceId });
-
-      return {
-        imei: items[0].imei,
-        a: items[0].a,
-        st: items[0].st,
-        fabrica: items[0].fabrica,
-        grupo: items[0].grupo,
-        devices: devs
-      }
-    });
-
-  }
+  useEffect(async () => {
+    if(!isNull(token)) { 
+      let devices_storage = await getDevices(getToken());
+  
+     if(firstLoad) {
+        DEVICES_ID = devices_storage.map(({device, rules}) => {
+          return device.deviceId;
+        })
+        firstLoad = false;
+     }
+  
+      DEVICES = devices_storage.map(({device, rules}) => {
+        const imei = device.imei;
+        const fabrica = device.fabrica;
+        const a = device.a;
+        const st = device.st.split('-')[0];
+        const grupo = device.grupo;
+  
+        return { imei, fabrica, a, st, grupo, device, rules }
+      }).reduce((prev, curr) => {
+        let key = curr.imei + '#' + curr.grupo; 
+        if(!prev[key]) prev[key] = []
+        prev[key].push(curr);
+        return prev; 
+      }, {});
+  
+      DEVICES = Object.values(DEVICES);
+  
+  
+      DEVICES = DEVICES.map((items) => {
+        let devs = items.map((item) => { 
+          totalRows++;
+  
+          return { device: item.device, rule: item.rules }
+         });
+  
+        const deviceId = items[0].imei + '#' + items[0].a + '#' + items[0].st + '#' + items[0].fabrica;
+  
+        itemsCollapse.push({ status: false, deviceId });
+  
+        return {
+          imei: items[0].imei,
+          a: items[0].a,
+          st: items[0].st,
+          fabrica: items[0].fabrica,
+          grupo: items[0].grupo,
+          devices: devs
+        }
+      });
+  
+    }
+  }, []);
 
   const [open, setOpen] = useState(itemsCollapse);
 
