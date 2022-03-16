@@ -1,5 +1,4 @@
 import homeFill from '@iconify/icons-eva/home-fill';
-import settings2Fill from '@iconify/icons-eva/settings-2-fill';
 import { Icon } from '@iconify/react';
 import { Avatar, Box, Button, Divider, IconButton, MenuItem, Typography } from '@material-ui/core';
 // material

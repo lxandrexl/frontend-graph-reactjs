@@ -12,7 +12,7 @@ export async function getDevices(token) {
     const header = { headers: { Authorization: `Bearer ${token}`}}
     const { data } = await axios.get(`${baseUrl}/devices`, header)
 
-    if(data.status == 'ok') {
+    if(data.status === 'ok') {
         console.log('DATA DEVICES')
         console.log(data.data)
         localStorage.setItem('devices', JSON.stringify(data.data))

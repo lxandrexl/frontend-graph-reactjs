@@ -14,6 +14,7 @@ import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/styles';
 import Stats from 'src/pages/devices/stats/Stats';
 import RegistrosTable from 'src/pages/devices/notifications/notifis';
+import CalendarGraphic from 'src/pages/calendarGraphic'
 
 // ----------------------------------------------------------------------
 function getModalStyle() {
@@ -38,6 +39,17 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'scroll',
     height: '90%',
     display: 'block'
+  },
+  paper2:{
+    position: 'absolute',    
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    width: 'auto',
+    overflow: 'auto',
+    height: 'auto',
+    display: 'block',
+    padding: theme.spacing(2, 4, 3),
   },
 }));
 
@@ -76,23 +88,23 @@ export default function UserMoreMenu(props) {
   
   let statsList = [];
 
-  if(type == 'singular') {
+  if(type === 'singular') {
     const deviceId = device.device.deviceId;
     for(let stat of stats) {
       const statDeviceId = stat.imei + '#' + stat.a + '#' + stat.st + '#' + stat.fabrica;
 
-      if(deviceId == statDeviceId) {
+      if(deviceId === statDeviceId) {
         statsList.push(stat);
       }
     }
-  } else if (type == 'plural') {
+  } else if (type === 'plural') {
     for(let item of device.devices) {
       const deviceId = item.device.deviceId;
 
       for(let stat of stats) {
         const statDeviceId = stat.imei + '#' + stat.a + '#' + stat.st + '#' + stat.fabrica;
 
-        if(deviceId == statDeviceId) {
+        if(deviceId === statDeviceId) {
           statsList.push(stat);
         }
       }
@@ -107,6 +119,7 @@ export default function UserMoreMenu(props) {
   const [modalStyle] = useState(getModalStyle);
   const [openModal, setOpenModal] = useState(false);
   const [openAlertModal, setOpenAlertModal] = useState(false);
+  const [openDailyGraphicModal, setOpenDailyGraphicModal] = useState(false);
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -124,9 +137,17 @@ export default function UserMoreMenu(props) {
     setOpenAlertModal(false);
   };
 
+  const handleOpenDailyGraphicModal = () => {
+    setOpenDailyGraphicModal(true);
+  };
+
+  const handleCloseDailyGraphicModal = () => {
+    setOpenDailyGraphicModal(false);
+  };
+
   const modalBody = (data) => (
     <div style={modalStyle} className={classes.paper}>
-      <h2 id="simple-modal-title">{ type == 'plural' ? "Estadísticas" : "Estadística" }</h2>
+      <h2 id="simple-modal-title">{ type === 'plural' ? "Estadísticas" : "Estadística" }</h2>
       <br/>
       <span>
         <Stats data={data} />
@@ -142,6 +163,16 @@ export default function UserMoreMenu(props) {
         <RegistrosTable registros={data} device={item} />
       </span>
     </div>
+  );
+
+  const modalDailyGraphic = (data) => (
+   (
+      <div style={modalStyle} className={classes.paper2}>
+        <h2 id="simple-modal-title">SELECCIONE EL DIA DEL GRÁFICO</h2>
+        <br/>
+        <CalendarGraphic datos={data} estado={1} />
+      </div>
+    )    
   );
 
 
@@ -160,9 +191,18 @@ export default function UserMoreMenu(props) {
         {modalBody(statsList)}
       </Modal>
 
+      <Modal
+        open={openDailyGraphicModal}
+        onClose={handleCloseDailyGraphicModal}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"        
+      >
+        {modalDailyGraphic({device: device, type: type})}
+      </Modal>
+
 
       {
-        (type == 'singular') ?
+        (type === 'singular') ?
         (
           <Modal
             open={openAlertModal}
@@ -186,7 +226,7 @@ export default function UserMoreMenu(props) {
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         {
-          (alerts.length > 0 && type == 'singular')  ?
+          (alerts.length > 0 && type === 'singular')  ?
           (
             <MenuItem sx={{ color: 'text.secondary' }}>
               <ListItemIcon>
@@ -206,7 +246,7 @@ export default function UserMoreMenu(props) {
           </ListItemIcon>
           <ListItemText 
             onClick={handleOpenModal}
-            primary={type == 'plural' ? "Ver estadísticas" : "Ver estadística"} 
+            primary={type === 'plural' ? "Ver estadísticas" : "Ver estadística"} 
             primaryTypographyProps={{ variant: 'body2' }} 
           />
         </MenuItem>
@@ -218,9 +258,25 @@ export default function UserMoreMenu(props) {
             state={{device: device, type: type}}
             style={{ fontSize: '0.875rem' }}
             color="inherit" underline="none" component={RouterLink}>
-              {type == 'plural' ? "Ver gráficos" : "Ver gráfico"}
-          </Link>
+              {type === 'plural' ? "Ver gráficos" : "Ver gráfico"}
+          </Link>          
         </MenuItem>
+
+        {
+          (type === 'plural')  
+          ? null 
+          : (
+            <MenuItem sx={{ color: 'text.secondary' }}>
+              <ListItemIcon> <Icon icon={barChart2Fill} width={24} height={24} /> </ListItemIcon>          
+              <ListItemText 
+                    onClick={handleOpenDailyGraphicModal}
+                    primary="Ver gráfico diario"
+                    primaryTypographyProps={{ variant: 'body2' }}
+                    state={{device: device, type: type}}
+                  />
+            </MenuItem>
+          )
+        }        
 
         {
           type === 'singular' ? (

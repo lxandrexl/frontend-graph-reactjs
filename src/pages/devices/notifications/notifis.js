@@ -27,8 +27,8 @@ export default function RegistrosTable({ registros, device }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {registros.map((row, index) => {
-            if(row.direccionCambio != 'Aceptable') {
+          {registros.map((row) => {
+            if(row.direccionCambio !== 'Aceptable') {
               var flechaMostrar;
               if (parseFloat(row.valorMedido) >= parseFloat(row.jsonRegla.umbralMaximo.N)) {
                 flechaMostrar = flechaArribaRoja;

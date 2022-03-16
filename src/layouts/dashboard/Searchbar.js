@@ -1,16 +1,9 @@
-import { Icon } from '@iconify/react';
 import { useState } from 'react';
-import searchFill from '@iconify/icons-eva/search-fill';
 // material
 import { styled, alpha } from '@material-ui/core/styles';
 import {
-  Box,
-  Input,
   Slide,
-  Button,
-  InputAdornment,
-  ClickAwayListener,
-  IconButton
+  ClickAwayListener
 } from '@material-ui/core';
 
 // ----------------------------------------------------------------------
@@ -41,11 +34,7 @@ const SearchbarStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Searchbar() {
-  const [isOpen, setOpen] = useState(false);
-
-  const handleOpen = () => {
-    setOpen((prev) => !prev);
-  };
+  const [isOpen, setOpen] = useState(false);  
 
   const handleClose = () => {
     setOpen(false);

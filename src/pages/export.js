@@ -3,7 +3,6 @@ import { useLocation } from 'react-router';
 import { parse as QueryParse, stringify as QueryStringify } from 'query-string';
 import { 
     Box,
-    Link,
     Button,
     Typography,
     Stack,
@@ -21,16 +20,13 @@ import {
 } from '@material-ui/core';
 import moment from 'moment';
 import Label from '../components/Label';
-import { Link as RouterLink } from 'react-router-dom';
 import AddIcon from '@material-ui/icons/Add';
 import ReplayIcon from '@material-ui/icons/Replay';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import DateTimePicker from '@material-ui/lab/DateTimePicker';
 import MobileDateTimePicker from '@material-ui/lab/MobileDateTimePicker';
 import LoadingButton from '@material-ui/lab/LoadingButton';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import AdapterMoment from '@material-ui/lab/AdapterMoment';
-import SearchIcon from '@material-ui/icons/Search';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import {getTickets, createTickets} from '../services/export.service';

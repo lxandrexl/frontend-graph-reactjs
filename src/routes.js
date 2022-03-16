@@ -35,6 +35,7 @@ export default function Router() {
     { path: 'login', element: <Navigate to="/dashboard/app" replace /> },
     { path: 'devices', element: <Devices /> },
     { path: 'graphic', element: <GraphicDevice /> },
+    { path: 'daily-graphic', element: <GraphicDevice /> },
     { path: 'stats', element: <Stats /> },
     { path: 'notificaciones', element: <Notifi /> },
     { path: 'register', element: <Navigate to="/dashboard/app" replace /> },
@@ -50,6 +51,7 @@ export default function Router() {
     { path: 'notificaciones', element: <Notifi /> },
     { path: 'dispositivos', element: <Devices /> },
     { path: 'graphic', element: <GraphicDevice /> },
+    { path: 'daily-graphic', element: <GraphicDevice /> },
     { path: 'data', element: <ExportPage/> },
     { path: 'threshold', element: <ThresholdPage/> },
   ];

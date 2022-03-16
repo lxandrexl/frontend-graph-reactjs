@@ -1,6 +1,5 @@
 import React from 'react';
 import Table from '@material-ui/core/Table';
-import Button from '@material-ui/core/Button';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -9,8 +8,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import AutorenewIcon from '@material-ui/icons/Autorenew';
 import './style.css';
 
 export function StatsTable({ stats }) {

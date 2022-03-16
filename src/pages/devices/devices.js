@@ -223,7 +223,7 @@ export default function Devices() {
   }, [statsData]);
 
   const handleClick = (event, item) => {
-    const selectedIndex = selected.findIndex(e => e.device.deviceId == item.device.deviceId);
+    const selectedIndex = selected.findIndex(e => e.device.deviceId === item.device.deviceId);
     let newSelected = [];
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, item);
@@ -262,7 +262,7 @@ export default function Devices() {
   const collapseTable = (deviceId) => {
     let items = open.map((item) => {
       return {
-        status: item.deviceId == deviceId ? !item.status : item.status,
+        status: item.deviceId === deviceId ? !item.status : item.status,
         deviceId: item.deviceId
       }
     });
@@ -274,7 +274,7 @@ export default function Devices() {
     let status;
 
     for(let item of open) {
-      if(item.deviceId == deviceId) {
+      if(item.deviceId === deviceId) {
         status = item.status;
       }
     }
@@ -331,7 +331,7 @@ export default function Devices() {
   }, []);
 
   useEffect(async() => {
-    if(count == 30) {
+    if(count === 30) {
       setAlertData([]);
       setCount(0);
     }
@@ -354,7 +354,7 @@ export default function Devices() {
           let oDeviceId = oldData.deviceId;
           let oData = oldData.data;
 
-          if(nDeviceId == oDeviceId) {
+          if(nDeviceId === oDeviceId) {
             let item = {
               deviceId: nDeviceId,
               ts: nTs,
@@ -463,7 +463,7 @@ export default function Devices() {
 
 
                             return (
-                              <Fragment>
+                              <Fragment key={"Fragment"+positionRow}>
                               <TableRow
                                 hover
                                 key={deviceId}
@@ -533,7 +533,7 @@ export default function Devices() {
                                       {
                                         devices.map((item, subIndex) => {
                                           const device = item.device;
-                                          const findDevice = selected.findIndex(e => e.device.deviceId == device.deviceId);
+                                          const findDevice = selected.findIndex(e => e.device.deviceId === device.deviceId);
                                           const isItemSelected = findDevice !== -1;
                                           const alertDevice = checkStatus(device, false);
 

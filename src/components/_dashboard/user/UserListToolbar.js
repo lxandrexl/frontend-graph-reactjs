@@ -1,20 +1,15 @@
 import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import searchFill from '@iconify/icons-eva/search-fill';
-import trash2Fill from '@iconify/icons-eva/trash-2-fill';
-import roundFilterList from '@iconify/icons-ic/round-filter-list';
 // material
 import { styled } from '@material-ui/core/styles';
 import {
   Box,
   Toolbar,
-  Tooltip,
-  IconButton,
   Typography,
   OutlinedInput,
   InputAdornment
 } from '@material-ui/core';
-import barChart2Fill from '@iconify/icons-eva/bar-chart-2-fill';
 
 // ----------------------------------------------------------------------
 
