@@ -95,16 +95,19 @@ export function generateOptions(datos){
         series: [{             
           data: datos.data[0] ? datos.data[0] : null,
           name: 'Dispositivo',
+          lineWidth: 3
         },
         {     
           data: (datos.data[1]?.length > 0) ? datos.data[1] : null,
-          name: 'Umbral Maximo',
-          visible: (datos.data[1]?.length > 0) ? true : false
+          name: 'Umbral Máximo',
+          visible: (datos.data[1]?.length > 0) ? true : false,
+          lineWidth: 3
         },
         {     
           data:  (datos.data[2]?.length > 0) ? datos.data[2] : null,
-          name: 'Umbral Minimo',
-          visible: (datos.data[2]?.length > 0) ? true : false
+          name: 'Umbral Mínimo',
+          visible: (datos.data[2]?.length > 0) ? true : false,
+          lineWidth: 3
         }],
         xAxis: {
           type: 'datetime',      
@@ -112,12 +115,7 @@ export function generateOptions(datos){
             text: `Fecha: ${fechaSpanish} desde las 00:00h hasta las 23:59h` 
           }
         },
-        yAxis:{
-          plotLines: [{
-            color: '#FF0000',
-            width: 2,
-            value: 300
-          }],
+        yAxis:{          
           title:{
             text: `Unidad de Medida: ${datos.abrevDaily}` 
           }
@@ -126,11 +124,22 @@ export function generateOptions(datos){
           enabled: false
         },
         tooltip: {
-          pointFormat: `<span style="color:{series.color}">{series.name}</span>: <b>{point.y} ${datos.abrevDaily}</b><br/>`,
+          headerFormat: '<table>',   
+          pointFormat: '<tr><td style="color: {series.color}"><b>{series.name}: </b></td>' +
+            '<td style="text-align: right"><b>{point.y} '+datos.abrevDaily+'</b></td></tr>',          
+          footerFormat: '</table>',
+          split: false,
+          shared: true,
+          useHTML: true
         },
         plotOptions: {
           series: {
               showInNavigator: true
+          },
+          line: {
+            marker: {
+                enabled: false
+            }
           }
         },    
         chart:{

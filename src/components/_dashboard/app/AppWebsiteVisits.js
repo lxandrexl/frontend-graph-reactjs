@@ -258,7 +258,7 @@ export default function AppWebsiteVisits({device, llave, rule,dateGraphic}) {
 
   Highcharts.setOptions({
     lang: { months: mesesSpanish, weekdays: diasSpanish },
-    colors: ['#00ab55','red','yellow']
+    colors: ['#00ab55','#ffc107','#1890ff']
   });   
 
   return (    
