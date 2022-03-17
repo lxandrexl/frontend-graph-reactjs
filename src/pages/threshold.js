@@ -222,7 +222,7 @@ export default function ThresholdPage(props) {
         const [result] = payload.filter((item) => {
             return (
                 item?.fabrica === _fabrica &&
-                item?.a === _a &&
+                item?.a == _a &&
                 item?.st === _st
             );
         });

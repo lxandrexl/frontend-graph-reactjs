@@ -270,7 +270,7 @@ export default function UserMoreMenu(props) {
               <ListItemIcon> <Icon icon={barChart2Fill} width={24} height={24} /> </ListItemIcon>          
               <ListItemText 
                     onClick={handleOpenDailyGraphicModal}
-                    primary="Ver gráfico diario"
+                    primary="Gráfico 24h"
                     primaryTypographyProps={{ variant: 'body2' }}
                     state={{device: device, type: type}}
                   />

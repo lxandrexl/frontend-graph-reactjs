@@ -9,7 +9,9 @@ import MobileDateTimePicker from '@material-ui/lab/MobileDateTimePicker';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import AdapterMoment from '@material-ui/lab/AdapterMoment';
 
-export default function CalendarGraphic(props) { 
+export default function CalendarGraphic(props) {
+    
+    console.log("props => ",props)
 
     const navigate = useNavigate();       
 
@@ -37,7 +39,7 @@ export default function CalendarGraphic(props) {
             <Stack spacing={1} sx={{
                 flex: 1
             }}>
-                <Typography variant="subtitle2">Dia: </Typography>
+                <Typography variant="subtitle2">Día: </Typography>
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                     <MobileDateTimePicker
                         renderInput={(props) => <TextField placeholder='Seleccionar fecha' variant="outlined" {...props} />}

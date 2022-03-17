@@ -25,7 +25,7 @@ export default function AppWebsiteVisits({ device, llave, rule }) {
   const [wsUmbral, setWsUmbral] = useState([]);
 
   let titleGraphic = `${device.descripcion}`;
-  let subtitleGraphic = `Codigo de dispositivo: ${device.deviceId}`;
+  let subtitleGraphic = `Código de dispositivo: ${device.deviceId}`;
 
   if(rule == undefined || rule == null) rule = []; 
 

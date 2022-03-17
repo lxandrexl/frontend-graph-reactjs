@@ -8,8 +8,8 @@ export const mesesSpanish = [
 ];
 
 export const diasSpanish = [
-    'Domingo', 'Lunes', 'Martes', 'Miercoles',
-    'Jueves', 'Viernes', 'Sabado'
+    'Domingo', 'Lunes', 'Martes', 'Miércoles',
+    'Jueves', 'Viernes', 'Sábado'
 ];
 
 moment.locale('es', {
@@ -124,13 +124,16 @@ export function generateOptions(datos){
           enabled: false
         },
         tooltip: {
-          headerFormat: '<table>',   
+          headerFormat: '<table>'+
+            '<tr><td><b style="font-size:11px">{point.x:%A, %d/%m a las %k:%M}</b></td></tr>',   
           pointFormat: '<tr><td style="color: {series.color}"><b>{series.name}: </b></td>' +
             '<td style="text-align: right"><b>{point.y} '+datos.abrevDaily+'</b></td></tr>',          
           footerFormat: '</table>',
           split: false,
           shared: true,
-          useHTML: true
+          useHTML: true,
+          xDateFormat: '%Y-%m-%d',
+          crosshairs: true
         },
         plotOptions: {
           series: {

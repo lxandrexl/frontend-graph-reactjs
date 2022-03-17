@@ -60,8 +60,8 @@ export default function AppWebsiteVisits({device, llave, rule,dateGraphic}) {
     : `${deviceLocation.descripcion}`;
 
   let subtitleGraphic = (typeof device !== 'undefined') 
-    ? `Codigo de dispositivo: ${device.deviceId}`
-    : `Codigo de dispositivo: ${deviceLocation.deviceId}`;
+    ? `Código de dispositivo: ${device.deviceId}`
+    : `Código de dispositivo: ${deviceLocation.deviceId}`;
 
   const timeInterval = timeIntervalPerMinute;
   const perMinute = 60000;
@@ -231,7 +231,7 @@ export default function AppWebsiteVisits({device, llave, rule,dateGraphic}) {
   const modalDailyGraphic = (data) => (
     (
        <div style={modalStyle} className={classes.paper2}>
-         <h2 id="simple-modal-title">SELECCIONE EL DIA DEL GRÁFICO</h2>
+         <h2 id="simple-modal-title">SELECCIONE EL DÍA DEL GRÁFICO</h2>
          <br/>
          <CalendarGraphic datos={data} estado={2} />
        </div>
