@@ -10,8 +10,9 @@ import {
 import * as moment from 'moment';
 import 'moment/locale/es';
 
-import { getCognitoUser, refreshCognitoToken } from '../services/auth.service';
-
+import { useNavigate } from 'react-router-dom';
+import { getCognitoUser, refreshCognitoToken, getDevices } from '../services/auth.service';
+import { useEffect, useState } from 'react';
 moment.locale('es');
 
 // ----------------------------------------------------------------------
@@ -54,14 +55,17 @@ function checkTokenExp(token, refreshToken) {
 }
 
 export default function DashboardApp() {
-  let devices;
-  let token = getToken();
-  let refreshToken = getRefreshToken();
+  const [devices, setDevices] = useState([]);
 
-  if(!isNull(token)) { 
-    devices = JSON.parse(localStorage.getItem('devices'));
-    checkTokenExp(token, refreshToken);
-  }
+  useEffect(async () => {
+    let token = getToken();
+    let refreshToken = getRefreshToken();
+    if(!isNull(token)) { 
+      const devices = await getDevices(token);
+      setDevices(devices)
+      checkTokenExp(token, refreshToken);
+    }
+  }, []);
   
   return (
     <Page title="Dashboard | IoT Fabricas">
