@@ -168,7 +168,7 @@ export default function UserMoreMenu(props) {
   const modalDailyGraphic = (data) => (
    (
       <div style={modalStyle} className={classes.paper2}>
-        <h2 id="simple-modal-title">SELECCIONE EL DIA DEL GRÁFICO</h2>
+        <h2 id="simple-modal-title">Seleccione el día del gráfico</h2>
         <br/>
         <CalendarGraphic datos={data} estado={1} />
       </div>
