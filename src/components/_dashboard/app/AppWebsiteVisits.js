@@ -277,7 +277,7 @@ export default function AppWebsiteVisits({device, llave, rule,dateGraphic}) {
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"        
             >
-              {modalDailyGraphic({device: device, type: type})}
+              {modalDailyGraphic({device: device, type: type,rule: [rule]})}
             </Modal>
             <Box display="flex" justifyContent="flex-end">
               <Button

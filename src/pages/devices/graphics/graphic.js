@@ -43,8 +43,8 @@ export default function GraphicDevice() {
                     devices.map((item, i) => {
                         return (
                             <Fragment key={"Fragment"+i}>
-                                <Grid item xs={12} md={12} lg={12} key={i}>
-                                    <AppWebsiteVisits device={item.device} rule={(typeof item.rule === 'undefined') ? null : item.rule[0] } llave={i} dateGraphic={dateGraphic} />
+                                <Grid item xs={12} md={12} lg={12} key={i}>                                    
+                                    <AppWebsiteVisits device={item.device} rule={item.rule[0]} llave={i} dateGraphic={dateGraphic} />
                                 </Grid>
                                 <Grid> &nbsp; </Grid> 
                             </Fragment>
@@ -52,8 +52,7 @@ export default function GraphicDevice() {
                     })
                     }
                 </Container>
-                </Page>
-                }
+            </Page>}
         </>
     )
 }

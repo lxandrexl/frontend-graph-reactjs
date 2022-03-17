@@ -10,12 +10,14 @@ import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import AdapterMoment from '@material-ui/lab/AdapterMoment';
 
 export default function CalendarGraphic(props) {
-    
-    console.log("props => ",props)
 
     const navigate = useNavigate();       
 
     function Redirigir(){       
+
+        if(props.estado===2){
+            props.datos.device.rule = props.datos.rule
+        }
 
         navigate(
             '/dashboard/daily-graphic',
