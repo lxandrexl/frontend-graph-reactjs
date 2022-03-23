@@ -1,4 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
+import { useLocation } from 'react-router';
+import { parse as QueryParse } from 'query-string';
 import { 
     Box,
     Button,
@@ -18,7 +20,7 @@ import {
 } from '@material-ui/core';
 import Calendar from 'react-calendar';
 
-export function AlarmPage(){
+export default function AlarmPage(){
     const location = useLocation();
     const {
         a,

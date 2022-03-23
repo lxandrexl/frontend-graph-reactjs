@@ -7,6 +7,7 @@ import infoFill from '@iconify/icons-eva/info-fill';
 import barChart2Fill from '@iconify/icons-eva/bar-chart-2-fill';
 import downloadFill from '@iconify/icons-eva/download-fill';
 import settings2Fill from '@iconify/icons-eva/settings-2-fill';
+import notificationFilled from '@iconify/icons-eva/calendar-fill';
 
 // material
 import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText, Link } from '@material-ui/core';
@@ -276,7 +277,22 @@ export default function UserMoreMenu(props) {
                   />
             </MenuItem>
           )
-        }        
+        }      
+
+        {
+          type === 'singular' && device?.device?.unidad_medida === 'ALARMA' ? (
+            <MenuItem sx={{ color: 'text.secondary' }}>
+              <ListItemIcon> <Icon icon={notificationFilled} width={24} height={24} /> </ListItemIcon>
+              <Link 
+                to={`/dashboard/alarms?${QueryStringify(pickDeviceQuery)}`}
+                state={{device: device, type: type}}
+                style={{ fontSize: '0.875rem' }}
+                color="inherit" underline="none" component={RouterLink}>
+                  Historial Alarmas
+              </Link>
+            </MenuItem>
+          ) : null
+        }  
 
         {
           type === 'singular' ? (
