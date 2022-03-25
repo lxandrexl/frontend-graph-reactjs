@@ -15,7 +15,7 @@ import Devices from './pages/devices/devices'
 import GraphicDevice  from './pages/devices/graphics/graphic'
 import ExportPage from './pages/export'
 import ThresholdPage from './pages/threshold'
-import AlarmPage from './pages/alarm'
+import AlarmPage, {StaticsAlarm} from './pages/alarm'
 
 // ----------------------------------------------------------------------
 
@@ -56,6 +56,7 @@ export default function Router() {
     { path: 'data', element: <ExportPage/> },
     { path: 'threshold', element: <ThresholdPage/> },
     { path: 'alarms', element: <AlarmPage/> },
+    { path: 'alarms/statistics', element: <StaticsAlarm/> },
   ];
 
   let routes = routesDefault;
