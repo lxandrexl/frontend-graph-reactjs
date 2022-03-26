@@ -6,23 +6,22 @@ import {
     Button,
     Typography,
     Stack,
-    TableContainer,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    TextField,
+    Fade,
     Modal,
     Backdrop,
     CircularProgress,
-    alpha
+    alpha,
+    Paper
 } from '@material-ui/core';
-import { AlarmCalendar } from '../components/alarm/alarm';
+import CloseIcon from '@material-ui/icons/Close';
+import { AlarmCalendar, AlarmChart } from '../components/alarm/alarm';
 import moment from 'moment';
+import ScrollContainer from 'react-indiana-drag-scroll';
 
 export function StaticsAlarm(){
     const location = useLocation();
+    const [openDetail, setOpenDetail] = useState(true);
+    const [details, setDetails] = useState([]);
     const {
         a,
         st,
@@ -37,6 +36,49 @@ export function StaticsAlarm(){
     return (
         <>
             <Box sx={{width: '100%', px: 2}}>
+                <Modal
+                    aria-labelledby="transition-modal-title"
+                    aria-describedby="transition-modal-description"
+                    open={openDetail}
+                    onClose={() => {setOpenDetail(false)}}
+                    closeAfterTransition
+                    BackdropComponent={Backdrop}
+                    BackdropProps={{
+                        timeout: 500,
+                    }}
+                >
+                    <Fade in={openDetail}>
+                        <Box sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 400,
+                            bgcolor: 'background.paper',
+                            p: 4,
+                            outline: 0
+                        }}>
+                            <Stack spacing={2}>
+                                <Stack justifyContent="space-between" direction="row" alignItems="center">
+                                    <Typography id="transition-modal-title" variant="h6" component="h2">
+                                    Fechas de activacion
+                                    </Typography>
+                                    <CloseIcon 
+                                        sx={{
+                                            cursor: 'pointer'
+                                        }} 
+                                        onClick={() => {
+                                            setOpenDetail(false);
+                                        }}
+                                    />
+                                </Stack>
+                                <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+                                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                                </Typography>
+                            </Stack>
+                        </Box>
+                    </Fade>
+                </Modal>
                 <Stack spacing={4}>
                     <Stack spacing={1}>
                         <Box sx={{display: 'flex', flexFlow: 'row', justifyContent: 'space-between'}}>
@@ -59,9 +101,34 @@ export function StaticsAlarm(){
                                 <Typography variant="subtitle2">Unidad:</Typography>
                                 <Typography variant="caption">{unidad}</Typography>
                             </Stack>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography variant="subtitle2">Fecha:</Typography>
+                                <Typography variant="caption">{fecha}</Typography>
+                            </Stack>
                         </Stack>
                     </Stack>
-                    <div>a</div>
+                    <Paper square elevation={5} sx={{ p: 2 }}>
+                        <Stack spacing={3}>
+                            <Typography variant="subtitle1">Cantidad de alarmas por hora</Typography>
+                            <Box sx={{
+                                overflowX: 'auto',
+                                overflowY: 'hidden'
+                            }}>
+                                <ScrollContainer
+                                    vertical={false}
+                                    className="scroll-container"
+                                    style={{
+                                        cursor: 'move'
+                                    }}
+                                >
+                                    <AlarmChart onClick={({x}) => {
+                                        console.log(x)
+                                        setOpenDetail(true)
+                                    }} />
+                                </ScrollContainer>
+                            </Box>
+                        </Stack>
+                    </Paper>
                 </Stack>
             </Box>
         </>
