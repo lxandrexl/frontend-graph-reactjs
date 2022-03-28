@@ -24,16 +24,11 @@ moment.locale('es', {
 export function generateSeries(datos){ 
 
   console.log("Cantidad de puntos => ",datos.deviceData.length)
-  console.log("datos => ",datos)
 
   var seriesDaily = [[],[],[]];
 
   for(let value of datos.deviceData) {
       if(value.deviceId === datos.deviceId) {
-        
-          //console.log("value.ts => ",value.ts)
-
-          console.log(moment(value.ts).format('YYYY-MM-DD HH:mm:ss'));
           
           seriesDaily[0].push({
             "date": moment(value.ts).format('YYYY-MM-DD HH:mm:ss'),
@@ -55,8 +50,6 @@ export function generateSeries(datos){
       }
       
   }  
-  
-  console.log("seriesDaily => ",seriesDaily)
 
   return seriesDaily;
 }

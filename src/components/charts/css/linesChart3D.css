@@ -178,3 +178,43 @@ p.center{
     color: #9b9b9b;
     opacity: 0.5;
 }
+
+.flex_wrap{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.legends{
+  flex-direction: row;
+  display: flex;
+  margin-right: 30px;
+  font-size: 13px;
+}
+
+.legends p{
+  display: flex;
+  margin-left: 7px;
+  align-items: baseline;
+}
+
+.legends p > span.circle{
+  width:10px;
+  height: 10px;
+  border-radius: 100%;
+  display: block;
+  margin-right: 6px;
+}
+
+.legends p > span.circle.dispositivo{
+  background: #00ab55;
+}
+
+.legends p > span.circle.umbralmax{
+background: #ffc107;
+}
+
+.legends p > span.circle.umbralmin{
+background: #1890ff;
+}
