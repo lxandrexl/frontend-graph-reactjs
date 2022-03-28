@@ -11,19 +11,13 @@ import {getDeviceData} from 'src/services/device.service';
 import { getAccessToken } from 'src/services/tokens';
 import { timeIntervalPerMinute } from 'src/services/constants'
 
-import Highcharts from 'highcharts'
-import HighchartsReact from 'highcharts-react-official'
+import LinesChartD3  from '../../charts/LinesChartD3';
 // ----------------------------------------------------------------------
 import Modal from '@material-ui/core/Modal';
 import CalendarGraphic from 'src/pages/calendarGraphic'
 import { makeStyles } from '@material-ui/styles';
 import { useLocation } from 'react-router-dom'
-import {
-  generateSeries,
-  generateOptions,
-  mesesSpanish,
-  diasSpanish
-} from 'src/utils/generateDataGraphic';
+import { generateSeries } from 'src/utils/generateDataGraphic';
 
 moment.locale('es');
 
@@ -248,18 +242,14 @@ export default function AppWebsiteVisits({device, llave, rule,dateGraphic}) {
     setOpenDailyGraphicModal(false);
   }; 
   
-  const options = generateOptions({
+  const options = {
     titleGraphic: titleGraphic,
     subtitleGraphic: subtitleGraphic,
     dateGraphic: dateGraphic,
-    data: data,
     abrevDaily: abrevDaily
-  })    
+  }     
 
-  Highcharts.setOptions({
-    lang: { months: mesesSpanish, weekdays: diasSpanish },
-    colors: ['#00ab55','#ffc107','#1890ff']
-  });   
+  const data3D = data;
 
   return (    
     (typeof dateGraphic !== 'string') 
@@ -289,8 +279,8 @@ export default function AppWebsiteVisits({device, llave, rule,dateGraphic}) {
                 Cambiar Fecha
               </Button> 
             </Box>      
-            <Card>
-              <HighchartsReact highcharts={Highcharts} options={options} updateArgs={[true]}/>
+            <Card>              
+              <LinesChartD3 series = {data3D} options={options} />
             </Card>
           </>           
         )

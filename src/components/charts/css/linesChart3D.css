@@ -1,0 +1,180 @@
+/*.listening-rect {
+    fill: transparent;
+  }
+  
+  path { 
+      stroke: steelblue;
+      stroke-width: 2;
+      fill: none;
+  }
+  
+  .axis path,
+  .axis line {
+      fill: none;
+      stroke: grey;
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+  }
+  
+  .x.axis path {
+    display: none;
+  }
+  
+  .line {
+    fill: none;
+    stroke-width: 1.5px;
+  }
+  
+  .overlay {
+    fill: none;
+    pointer-events: all;
+  }
+  
+  
+  
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 2;
+    shape-rendering: crispEdges;
+  }
+  
+  .grid .tick {
+    stroke: lightgrey;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+  }
+  
+  .grid path {
+    stroke-width: 0;
+  }
+  */
+
+  .focus circle {
+    stroke: #00ab55;
+    fill: #00ab55 !important;
+    width: 20px;
+    height: 20px;
+    stroke-width: 3.5px
+  }
+  
+  div#tooltip{
+    position:absolute;
+    background-color:white;
+    padding:5px;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    box-shadow: 0px 2px 17px -2px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 2px 17px -2px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 2px 17px -2px rgba(0,0,0,0.75);
+    border-radius: 8px;
+    font-family: "Public Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgb(33, 43, 54);
+    border: 1px solid #00ab55;
+  }
+
+  div#tooltip p{
+      font-weight: 900;
+  }
+
+  div#tooltip label{
+    display: flex;
+    justify-content: flex-start;
+    align-items: baseline;
+    margin-top: 3px;
+  }
+
+  div#tooltip label > span{
+      font-weight: 900;
+  }
+
+  div#tooltip label > span.circle{
+      width:10px;
+      height: 10px;
+      border-radius: 100%;
+      display: block;
+      margin-right: 6px;
+  }
+
+  div#tooltip label > span.circle.dispositivo{
+      background: #00ab55;
+  }
+
+  div#tooltip label > span.circle.umbralmax{
+    background: #ffc107;
+}
+
+div#tooltip label > span.circle.umbralmin{
+    background: #1890ff;
+}
+
+p.center{
+    text-align: center;
+}
+
+.h1graphic{
+    margin-left: 20px; 
+    margin-top: 7px;
+    font-family:"Public Sans", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: black;
+}
+
+.h4graphic{
+    margin-left: 20px; 
+    margin-bottom: 5px; 
+    margin-top: 7px;
+    font-weight: 400;
+    color: #878787;
+}
+
+.pdetails{
+    margin-left: 20px; margin-bottom: 5px;
+    color: #878787;
+}
+
+.pdetails span{
+    font-weight:700
+}
+
+.abajografico{
+    font-size: 12px;
+    margin-top: 6px;
+    margin-bottom: 20px;
+}
+
+.bold_dispo{
+    font-weight: 700;
+    color: #00ab55;
+    display: block;
+    margin-right: 4px;
+}
+
+.bold_minimo{
+    font-weight: 700;
+    color: #1890ff;
+    display: block;
+    margin-right: 4px;
+}
+
+.bold_maximo{
+    font-weight: 700;
+    color: #ffc107;
+    display: block;
+    margin-right: 4px;
+}
+
+.ejey path.domain{
+    color: #9b9b9b;
+    opacity: 0.5;
+}
+
+.ejex path.domain{
+    color: #9b9b9b;
+    opacity: 0.5;
+}
