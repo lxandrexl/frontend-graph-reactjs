@@ -11,7 +11,7 @@ import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
 import {worker} from './mocks/browser/handler';
 
-if(process.env.NODE_ENV === 'local'){
+if(process.env.NODE_ENV === 'development'){
   worker.start()
 }
 

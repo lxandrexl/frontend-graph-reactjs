@@ -115,14 +115,24 @@ export function AlarmCalendar({
                     showNavigation={false}
                     activeStartDate={dateInput.toDate()}
                     tileClassName={({ date }) => {
-                        const ff = select.some((element) => element === moment(date).format('YYYY-MM-DD'));
+                        const dd = moment(date).format('YYYY-MM-DD');
+                        const ff = select.some((element) => {
+                            const {year, month, day} = element;
+                            const d = moment(new Date(year, month - 1, day)).format('YYYY-MM-DD');
+                            return d === dd
+                        });
                         return ff ? classes.inAlert : null;
                     }}
                     onClickDay={(value) => {
                         onSelected(moment(value).format('YYYY-MM-DD'));
                     }}
                     tileDisabled={({ date }) => {
-                        return !select.some((element) => element === moment(date).format('YYYY-MM-DD'));
+                        const dd = moment(date).format('YYYY-MM-DD');
+                        return !(select.some((element) => {
+                            const {year, month, day} = element;
+                            const d = moment(new Date(year, month - 1, day)).format('YYYY-MM-DD');
+                            return d === dd
+                        }));
                     }}
                 />
             </Stack>

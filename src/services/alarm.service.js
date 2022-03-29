@@ -4,7 +4,7 @@ import { getToken } from './tokens';
 
 export async function getAlarm(query){
     const token = getToken();
-    return axios.get(
+    const {data} = await axios.get(
       `${baseUrl}/alarms?${query}`,
       {
         headers: {
@@ -12,4 +12,5 @@ export async function getAlarm(query){
         }
       }
     );
+    return data;
 }

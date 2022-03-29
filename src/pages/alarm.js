@@ -10,11 +10,14 @@ import {
     Backdrop,
     CircularProgress,
     alpha,
-    Paper
+    Paper,
+    Select,
+    MenuItem
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import TimerIcon from '@material-ui/icons/Timer';
 import { AlarmCalendar, AlarmChart } from '../components/alarm/alarm';
+import { getAlarm } from '../services/alarm.service';
 import moment from 'moment';
 import ScrollContainer from 'react-indiana-drag-scroll';
 
@@ -165,8 +168,7 @@ export default function AlarmPage(){
     const location = useLocation();
     const navigate = useNavigate();
     const [year, setYear] = useState(moment().year());
-    const [refresh, setRefresh] = useState(false);
-    const [data, setData] = useState({});
+    const [data, setData] = useState([]);
     const {
         a,
         st,
@@ -177,6 +179,14 @@ export default function AlarmPage(){
         descripcion
     } = useMemo(() => QueryParse(location.search), []);
 
+    const intervalYears = useMemo(() => {
+        const yy = [];
+        for(let i = moment().year(); i >= 2021; i--){
+            yy.push(i);
+        }
+        return yy;
+    }, []);
+
     const listDates = useMemo(() => {
         const yy = moment();
         const mm = year < yy.year() ? 12 : yy.month() + 1;
@@ -185,11 +195,13 @@ export default function AlarmPage(){
             .reverse();
     }, [year]);
 
-    useEffect(() => {
-        setData({
-            3: ['2022-03-05']
-        });
-    }, [year, refresh]);
+    useEffect(async () => {
+        const r = await getAlarm(stringify({
+            action: 'by_year',
+            date: year
+        }));
+        setData(r.payload);
+    }, [year]);
 
     function onSelected(date){
         const query = stringify({
@@ -232,6 +244,21 @@ export default function AlarmPage(){
                             </Stack>
                         </Stack>
                     </Stack>
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'flex-end'
+                    }}>
+                        <Stack spacing={1}>
+                            <Typography variant="subtitle2">Seleccionar año</Typography>
+                            <Select value={year} onChange={(event) => setYear(event.target.value)}>
+                                {
+                                    intervalYears.map((element) => {
+                                        return <MenuItem value={element}>{element}</MenuItem>
+                                    })
+                                }
+                            </Select>
+                        </Stack>
+                    </Box>
                     <Box
                         sx={{
                             display: 'flex',
@@ -246,8 +273,6 @@ export default function AlarmPage(){
                     >
                         {
                             listDates.map((element, i) => {
-                                const mm = moment(element, 'YYYY-MM-DD').month() + 1;
-                                const select = data[mm];
                                 return (
                                     <Box sx={{
                                         mb: 3,
@@ -256,7 +281,7 @@ export default function AlarmPage(){
                                         <AlarmCalendar
                                             key={i}
                                             date={element}
-                                            select={select ?? []}
+                                            select={data ?? []}
                                             onSelected={onSelected}
                                         />
                                     </Box>
