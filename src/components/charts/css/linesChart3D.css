@@ -191,12 +191,14 @@ p.center{
   display: flex;
   margin-right: 30px;
   font-size: 13px;
+  justify-content: center;
+
 }
 
 .legends p{
   display: flex;
-  margin-left: 7px;
-  align-items: baseline;
+  margin-left: 12px;
+  align-items: center;
 }
 
 .legends p > span.circle{
@@ -207,14 +209,25 @@ p.center{
   margin-right: 6px;
 }
 
-.legends p > span.circle.dispositivo{
+.legends p > span.circle.dispositivo, .legends p > span.rectangulo.dispositivo{
   background: #00ab55;
 }
 
-.legends p > span.circle.umbralmax{
+.legends p > span.circle.umbralmax, .legends p > span.rectangulo.umbralmax{
 background: #ffc107;
 }
 
-.legends p > span.circle.umbralmin{
+.legends p > span.circle.umbralmin, .legends p > span.rectangulo.umbralmin{
 background: #1890ff;
+}
+
+.legends p > span.rectangulo{
+  width:15px;
+  height: 5px;
+  display: block;
+  margin-right: 6px;
+}
+
+.legends p label{
+  font-weight: 700;
 }

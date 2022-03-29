@@ -23,23 +23,23 @@ d3.formatLocale(es_PE);
 function Leyenda(datos){
     if(datos.umbralMaximo > 0 && datos.umbralMinimo > 0){
         return (<div className="legends">
-                    <p><span class='circle dispositivo'></span><label>Dispositivo</label></p>
-                    <p><span class='circle umbralmin'></span><label>Umbral Mínimo</label></p>
-                    <p><span class='circle umbralmax'></span><label>Umbral Máximo</label></p>
+                    <p><span class='rectangulo dispositivo'></span><label>Dispositivo</label></p>
+                    <p><span class='rectangulo umbralmin'></span><label>Umbral Mínimo</label></p>
+                    <p><span class='rectangulo umbralmax'></span><label>Umbral Máximo</label></p>
                 </div>)
     }else if(datos.umbralMaximo > 0){
         return (<div className="legends">
-                    <p><span class='circle dispositivo'></span><label>Dispositivo</label></p>
-                    <p><span class='circle umbralmax'></span><label>Umbral Máximo</label></p>
+                    <p><span class='rectangulo dispositivo'></span><label>Dispositivo</label></p>
+                    <p><span class='rectangulo umbralmax'></span><label>Umbral Máximo</label></p>
                 </div>)
     }else if(datos.umbralMinimo > 0){
         return (<div className="legends">
-                    <p><span class='circle dispositivo'></span><label>Dispositivo</label></p>
-                    <p><span class='circle umbralmin'></span><label>Umbral Mínimo</label></p>
+                    <p><span class='rectangulo dispositivo'></span><label>Dispositivo</label></p>
+                    <p><span class='rectangulo umbralmin'></span><label>Umbral Mínimo</label></p>
                 </div>)
     }else{
         return (<div className="legends">
-                    <p><span class='circle dispositivo'></span><label>Dispositivo</label></p>
+                    <p><span class='rectangulo dispositivo'></span><label>Dispositivo</label></p>
                 </div>)
     }
 }
@@ -302,7 +302,22 @@ export default function LinesChartD3(datos) {
                             .style("left",(event.pageX-280)+"px")
                     }                    
                 }              
-            }            
+            } 
+            
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(y)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -50)
+                .attr("dy", ".71em")
+                .attr("dx", "-5em")
+                .style("text-anchor", "end")
+                    .style("font-size", "12px")
+                    .style("font-weight", "400")
+                    .style("font", "sans-serif")
+                    .style("margin-top","20px")
+                .text("Unidad de Medida: "+datos.options.abrevDaily);
         
             svg
                 .append("rect")
@@ -329,13 +344,12 @@ export default function LinesChartD3(datos) {
                 <h4 className="h4graphic">{datos.options.subtitleGraphic}</h4>
                 <div className="flex_wrap">
                     <p className="pdetails">Fecha: <span>{textoFecha}</span></p>                    
-                    <Leyenda 
-                        umbralMinimo={umbralMinimo.length}
-                        umbralMaximo={umbralMaximo.length}
-                    />
-                </div>
-                
-                <svg id="grafico_daily"></svg>
+                </div>                
+                <svg id="grafico_daily"></svg>                
+                <Leyenda 
+                    umbralMinimo={umbralMinimo.length}
+                    umbralMaximo={umbralMaximo.length}
+                />
                 <p className='center abajografico'>Fecha: {fechaSpanish} desde las 00:00h hasta las 23:59h</p>
                 <div id='tooltip' ></div>
             </div>          
