@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router';
 import { parse as QueryParse, stringify } from 'query-string';
 import { 
     Box,
-    Button,
     Typography,
     Stack,
     Fade,
@@ -14,13 +13,14 @@ import {
     Paper
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import TimerIcon from '@material-ui/icons/Timer';
 import { AlarmCalendar, AlarmChart } from '../components/alarm/alarm';
 import moment from 'moment';
 import ScrollContainer from 'react-indiana-drag-scroll';
 
 export function StaticsAlarm(){
     const location = useLocation();
-    const [openDetail, setOpenDetail] = useState(true);
+    const [openDetail, setOpenDetail] = useState(false);
     const [details, setDetails] = useState([]);
     const {
         a,
@@ -53,7 +53,7 @@ export function StaticsAlarm(){
                             top: '50%',
                             left: '50%',
                             transform: 'translate(-50%, -50%)',
-                            width: 400,
+                            width: 320,
                             bgcolor: 'background.paper',
                             p: 4,
                             outline: 0
@@ -61,7 +61,7 @@ export function StaticsAlarm(){
                             <Stack spacing={2}>
                                 <Stack justifyContent="space-between" direction="row" alignItems="center">
                                     <Typography id="transition-modal-title" variant="h6" component="h2">
-                                    Fechas de activacion
+                                    Fechas de alarma
                                     </Typography>
                                     <CloseIcon 
                                         sx={{
@@ -72,9 +72,32 @@ export function StaticsAlarm(){
                                         }}
                                     />
                                 </Stack>
-                                <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-                                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                                </Typography>
+                                <Box sx={{
+                                    overflowY: 'auto',
+                                    boxSizing: 'border-box',
+                                    p: .5,
+                                    maxHeight: 380
+                                }}>
+                                    <Stack spacing={1.5}>
+                                {
+                                    new Array(5).fill('2022-03-05 00:01:00').map((element) => {
+                                        return (
+                                            <Paper elevation={2} sx={{
+                                                boxSizing: 'border-box',
+                                                p: 2
+                                            }}>
+                                                <Stack direction="row" alignItems="center" spacing={2}>
+                                                    <TimerIcon size="small" color="error" />
+                                                    <Typography variant="body2">
+                                                    {element}
+                                                    </Typography>
+                                                </Stack>
+                                            </Paper>
+                                        );
+                                    })
+                                }
+                                    </Stack>
+                                </Box>
                             </Stack>
                         </Box>
                     </Fade>
@@ -82,7 +105,7 @@ export function StaticsAlarm(){
                 <Stack spacing={4}>
                     <Stack spacing={1}>
                         <Box sx={{display: 'flex', flexFlow: 'row', justifyContent: 'space-between'}}>
-                            <Typography variant="h4">Estadistica de Alarma</Typography>
+                            <Typography variant="h4">Estadística de Alarma</Typography>
                         </Box>
                         <Stack spacing={1}>
                             <Stack direction="row" spacing={1} alignItems="center">
@@ -109,7 +132,10 @@ export function StaticsAlarm(){
                     </Stack>
                     <Paper square elevation={5} sx={{ p: 2 }}>
                         <Stack spacing={3}>
-                            <Typography variant="subtitle1">Cantidad de alarmas por hora</Typography>
+                            <Stack spacing={1}>
+                                <Typography variant="subtitle1">Cantidad de alarmas por hora</Typography>
+                                <Typography variant="body2">Intervalo con mayor cantidad de alarmas: 00:00</Typography>
+                            </Stack>
                             <Box sx={{
                                 overflowX: 'auto',
                                 overflowY: 'hidden'
@@ -185,7 +211,7 @@ export default function AlarmPage(){
                 <Stack spacing={4}>
                     <Stack spacing={1}>
                         <Box sx={{display: 'flex', flexFlow: 'row', justifyContent: 'space-between'}}>
-                            <Typography variant="h4">Calendario de Alarmas</Typography>
+                            <Typography variant="h4">Historial de Alarmas</Typography>
                         </Box>
                         <Stack spacing={1}>
                             <Stack direction="row" spacing={1} alignItems="center">
