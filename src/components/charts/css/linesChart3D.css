@@ -1,55 +1,7 @@
-/*.listening-rect {
-    fill: transparent;
+  .grafico_daily{
+    width: 100%;
+    height: calc(100vh - 320px);
   }
-  
-  path { 
-      stroke: steelblue;
-      stroke-width: 2;
-      fill: none;
-  }
-  
-  .axis path,
-  .axis line {
-      fill: none;
-      stroke: grey;
-      stroke-width: 1;
-      shape-rendering: crispEdges;
-  }
-  
-  .x.axis path {
-    display: none;
-  }
-  
-  .line {
-    fill: none;
-    stroke-width: 1.5px;
-  }
-  
-  .overlay {
-    fill: none;
-    pointer-events: all;
-  }
-  
-  
-  
-  .axis path,
-  .axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 2;
-    shape-rendering: crispEdges;
-  }
-  
-  .grid .tick {
-    stroke: lightgrey;
-    stroke-opacity: 0.7;
-    shape-rendering: crispEdges;
-  }
-  
-  .grid path {
-    stroke-width: 0;
-  }
-  */
 
   .focus circle {
     stroke: #00ab55;
@@ -145,7 +97,7 @@ p.center{
 .abajografico{
     font-size: 12px;
     margin-top: 6px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .bold_dispo{
@@ -192,7 +144,7 @@ p.center{
   margin-right: 30px;
   font-size: 13px;
   justify-content: center;
-
+  margin-bottom: 20px;
 }
 
 .legends p{
