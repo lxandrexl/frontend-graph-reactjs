@@ -225,7 +225,8 @@ export default function AlarmPage(){
         navigate(`./statistics`, {
             state: {
                 type,
-                device
+                device,
+                date
             }
         });
     }
