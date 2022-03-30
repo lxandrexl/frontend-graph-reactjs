@@ -36,7 +36,8 @@ export function StaticsAlarm(){
     const {
         type,
         device,
-        date
+        date,
+        ids
     } = useMemo(() => location.state, []);
 
     const listDates = useMemo(() => {
@@ -177,7 +178,12 @@ export function StaticsAlarm(){
                         ) : null
                     }
                     {
-                        type === 'plural' && device.devices.map((element) => {
+                        type === 'plural' && device.devices.filter((element) => {
+                            const {deviceId} = element.device;
+                            return ids.some((element) => {
+                                return element === deviceId;
+                            })
+                        }).map((element) => {
                             const {deviceId, descripcion, grupo, unidad_medida} = element.device;
                             return (
                                 <Paper square elevation={5} sx={{ p: 2 }}>
@@ -295,12 +301,13 @@ export default function AlarmPage(){
         setData(r.payload);
     }, [year]);
 
-    function onSelected(date){
+    function onSelected({date, ids}){
         navigate(`./statistics`, {
             state: {
                 type,
                 device,
-                date
+                date,
+                ids
             }
         });
     }

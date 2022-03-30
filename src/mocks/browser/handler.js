@@ -7,7 +7,7 @@ export const worker = setupWorker(
     const {
       url
     } = req;
-    const {action} = QueryParse(url.search);
+    const {action, device} = QueryParse(url.search);
     switch(action){
       case 'by_year':
         return res(
@@ -17,7 +17,8 @@ export const worker = setupWorker(
               year: 2022,
               month: 3,
               day: 20,
-              total: 10
+              total: 10,
+              ids: '352557100884025#1#20051-V7#LAIVE'
             }]
           }),
         )

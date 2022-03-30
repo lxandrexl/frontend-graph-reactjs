@@ -113,7 +113,16 @@ export function AlarmCalendar({
                         return ff ? classes.inAlert : null;
                     }}
                     onClickDay={(value) => {
-                        onSelected(moment(value).format('YYYY-MM-DD'));
+                        const dd = moment(value).format('YYYY-MM-DD');
+                        const [{ids}] = select.filter((element) => {
+                            const {year, month, day} = element;
+                            const d = moment(new Date(year, month - 1, day)).format('YYYY-MM-DD');
+                            return d === dd
+                        });
+                        onSelected({
+                            date: moment(value).format('YYYY-MM-DD'),
+                            ids: ids.split(',')
+                        });
                     }}
                     tileDisabled={({ date }) => {
                         const dd = moment(date).format('YYYY-MM-DD');
