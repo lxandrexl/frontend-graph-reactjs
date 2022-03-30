@@ -313,66 +313,70 @@ function reDraw({
         var tooltip = d3.select("#tooltip");
         
         function mouseMove(event) {
-            const bisect = d3.bisector((d) => d.date).left,
-            x0 = x.invert(d3.pointer(event, this)[0]),
-            i = bisect(dataGrafico, x0, 1),
-            d0 = dataGrafico[i - 1],
-            d1 = dataGrafico[i],
-            d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-        
-            focus
-                .select("circle.y")
-                .attr("transform", "translate(" + x(d.date) + "," + y(d.value) + ")");      
-        
-            if(umbralMaximo.length > 0 && umbralMinimo.length > 0){
-                tooltip.html(
-                    "<p>"+moment(d.date).format('dddd DD [de] MMMM [a las] HH:mm A')+"</p>"
-                    +"<label><span class='circle dispositivo'></span><span class='bold_dispo'>Dispositivo: </span><span>"+d.value+" "+options.abrevDaily+"</span></label>"
-                    +"<label><span class='circle umbralmin'></span><span class='bold_minimo'>Umbral Mínimo: </span><span>"+umbralMinimo[0].value+" "+options.abrevDaily+"</span></label>"
-                    +"<label><span class='circle umbralmax'></span><span class='bold_maximo'>Umbral Máximo: </span><span>"+umbralMaximo[0].value+" "+options.abrevDaily+"</span></label"
-                );
-            }else if(umbralMaximo.length > 0){
-                tooltip.html(
-                    "<p>"+moment(d.date).format('dddd DD [de] MMMM [a las] HH:mm A')+"</p>"
-                    +"<label><span class='circle dispositivo'></span><span class='bold_dispo'>Dispositivo: </span><span>"+d.value+" "+options.abrevDaily+"</span></label>"
-                    +"<label><span class='circle umbralmax'></span><span class='bold_maximo'>Umbral Máximo: </span><span>"+umbralMaximo[0].value+" "+options.abrevDaily+"</span></label"
-                );
-            }else if(umbralMinimo.length > 0){
-                tooltip.html(
-                    "<p>"+moment(d.date).format('dddd DD [de] MMMM [a las] HH:mm A')+"</p>"
-                    +"<label><span class='circle dispositivo'></span><span class='bold_dispo'>Dispositivo: </span><span>"+d.value+" "+options.abrevDaily+"</span></label>"
-                    +"<label><span class='circle umbralmax'></span><span class='bold_maximo'>Umbral Máximo: </span><span>"+umbralMaximo[0].value+" "+options.abrevDaily+"</span></label"
-                );
-            }else{
-                tooltip.html(
-                    "<p>"+moment(d.date).format('dddd DD [de] MMMM [a las] HH:mm A')+"</p>"
-                    +"<label><span class='circle dispositivo'></span><span class='bold_dispo'>Dispositivo: </span><span>"+d.value+" "+options.abrevDaily+"</span></label>"
-                );
+            const x0 = x.invert(d3.pointer(event, this)[0]);
+            if(x0 <= dataGrafico[dataGrafico.length-1].date){
+                const bisect = d3.bisector((d) => d.date ).left,            
+                i = bisect(dataGrafico, x0, 1),
+                d0 = dataGrafico[i - 1],
+                d1 = dataGrafico[i],
+                d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+            
+                focus
+                    .select("circle.y")
+                    .attr("transform", "translate(" + x(d.date) + "," + y(d.value) + ")");      
+            
+                if(umbralMaximo.length > 0 && umbralMinimo.length > 0){
+                    tooltip.html(
+                        "<p>"+moment(d.date).format('dddd DD [de] MMMM [a las] HH:mm A')+"</p>"
+                        +"<label><span class='circle dispositivo'></span><span class='bold_dispo'>Dispositivo: </span><span>"+d.value+" "+options.abrevDaily+"</span></label>"
+                        +"<label><span class='circle umbralmin'></span><span class='bold_minimo'>Umbral Mínimo: </span><span>"+umbralMinimo[0].value+" "+options.abrevDaily+"</span></label>"
+                        +"<label><span class='circle umbralmax'></span><span class='bold_maximo'>Umbral Máximo: </span><span>"+umbralMaximo[0].value+" "+options.abrevDaily+"</span></label"
+                    );
+                }else if(umbralMaximo.length > 0){
+                    tooltip.html(
+                        "<p>"+moment(d.date).format('dddd DD [de] MMMM [a las] HH:mm A')+"</p>"
+                        +"<label><span class='circle dispositivo'></span><span class='bold_dispo'>Dispositivo: </span><span>"+d.value+" "+options.abrevDaily+"</span></label>"
+                        +"<label><span class='circle umbralmax'></span><span class='bold_maximo'>Umbral Máximo: </span><span>"+umbralMaximo[0].value+" "+options.abrevDaily+"</span></label"
+                    );
+                }else if(umbralMinimo.length > 0){
+                    tooltip.html(
+                        "<p>"+moment(d.date).format('dddd DD [de] MMMM [a las] HH:mm A')+"</p>"
+                        +"<label><span class='circle dispositivo'></span><span class='bold_dispo'>Dispositivo: </span><span>"+d.value+" "+options.abrevDaily+"</span></label>"
+                        +"<label><span class='circle umbralmax'></span><span class='bold_maximo'>Umbral Máximo: </span><span>"+umbralMaximo[0].value+" "+options.abrevDaily+"</span></label"
+                    );
+                }else{
+                    tooltip.html(
+                        "<p>"+moment(d.date).format('dddd DD [de] MMMM [a las] HH:mm A')+"</p>"
+                        +"<label><span class='circle dispositivo'></span><span class='bold_dispo'>Dispositivo: </span><span>"+d.value+" "+options.abrevDaily+"</span></label>"
+                    );
+                }
+
+                if(event.pageX-280 > 750){
+                    if( event.pageY > 480){
+                        tooltip
+                            .style("top", (event.pageY-300)+"px")
+                            .style("left",(event.pageX-500)+"px")
+                    }else{
+                        tooltip
+                            .style("top", (event.pageY-100)+"px")
+                            .style("left",(event.pageX-500)+"px")
+                    }
+                        
+                }else{
+
+                    if( event.pageY > 480){
+                        tooltip
+                            .style("top", (event.pageY-200)+"px")
+                            .style("left",(event.pageX-280)+"px")
+                    }else{
+                        tooltip
+                            .style("top", (event.pageY-100)+"px")
+                            .style("left",(event.pageX-280)+"px")
+                    }                    
+                } 
             }
 
-            if(event.pageX-280 > 750){
-                if( event.pageY > 480){
-                    tooltip
-                        .style("top", (event.pageY-300)+"px")
-                        .style("left",(event.pageX-500)+"px")
-                }else{
-                    tooltip
-                        .style("top", (event.pageY-100)+"px")
-                        .style("left",(event.pageX-500)+"px")
-                }
-                    
-            }else{
-
-                if( event.pageY > 480){
-                    tooltip
-                        .style("top", (event.pageY-200)+"px")
-                        .style("left",(event.pageX-280)+"px")
-                }else{
-                    tooltip
-                        .style("top", (event.pageY-100)+"px")
-                        .style("left",(event.pageX-280)+"px")
-                }                    
-            }              
+                         
         } 
         
         svg.append("g")
