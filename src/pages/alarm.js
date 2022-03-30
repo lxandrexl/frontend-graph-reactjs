@@ -10,7 +10,9 @@ import {
     Backdrop,
     CircularProgress,
     alpha,
+    Button,
     Paper,
+    Tooltip,
     Select,
     MenuItem
 } from '@material-ui/core';
@@ -19,12 +21,13 @@ import TimerIcon from '@material-ui/icons/Timer';
 import { AlarmCalendar, AlarmChart } from '../components/alarm/alarm';
 import { getAlarm } from '../services/alarm.service';
 import moment from 'moment';
-import ScrollContainer from 'react-indiana-drag-scroll';
 
 export function StaticsAlarm(){
     const location = useLocation();
     const [openDetail, setOpenDetail] = useState(false);
+    const [selectedDate, setSelectDate] = useState(null);
     const [details, setDetails] = useState([]);
+    const [hourAlerts, setHourAlerts] = useState([]);
     const {
         a,
         st,
@@ -35,6 +38,45 @@ export function StaticsAlarm(){
         descripcion,
         fecha
     } = useMemo(() => QueryParse(location.search), []);
+
+    const listDates = useMemo(() => {
+        const dates = [...Array(24).keys()]
+            .map((element) => `${(element).toString().padStart(2, '0')}:00`);
+        return (dates ?? []).map((element) => {
+            return {
+                x: element
+            }
+        })
+    }, []);
+
+    const maxAlarmsHour = useMemo(() => {
+        return (hourAlerts || []).reduce((prev, actual) => {
+            const [total] = prev;
+            if(actual.total > total){
+                prev[0] = actual.total;
+                prev[1] = `${(actual.hour).toString().padStart(2, '0')}:00`;
+            }
+            return prev;
+        }, [0, '00:00'])
+    }, [hourAlerts]);
+
+    useEffect(async () => {
+        if(!fecha) return;
+        const r = await getAlarm(stringify({
+            action: 'by_day',
+            date: fecha
+        }));
+        setHourAlerts(r.payload)
+    }, [fecha]);
+
+    useEffect(async () => {
+        if(!selectedDate) return;
+        const r = await getAlarm(stringify({
+            action: 'by_hour',
+            date: selectedDate
+        }));
+        setDetails(r.payload)
+    }, [selectedDate]);
 
     return (
         <>
@@ -82,23 +124,23 @@ export function StaticsAlarm(){
                                     maxHeight: 380
                                 }}>
                                     <Stack spacing={1.5}>
-                                {
-                                    new Array(5).fill('2022-03-05 00:01:00').map((element) => {
-                                        return (
-                                            <Paper elevation={2} sx={{
-                                                boxSizing: 'border-box',
-                                                p: 2
-                                            }}>
-                                                <Stack direction="row" alignItems="center" spacing={2}>
-                                                    <TimerIcon size="small" color="error" />
-                                                    <Typography variant="body2">
-                                                    {element}
-                                                    </Typography>
-                                                </Stack>
-                                            </Paper>
-                                        );
-                                    })
-                                }
+                                    {
+                                        details.map((element) => {
+                                            return (
+                                                <Paper elevation={2} sx={{
+                                                    boxSizing: 'border-box',
+                                                    p: 2
+                                                }}>
+                                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                                        <TimerIcon size="small" color="error" />
+                                                        <Typography variant="body2">
+                                                        {element}
+                                                        </Typography>
+                                                    </Stack>
+                                                </Paper>
+                                            );
+                                        })
+                                    }
                                     </Stack>
                                 </Box>
                             </Stack>
@@ -127,34 +169,50 @@ export function StaticsAlarm(){
                                 <Typography variant="subtitle2">Unidad:</Typography>
                                 <Typography variant="caption">{unidad}</Typography>
                             </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Fecha:</Typography>
-                                <Typography variant="caption">{fecha}</Typography>
-                            </Stack>
                         </Stack>
                     </Stack>
                     <Paper square elevation={5} sx={{ p: 2 }}>
                         <Stack spacing={3}>
                             <Stack spacing={1}>
-                                <Typography variant="subtitle1">Cantidad de alarmas por hora</Typography>
-                                <Typography variant="body2">Intervalo con mayor cantidad de alarmas: 00:00</Typography>
+                                <Typography variant="subtitle1">{moment(fecha).format('dddd DD [de] MMMM [del] YYYY')}</Typography>
+                                <Typography variant="body2">Hora con mayor cantidad de alarmas: {maxAlarmsHour[1]}</Typography>
                             </Stack>
                             <Box sx={{
-                                overflowX: 'auto',
-                                overflowY: 'hidden'
+                                display: 'flex',
+                                gap: 2,
+                                flexWrap: 'wrap',
                             }}>
-                                <ScrollContainer
-                                    vertical={false}
-                                    className="scroll-container"
-                                    style={{
-                                        cursor: 'move'
-                                    }}
-                                >
-                                    <AlarmChart onClick={({x}) => {
-                                        console.log(x)
-                                        setOpenDetail(true)
-                                    }} />
-                                </ScrollContainer>
+                                {
+                                    (listDates || []).map((element) => {
+                                        const getH = element.x.substring(0, 2);
+                                        const [found] = hourAlerts.filter((element) => {
+                                            return element.hour === +getH;
+                                        });
+                                        const title = found ? `Cantidad de alarmas: ${found.total}` : '';
+                                        return (
+                                            <Box sx={{
+                                                flex: '1 1 15.00%',
+                                                boxShadow: 'border-box',
+                                                p: 1
+                                            }}>
+                                                <Tooltip title={title}>
+                                                <Button 
+                                                    variant="outlined"
+                                                    disabled={!found}
+                                                    sx={{
+                                                        width: '100%'
+                                                    }}
+                                                    color="error"
+                                                    onClick={() => {
+                                                        setSelectDate(`${fecha} ${getH}`);
+                                                        setOpenDetail(true);
+                                                    }}
+                                                >{element.x}</Button>
+                                                </Tooltip>  
+                                            </Box>
+                                        );
+                                    })
+                                }
                             </Box>
                         </Stack>
                     </Paper>
