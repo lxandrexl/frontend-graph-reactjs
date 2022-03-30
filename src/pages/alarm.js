@@ -244,19 +244,19 @@ export default function AlarmPage(){
                                 <Stack spacing={1}>
                                     <Stack direction="row" spacing={1} alignItems="center">
                                         <Typography variant="subtitle2">C&oacute;digo:</Typography>
-                                        <Typography variant="caption">{`1`}</Typography>
+                                        <Typography variant="caption">{device.device.deviceId}</Typography>
                                     </Stack>
                                     <Stack direction="row" spacing={1} alignItems="center">
                                         <Typography variant="subtitle2">Descripci&oacute;n:</Typography>
-                                        <Typography variant="caption">{1}</Typography>
+                                        <Typography variant="caption">{device.device.descripcion}</Typography>
                                     </Stack>
                                     <Stack direction="row" spacing={1} alignItems="center">
                                         <Typography variant="subtitle2">Grupo:</Typography>
-                                        <Typography variant="caption">{1}</Typography>
+                                        <Typography variant="caption">{device.device.grupo}</Typography>
                                     </Stack>
                                     <Stack direction="row" spacing={1} alignItems="center">
                                         <Typography variant="subtitle2">Unidad:</Typography>
-                                        <Typography variant="caption">{1}</Typography>
+                                        <Typography variant="caption">{device.device.unidad_medida}</Typography>
                                     </Stack>
                                 </Stack>
                             ) : (
