@@ -279,12 +279,12 @@ export default function UserMoreMenu(props) {
           )
         }      
 
-        {
+        {/* {
           type === 'singular' && device?.device?.unidad_medida === 'ALARMA' ? (
             <MenuItem sx={{ color: 'text.secondary' }}>
               <ListItemIcon> <Icon icon={notificationFilled} width={24} height={24} /> </ListItemIcon>
               <Link 
-                to={`/dashboard/alarms?${QueryStringify(pickDeviceQuery)}`}
+                to={`/dashboard/alarms`}
                 state={{device: device, type: type}}
                 style={{ fontSize: '0.875rem' }}
                 color="inherit" underline="none" component={RouterLink}>
@@ -292,7 +292,18 @@ export default function UserMoreMenu(props) {
               </Link>
             </MenuItem>
           ) : null
-        }  
+        }   */}
+
+          <MenuItem sx={{ color: 'text.secondary' }}>
+              <ListItemIcon> <Icon icon={notificationFilled} width={24} height={24} /> </ListItemIcon>
+              <Link 
+                to={`/dashboard/alarms`}
+                state={{device: device, type: type}}
+                style={{ fontSize: '0.875rem' }}
+                color="inherit" underline="none" component={RouterLink}>
+                  Historial Alarmas
+              </Link>
+          </MenuItem>
 
         {
           type === 'singular' ? (

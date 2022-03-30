@@ -14,10 +14,14 @@ import {
     Paper,
     Tooltip,
     Select,
-    MenuItem
+    MenuItem,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import TimerIcon from '@material-ui/icons/Timer';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import { AlarmCalendar, AlarmHours } from '../components/alarm/alarm';
 import { getAlarm } from '../services/alarm.service';
 import moment from 'moment';
@@ -184,15 +188,9 @@ export default function AlarmPage(){
     const [year, setYear] = useState(moment().year());
     const [data, setData] = useState([]);
     const {
-        a,
-        st,
-        imei,
-        fabrica,
-        grupo,
-        unidad,
-        descripcion,
+        type,
         device
-    } = useMemo(() => QueryParse(location.search), []);
+    } = useMemo(() => location.state, []);
 
     const intervalYears = useMemo(() => {
         const yy = [];
@@ -211,25 +209,25 @@ export default function AlarmPage(){
     }, [year]);
 
     useEffect(async () => {
-        const r = await getAlarm(stringify({
+        const devices = type === 'plural' ? device.devices.map((element) => {
+            return element.device.deviceId;
+        }) : [device.device.deviceId]
+        const qq = stringify({
             action: 'by_year',
-            date: year
-        }));
+            date: year,
+            device: devices
+        });
+        const r = await getAlarm(qq);
         setData(r.payload);
     }, [year]);
 
     function onSelected(date){
-        const query = stringify({
-            a,
-            st,
-            imei,
-            fabrica,
-            grupo,
-            unidad,
-            descripcion,
-            fecha: date
+        navigate(`./statistics`, {
+            state: {
+                type,
+                device
+            }
         });
-        navigate(`./statistics?${query}`);
     }
 
     return (
@@ -240,24 +238,35 @@ export default function AlarmPage(){
                         <Box sx={{display: 'flex', flexFlow: 'row', justifyContent: 'space-between'}}>
                             <Typography variant="h4">Historial de Alarmas</Typography>
                         </Box>
-                        <Stack spacing={1}>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">C&oacute;digo:</Typography>
-                                <Typography variant="caption">{`${imei}#${a}#${st}#${fabrica}`}</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Descripci&oacute;n:</Typography>
-                                <Typography variant="caption">{descripcion}</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Grupo:</Typography>
-                                <Typography variant="caption">{grupo}</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Unidad:</Typography>
-                                <Typography variant="caption">{unidad}</Typography>
-                            </Stack>
-                        </Stack>
+                        {
+                            type === 'singular' ? (
+                                <Stack spacing={1}>
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                        <Typography variant="subtitle2">C&oacute;digo:</Typography>
+                                        <Typography variant="caption">{`1`}</Typography>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                        <Typography variant="subtitle2">Descripci&oacute;n:</Typography>
+                                        <Typography variant="caption">{1}</Typography>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                        <Typography variant="subtitle2">Grupo:</Typography>
+                                        <Typography variant="caption">{1}</Typography>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                        <Typography variant="subtitle2">Unidad:</Typography>
+                                        <Typography variant="caption">{1}</Typography>
+                                    </Stack>
+                                </Stack>
+                            ) : (
+                                <Stack spacing={1}>
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                        <Typography variant="subtitle2">Tipo:</Typography>
+                                        <Typography variant="caption">Multiple alarmas</Typography>
+                                    </Stack>
+                                </Stack>
+                            )
+                        }
                     </Stack>
                     <Box sx={{
                         display: 'flex',
