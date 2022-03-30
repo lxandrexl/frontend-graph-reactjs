@@ -30,18 +30,14 @@ export function StaticsAlarm(){
     const location = useLocation();
     const [openDetail, setOpenDetail] = useState(false);
     const [selectedDate, setSelectDate] = useState(null);
+    const [selectedDevice, setSelectedDevice] = useState(null);
     const [details, setDetails] = useState([]);
     const [hourAlerts, setHourAlerts] = useState([]);
     const {
-        a,
-        st,
-        imei,
-        fabrica,
-        grupo,
-        unidad,
-        descripcion,
-        fecha
-    } = useMemo(() => QueryParse(location.search), []);
+        type,
+        device,
+        date
+    } = useMemo(() => location.state, []);
 
     const listDates = useMemo(() => {
         const dates = [...Array(24).keys()]
@@ -53,20 +49,28 @@ export function StaticsAlarm(){
         })
     }, []);
 
-    useEffect(async () => {
-        if(!fecha) return;
-        const r = await getAlarm(stringify({
-            action: 'by_day',
-            date: fecha
-        }));
-        setHourAlerts(r.payload)
-    }, [fecha]);
+    useEffect(() => {
+        if(type === 'singular'){
+            setSelectedDevice(device.device.deviceId);
+        }
+    }, [type]);
 
     useEffect(async () => {
-        if(!selectedDate) return;
+        if(!date || !selectedDevice) return;
+        const r = await getAlarm(stringify({
+            action: 'by_day',
+            date,
+            device: selectedDevice
+        }));
+        setHourAlerts(r.payload)
+    }, [date, selectedDevice]);
+
+    useEffect(async () => {
+        if(!selectedDate || !selectedDevice) return;
         const r = await getAlarm(stringify({
             action: 'by_hour',
-            date: selectedDate
+            date: selectedDate,
+            device: selectedDevice
         }));
         setDetails(r.payload)
     }, [selectedDate]);
@@ -145,37 +149,107 @@ export function StaticsAlarm(){
                         <Box sx={{display: 'flex', flexFlow: 'row', justifyContent: 'space-between'}}>
                             <Typography variant="h4">Estadística de Alarma</Typography>
                         </Box>
-                        <Stack spacing={1}>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">C&oacute;digo:</Typography>
-                                <Typography variant="caption">{`${imei}#${a}#${st}#${fabrica}`}</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Descripci&oacute;n:</Typography>
-                                <Typography variant="caption">{descripcion}</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Grupo:</Typography>
-                                <Typography variant="caption">{grupo}</Typography>
-                            </Stack>
-                            <Stack direction="row" spacing={1} alignItems="center">
-                                <Typography variant="subtitle2">Unidad:</Typography>
-                                <Typography variant="caption">{unidad}</Typography>
-                            </Stack>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                            <Typography variant="subtitle2">Fecha:</Typography>
+                            <Typography variant="caption">{date}</Typography>
                         </Stack>
                     </Stack>
-                    <Paper square elevation={5} sx={{ p: 2 }}>
-                        <AlarmHours
-                            fecha={fecha}
-                            hourAlerts={hourAlerts}
-                            listDates={listDates}
-                            onSelect={(e) => {
-                                setSelectDate(e);
-                                setOpenDetail(true);
-                                console.log(e)
-                            }}
-                        />
-                    </Paper>
+                    {
+                        type === 'singular' ? (
+                            <Stack spacing={1}>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    <Typography variant="subtitle2">C&oacute;digo:</Typography>
+                                    <Typography variant="caption">{device.device.deviceId}</Typography>
+                                </Stack>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    <Typography variant="subtitle2">Descripci&oacute;n:</Typography>
+                                    <Typography variant="caption">{device.device.descripcion}</Typography>
+                                </Stack>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    <Typography variant="subtitle2">Grupo:</Typography>
+                                    <Typography variant="caption">{device.device.grupo}</Typography>
+                                </Stack>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    <Typography variant="subtitle2">Unidad:</Typography>
+                                    <Typography variant="caption">{device.device.unidad_medida}</Typography>
+                                </Stack>
+                            </Stack>
+                        ) : null
+                    }
+                    {
+                        type === 'plural' && device.devices.map((element) => {
+                            const {deviceId, descripcion, grupo, unidad_medida} = element.device;
+                            return (
+                                <Paper square elevation={5} sx={{ p: 2 }}>
+                                <Accordion expanded={deviceId === selectedDevice} onChange={(e, expand) => {
+                                    if(expand){
+                                        setSelectedDevice(deviceId);
+                                    }else{
+                                        setSelectedDevice(null);
+                                    }
+                                }}>
+                                    <AccordionSummary
+                                    expandIcon={<ExpandMore />}
+                                    aria-controls="panel1a-content"
+                                    id="panel1a-header"
+                                    >
+                                        <Typography>{deviceId} - <b>{descripcion}</b></Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Stack spacing={2.5}>
+                                            <Stack spacing={1}>
+                                                <Stack direction="row" spacing={1} alignItems="center">
+                                                    <Typography variant="subtitle2">C&oacute;digo:</Typography>
+                                                    <Typography variant="caption">{deviceId}</Typography>
+                                                </Stack>
+                                                <Stack direction="row" spacing={1} alignItems="center">
+                                                    <Typography variant="subtitle2">Descripci&oacute;n:</Typography>
+                                                    <Typography variant="caption">{descripcion}</Typography>
+                                                </Stack>
+                                                <Stack direction="row" spacing={1} alignItems="center">
+                                                    <Typography variant="subtitle2">Grupo:</Typography>
+                                                    <Typography variant="caption">{grupo}</Typography>
+                                                </Stack>
+                                                <Stack direction="row" spacing={1} alignItems="center">
+                                                    <Typography variant="subtitle2">Unidad:</Typography>
+                                                    <Typography variant="caption">{unidad_medida}</Typography>
+                                                </Stack>
+                                            </Stack>
+                                            <Paper square elevation={5} sx={{ p: 2 }}>
+                                                <AlarmHours
+                                                    fecha={date}
+                                                    hourAlerts={hourAlerts}
+                                                    listDates={listDates}
+                                                    onSelect={(e) => {
+                                                        setSelectDate(e);
+                                                        setOpenDetail(true);
+                                                        console.log(e)
+                                                    }}
+                                                />
+                                            </Paper>
+                                        </Stack>
+                                    </AccordionDetails>
+                                </Accordion>
+                                </Paper>
+                            );
+                        })
+                    }
+                    {
+                        type === 'singular' ? (
+                            <Paper square elevation={5} sx={{ p: 2 }}>
+                                <AlarmHours
+                                    fecha={date}
+                                    hourAlerts={hourAlerts}
+                                    listDates={listDates}
+                                    onSelect={(e) => {
+                                        setSelectDate(e);
+                                        setOpenDetail(true);
+                                        console.log(e)
+                                    }}
+                                />
+                            </Paper>
+                        ) : null
+                    }
                 </Stack>
             </Box>
         </>
