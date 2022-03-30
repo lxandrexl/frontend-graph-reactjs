@@ -7,8 +7,10 @@ import {
     Stack,
     Paper,
     Typography,
+    Box,
+    Button,
+    Tooltip,
 } from '@material-ui/core';
-import Chart from 'react-apexcharts'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,80 +22,67 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export function AlarmChart({
-    onClick
+export function AlarmHours({
+    fecha,
+    hourAlerts,
+    listDates,
+    onSelect
 }){
 
-    const [refresh, setRefresh] = useState(false);
-
-    const listDates = useMemo(() => {
-        const dates = [...Array(24).keys()]
-            .map((element) => `${(element).toString().padStart(2, '0')}:00`);
-        return (dates ?? []).map((element) => {
-            return {
-                x: element,
-                y: Math.floor(Math.random() * (20 - 0) + 0).toFixed(0)
+    const maxAlarmsHour = useMemo(() => {
+        return (hourAlerts || []).reduce((prev, actual) => {
+            const [total] = prev;
+            if(actual.total > total){
+                prev[0] = actual.total;
+                prev[1] = `${(actual.hour).toString().padStart(2, '0')}:00`;
             }
-        })
-    }, [refresh]);
+            return prev;
+        }, [0, '00:00'])
+    }, [hourAlerts]);
 
     return (
-        <Chart options={{
-            chart: {
-                id: 'chart',
-                events: {
-                    click(event, chartContext, config) {
-                        const ser = config.config.series[config.seriesIndex];
-                        const pass = ser && ser.data;
-                        if(pass){
-                            const data = ser.data[config.dataPointIndex];
-                            onClick(data);
-                        }
-                    },
-                    dataPointMouseEnter: function(event) {
-                        event.path[0].style.cursor = "pointer";
-                    }              
-                },
-                zoom: {
-                    enabled: true,
-                    type: 'x',
-                    resetIcon: {
-                        offsetX: -10,
-                        offsetY: 0,
-                        fillColor: '#fff',
-                        strokeColor: '#37474F'
-                    },
-                    selection: {
-                        background: '#90CAF9',
-                        border: '#0D47A1'
-                    }    
+        <Stack spacing={3}>
+            <Stack spacing={1}>
+                <Typography variant="subtitle1">{moment(fecha).format('dddd DD [de] MMMM [del] YYYY')}</Typography>
+                <Typography variant="body2">Hora con mayor cantidad de alarmas: {maxAlarmsHour[1]}</Typography>
+            </Stack>
+            <Box sx={{
+                display: 'flex',
+                gap: 2,
+                flexWrap: 'wrap',
+            }}>
+                {
+                    (listDates || []).map((element) => {
+                        const getH = element.x.substring(0, 2);
+                        const [found] = hourAlerts.filter((element) => {
+                            return element.hour === +getH;
+                        });
+                        const title = found ? `Cantidad de alarmas: ${found.total}` : '';
+                        return (
+                            <Box sx={{
+                                flex: '1 1 15.00%',
+                                boxShadow: 'border-box',
+                                p: 1
+                            }}>
+                                <Tooltip title={title}>
+                                <Button 
+                                    variant="outlined"
+                                    disabled={!found}
+                                    sx={{
+                                        width: '100%'
+                                    }}
+                                    color="error"
+                                    onClick={() => {
+                                        onSelect(`${fecha} ${getH}`);
+                                    }}
+                                >{element.x}</Button>
+                                </Tooltip>  
+                            </Box>
+                        );
+                    })
                 }
-            },
-            tooltip: {
-                y: {
-                    formatter: function (val) {
-                        return `Alarmas: ${val}`
-                    },
-                    title: {
-                        formatter: (seriesName) => '',
-                    },
-                },
-                x: {
-                    show: false
-                },
-                marker: {
-                    show: false,
-                },
-            },
-            colors: ['#F44336']
-        }} 
-        series={[{
-            data: listDates
-        }]}
-        type="bar"
-        width={2000}
-        height={320} 
-        />
+            </Box>
+        </Stack>
     );
 }
 

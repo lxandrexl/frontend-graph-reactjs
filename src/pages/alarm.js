@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import TimerIcon from '@material-ui/icons/Timer';
-import { AlarmCalendar, AlarmChart } from '../components/alarm/alarm';
+import { AlarmCalendar, AlarmHours } from '../components/alarm/alarm';
 import { getAlarm } from '../services/alarm.service';
 import moment from 'moment';
 
@@ -48,17 +48,6 @@ export function StaticsAlarm(){
             }
         })
     }, []);
-
-    const maxAlarmsHour = useMemo(() => {
-        return (hourAlerts || []).reduce((prev, actual) => {
-            const [total] = prev;
-            if(actual.total > total){
-                prev[0] = actual.total;
-                prev[1] = `${(actual.hour).toString().padStart(2, '0')}:00`;
-            }
-            return prev;
-        }, [0, '00:00'])
-    }, [hourAlerts]);
 
     useEffect(async () => {
         if(!fecha) return;
@@ -172,49 +161,16 @@ export function StaticsAlarm(){
                         </Stack>
                     </Stack>
                     <Paper square elevation={5} sx={{ p: 2 }}>
-                        <Stack spacing={3}>
-                            <Stack spacing={1}>
-                                <Typography variant="subtitle1">{moment(fecha).format('dddd DD [de] MMMM [del] YYYY')}</Typography>
-                                <Typography variant="body2">Hora con mayor cantidad de alarmas: {maxAlarmsHour[1]}</Typography>
-                            </Stack>
-                            <Box sx={{
-                                display: 'flex',
-                                gap: 2,
-                                flexWrap: 'wrap',
-                            }}>
-                                {
-                                    (listDates || []).map((element) => {
-                                        const getH = element.x.substring(0, 2);
-                                        const [found] = hourAlerts.filter((element) => {
-                                            return element.hour === +getH;
-                                        });
-                                        const title = found ? `Cantidad de alarmas: ${found.total}` : '';
-                                        return (
-                                            <Box sx={{
-                                                flex: '1 1 15.00%',
-                                                boxShadow: 'border-box',
-                                                p: 1
-                                            }}>
-                                                <Tooltip title={title}>
-                                                <Button 
-                                                    variant="outlined"
-                                                    disabled={!found}
-                                                    sx={{
-                                                        width: '100%'
-                                                    }}
-                                                    color="error"
-                                                    onClick={() => {
-                                                        setSelectDate(`${fecha} ${getH}`);
-                                                        setOpenDetail(true);
-                                                    }}
-                                                >{element.x}</Button>
-                                                </Tooltip>  
-                                            </Box>
-                                        );
-                                    })
-                                }
-                            </Box>
-                        </Stack>
+                        <AlarmHours
+                            fecha={fecha}
+                            hourAlerts={hourAlerts}
+                            listDates={listDates}
+                            onSelect={(e) => {
+                                setSelectDate(e);
+                                setOpenDetail(true);
+                                console.log(e)
+                            }}
+                        />
                     </Paper>
                 </Stack>
             </Box>
@@ -234,7 +190,8 @@ export default function AlarmPage(){
         fabrica,
         grupo,
         unidad,
-        descripcion
+        descripcion,
+        device
     } = useMemo(() => QueryParse(location.search), []);
 
     const intervalYears = useMemo(() => {
