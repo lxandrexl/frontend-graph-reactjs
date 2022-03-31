@@ -150,7 +150,7 @@ export function StaticsAlarm(){
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         <TimerIcon size="small" color="error" />
                                                         <Typography variant="body2">
-                                                        {element.fecha}
+                                                        {moment(element.fecha, 'YYYY-MM-DD HH:mm:ss').format('DD-MM-YYYY HH:mm:ss')}
                                                         </Typography>
                                                     </Stack>
                                                 </Paper>
@@ -166,12 +166,16 @@ export function StaticsAlarm(){
                 <Stack spacing={4}>
                     <Stack spacing={1}>
                         <Box sx={{display: 'flex', flexFlow: 'row', justifyContent: 'space-between'}}>
-                            <Typography variant="h4">Estadística de Alarma</Typography>
+                            <Typography variant="h4">Hora de Alarma</Typography>
                         </Box>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                            <Typography variant="subtitle2">Fecha:</Typography>
-                            <Typography variant="caption">{date}</Typography>
-                        </Stack>
+                        {
+                            type === 'plural' ? (
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    <Typography variant="subtitle2">Fecha seleccionada:</Typography>
+                                    <Typography variant="caption">{date}</Typography>
+                                </Stack>
+                            ) : null
+                        }
                     </Stack>
                     {
                         type === 'singular' ? (
@@ -209,6 +213,7 @@ export function StaticsAlarm(){
                                     if(expand){
                                         setSelectedDevice(deviceId);
                                     }else{
+                                        setDetails([]);
                                         setSelectedDevice(null);
                                     }
                                 }}>
@@ -218,20 +223,27 @@ export function StaticsAlarm(){
                                     id="panel1a-header"
                                     >
                                         <Stack spacing={1}>
-                                            <Typography>{deviceId}</Typography>
                                             <Stack direction="row" spacing={1} alignItems="center">
-                                                <Typography variant="subtitle2">Descripcion:</Typography>
+                                                <Typography variant="subtitle2">Código:</Typography>
+                                                <Typography variant="caption">{deviceId}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <Typography variant="subtitle2">Descripción:</Typography>
                                                 <Typography variant="caption">{descripcion}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <Typography variant="subtitle2">Grupo:</Typography>
+                                                <Typography variant="caption">{grupo}</Typography>
+                                            </Stack>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <Typography variant="subtitle2">Unidad:</Typography>
+                                                <Typography variant="caption">{unidad_medida}</Typography>
                                             </Stack>
                                         </Stack>
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <Stack spacing={2.5}>
-                                            <Stack spacing={1}>
-                                                <Stack direction="row" spacing={1} alignItems="center">
-                                                    <Typography variant="subtitle2">C&oacute;digo:</Typography>
-                                                    <Typography variant="caption">{deviceId}</Typography>
-                                                </Stack>
+                                            {/* <Stack spacing={1}>
                                                 <Stack direction="row" spacing={1} alignItems="center">
                                                     <Typography variant="subtitle2">Grupo:</Typography>
                                                     <Typography variant="caption">{grupo}</Typography>
@@ -240,7 +252,7 @@ export function StaticsAlarm(){
                                                     <Typography variant="subtitle2">Unidad:</Typography>
                                                     <Typography variant="caption">{unidad_medida}</Typography>
                                                 </Stack>
-                                            </Stack>
+                                            </Stack> */}
                                             <Paper square elevation={5} sx={{ p: 2, position: 'relative' }}>
                                                 <Backdrop
                                                     sx={{ 
@@ -383,14 +395,7 @@ export default function AlarmPage(){
                                         <Typography variant="caption">{device.device.unidad_medida}</Typography>
                                     </Stack>
                                 </Stack>
-                            ) : (
-                                <Stack spacing={1}>
-                                    <Stack direction="row" spacing={1} alignItems="center">
-                                        <Typography variant="subtitle2">Tipo:</Typography>
-                                        <Typography variant="caption">Multiple alarmas</Typography>
-                                    </Stack>
-                                </Stack>
-                            )
+                            ) : null
                         }
                     </Stack>
                     <Box sx={{
