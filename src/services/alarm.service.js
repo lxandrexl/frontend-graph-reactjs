@@ -5,7 +5,7 @@ import { getToken } from './tokens';
 export async function getAlarm(query){
     const token = getToken();
     const {data} = await axios.get(
-      `${baseUrl}/alarms?${query}`,
+      `${baseUrl}/dashboard/alarms?${query}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`

@@ -12,7 +12,7 @@ import reportWebVitals from './reportWebVitals';
 import {worker} from './mocks/browser/handler';
 
 if(process.env.NODE_ENV === 'development'){
-  worker.start()
+  //worker.start()
 }
 
 // ----------------------------------------------------------------------

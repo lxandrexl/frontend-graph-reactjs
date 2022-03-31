@@ -33,6 +33,8 @@ export function StaticsAlarm(){
     const [selectedDevice, setSelectedDevice] = useState(null);
     const [details, setDetails] = useState([]);
     const [hourAlerts, setHourAlerts] = useState([]);
+    const [loadingHours, setLoadingHours] = useState(false);
+    const [loadingExactlyDates, setLoadingExactlyDates] = useState(false);
     const {
         type,
         device,
@@ -58,22 +60,26 @@ export function StaticsAlarm(){
 
     useEffect(async () => {
         if(!date || !selectedDevice) return;
+        setLoadingHours(true);
         const r = await getAlarm(stringify({
             action: 'by_day',
             date,
             device: selectedDevice
         }));
-        setHourAlerts(r.payload)
+        setHourAlerts(r.payload);
+        setLoadingHours(false);
     }, [date, selectedDevice]);
 
     useEffect(async () => {
         if(!selectedDate || !selectedDevice) return;
+        setLoadingExactlyDates(true);
         const r = await getAlarm(stringify({
             action: 'by_hour',
             date: selectedDate,
             device: selectedDevice
         }));
-        setDetails(r.payload)
+        setDetails(r.payload);
+        setLoadingExactlyDates(false);
     }, [selectedDate]);
 
     return (
@@ -119,8 +125,20 @@ export function StaticsAlarm(){
                                     overflowY: 'auto',
                                     boxSizing: 'border-box',
                                     p: .5,
-                                    maxHeight: 380
+                                    minHeight: 100,
+                                    maxHeight: 380,
+                                    position: 'relative'
                                 }}>
+                                    <Backdrop
+                                        sx={{ 
+                                            background: alpha('#FFF', 0.85), 
+                                            zIndex: (theme) => theme.zIndex.drawer + 1,
+                                            position: 'absolute',
+                                        }}
+                                        open={loadingExactlyDates}
+                                        >
+                                        <CircularProgress color="inherit" />
+                                    </Backdrop>
                                     <Stack spacing={1.5}>
                                     {
                                         details.map((element) => {
@@ -132,7 +150,7 @@ export function StaticsAlarm(){
                                                     <Stack direction="row" alignItems="center" spacing={2}>
                                                         <TimerIcon size="small" color="error" />
                                                         <Typography variant="body2">
-                                                        {element}
+                                                        {element.fecha}
                                                         </Typography>
                                                     </Stack>
                                                 </Paper>
@@ -199,7 +217,13 @@ export function StaticsAlarm(){
                                     aria-controls="panel1a-content"
                                     id="panel1a-header"
                                     >
-                                        <Typography>{deviceId} - <b>{descripcion}</b></Typography>
+                                        <Stack spacing={1}>
+                                            <Typography>{deviceId}</Typography>
+                                            <Stack direction="row" spacing={1} alignItems="center">
+                                                <Typography variant="subtitle2">Descripcion:</Typography>
+                                                <Typography variant="caption">{descripcion}</Typography>
+                                            </Stack>
+                                        </Stack>
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <Stack spacing={2.5}>
@@ -207,10 +231,6 @@ export function StaticsAlarm(){
                                                 <Stack direction="row" spacing={1} alignItems="center">
                                                     <Typography variant="subtitle2">C&oacute;digo:</Typography>
                                                     <Typography variant="caption">{deviceId}</Typography>
-                                                </Stack>
-                                                <Stack direction="row" spacing={1} alignItems="center">
-                                                    <Typography variant="subtitle2">Descripci&oacute;n:</Typography>
-                                                    <Typography variant="caption">{descripcion}</Typography>
                                                 </Stack>
                                                 <Stack direction="row" spacing={1} alignItems="center">
                                                     <Typography variant="subtitle2">Grupo:</Typography>
@@ -221,7 +241,17 @@ export function StaticsAlarm(){
                                                     <Typography variant="caption">{unidad_medida}</Typography>
                                                 </Stack>
                                             </Stack>
-                                            <Paper square elevation={5} sx={{ p: 2 }}>
+                                            <Paper square elevation={5} sx={{ p: 2, position: 'relative' }}>
+                                                <Backdrop
+                                                    sx={{ 
+                                                        background: alpha('#FFF', 0.85), 
+                                                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                                                        position: 'absolute',
+                                                    }}
+                                                    open={loadingHours}
+                                                    >
+                                                    <CircularProgress color="inherit" />
+                                                </Backdrop>
                                                 <AlarmHours
                                                     fecha={date}
                                                     hourAlerts={hourAlerts}
@@ -242,7 +272,17 @@ export function StaticsAlarm(){
                     }
                     {
                         type === 'singular' ? (
-                            <Paper square elevation={5} sx={{ p: 2 }}>
+                            <Paper square elevation={5} sx={{ p: 2, position: 'relative' }}>
+                                <Backdrop
+                                    sx={{ 
+                                        background: alpha('#FFF', 0.85), 
+                                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                                        position: 'absolute',
+                                    }}
+                                    open={loadingHours}
+                                    >
+                                    <CircularProgress color="inherit" />
+                                </Backdrop>
                                 <AlarmHours
                                     fecha={date}
                                     hourAlerts={hourAlerts}
@@ -266,6 +306,7 @@ export default function AlarmPage(){
     const location = useLocation();
     const navigate = useNavigate();
     const [year, setYear] = useState(moment().year());
+    const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const {
         type,
@@ -289,6 +330,7 @@ export default function AlarmPage(){
     }, [year]);
 
     useEffect(async () => {
+        setLoading(true);
         const devices = type === 'plural' ? device.devices.map((element) => {
             return element.device.deviceId;
         }) : [device.device.deviceId]
@@ -299,6 +341,7 @@ export default function AlarmPage(){
         });
         const r = await getAlarm(qq);
         setData(r.payload);
+        setLoading(false);
     }, [year]);
 
     function onSelected({date, ids}){
@@ -374,9 +417,20 @@ export default function AlarmPage(){
                             p: 1,
                             m: 1,
                             bgcolor: 'background.paper',
-                            boxSizing: 'border-box'
+                            boxSizing: 'border-box',
+                            position: 'relative'
                         }}
                     >
+                        <Backdrop
+                            sx={{ 
+                                background: alpha('#FFF', 0.85), 
+                                zIndex: (theme) => theme.zIndex.drawer + 1,
+                                position: 'absolute',
+                            }}
+                            open={loading}
+                            >
+                            <CircularProgress color="inherit" />
+                        </Backdrop>
                         {
                             listDates.map((element, i) => {
                                 return (
