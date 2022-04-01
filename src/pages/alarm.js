@@ -376,6 +376,14 @@ export default function AlarmPage(){
                             <Typography variant="h4">Historial de Alarmas</Typography>
                         </Box>
                         {
+                            type === 'plural' ? (
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                    <Typography variant="subtitle2">Grupo:</Typography>
+                                    <Typography variant="caption">{device.devices[0].device.grupo}</Typography>
+                                </Stack>
+                            ) : null
+                        }
+                        {
                             type === 'singular' ? (
                                 <Stack spacing={1}>
                                     <Stack direction="row" spacing={1} alignItems="center">
